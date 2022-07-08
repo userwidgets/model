@@ -1,6 +1,6 @@
 // import * as isoly from "isoly"
 import * as authly from "authly"
-import * as model from "../../../model"
+import * as model from "../../"
 const now = new Date()
 // const timeNow = isoly.DateTime.now()
 
