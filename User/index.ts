@@ -2,7 +2,7 @@ import * as isoly from "isoly"
 import { Credentials as UserCredentials } from "./Credentials"
 import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
-import { PasswordChange as UserPasswordChange } from "./PasswordChange"
+import { Password as UserPassword } from "./Password"
 
 export interface User {
 	email: string
@@ -52,6 +52,11 @@ export namespace User {
 
 	export type Credentials = UserCredentials
 	export const Credentials = UserCredentials
-	export type PasswordChange = UserPasswordChange
-	export const PasswordChange = UserPasswordChange
+	export type Password = UserPassword
+	export namespace Password {
+		export type Change = UserPassword.Change
+		export const Change = UserPassword.Change
+		export type Set = UserPassword.Set
+		export const Set = UserPassword.Set
+	}
 }
