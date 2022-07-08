@@ -1,5 +1,5 @@
 import * as isoly from "isoly"
-import * as model from "../../model"
+import * as model from "../"
 
 describe("Application", () => {
 	it("is", () => {
