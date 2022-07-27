@@ -1,7 +1,17 @@
+import { Permissions } from "../Permissions"
+
 export interface Creatable {
 	name: { first: string; last: string }
 	email: string
-	permissions: Record<"*", string> & Record<string /* organizationIds */, string | undefined>
+	permissions: Record<
+		"*",
+		Record<"application" | "organization" | "user", Permissions.Permission> &
+			Record<string, Permissions.Permission | undefined>
+	> &
+		Record<
+			string /* organizationIds */,
+			Record<"organization" | "user", Permissions.Permission> & Record<string, Permissions.Permission | undefined>
+		>
 }
 
 export namespace Creatable {
@@ -14,8 +24,15 @@ export namespace Creatable {
 			typeof value.name.last == "string" &&
 			typeof value.permissions == "object" &&
 			Object.keys(value.permissions).includes("*") &&
-			Object.entries(value.permissions).every(([k, v]) => typeof k == "string" && typeof v == "string") &&
-			Object.keys(value.permissions).includes("*")
+			["application", "organization", "user"].every(resource =>
+				Object.keys(value.permissions["*"]).includes(resource)
+			) &&
+			Object.values(value.permissions).every(
+				organization =>
+					typeof organization == "object" &&
+					organization &&
+					["organization", "user"].every(resource => Object.keys(organization).includes(resource))
+			)
 		)
 	}
 }

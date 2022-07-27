@@ -15,7 +15,7 @@ export namespace Creatable {
 			value.permissions.every((permission: string | any) => typeof permission == "string") &&
 			["application", "organization", "user"].every(permission => value.permissions.includes(permission)) &&
 			typeof value.organizations == "object" &&
-			Object.entries(value.organizations).every(([k, v]) => typeof k == "string" && Organization.is(v))
+			Object.values(value.organizations).every(organization => Organization.is(organization))
 		)
 	}
 }
