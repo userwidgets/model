@@ -1,6 +1,6 @@
 // import * as isoly from "isoly"
 import * as authly from "authly"
-import * as model from "../../"
+import * as model from "../../index"
 const now = new Date()
 // const timeNow = isoly.DateTime.now()
 
@@ -13,7 +13,7 @@ describe("Creatable", () => {
 			issued: "2022-08-03T10:53:14.130Z",
 			expires: "2022-08-03T10:53:14.130Z",
 			name: { first: "john", last: "doe" },
-			email: "john@issuefab.com",
+			email: "john@example.com",
 			permissions: { "*": "" },
 			token: "asd",
 		}
@@ -28,7 +28,7 @@ describe("Creatable", () => {
 		)
 		const creatable: model.User.Key.Creatable = {
 			name: { first: "john", last: "doe" },
-			email: "john@issuefab.com",
+			email: "john@example.com",
 			permissions: { "*": "" },
 		}
 
@@ -80,11 +80,10 @@ describe("Creatable", () => {
 		const unsignedVerifier = authly.Verifier.create(authly.Algorithm.none())
 		const creatable: model.User.Key.Creatable = {
 			name: { first: "john", last: "doe" },
-			email: "john@issuefab.com",
+			email: "john@example.com",
 			permissions: { "*": "" },
 		}
 		if (!issuer || !verifier || !unsignedVerifier) {
-			console.log("FAILED")
 			return
 		}
 		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
@@ -119,11 +118,11 @@ describe("Creatable", () => {
 			"VBIovic5l0xFkEHskAjFTevO86Fsz1C2aSeRKSqGFoOQ0tmJzBEs1R6KqnHInicD" +
 			"TQrKhArgLXX4v3CddjfTRJkFWDbE/CkvKZNOrcf1nhaGCPspRJj2KUkj1Fhl9Cnc" +
 			"dn/RsYEONbwQSjIfMPkvxF+8HQ=="
-		const issuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "issuefab")
+		const issuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "example")
 		const verifier = model.User.Key.Signed.Verifier.create("userwidgets")
 		const creatable: model.User.Key.Creatable = {
 			name: { first: "john", last: "doe" },
-			email: "doe@issuefab.com",
+			email: "doe@example.com",
 			permissions: { "*": "" },
 		}
 		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
@@ -133,7 +132,7 @@ describe("Creatable", () => {
 			issuer: "userwidgets",
 			issued: Math.floor(now.getTime() / 1000),
 			expires: Math.floor(now.getTime() / 1000) + 60 * 60 * 12,
-			audience: "issuefab",
+			audience: "example",
 			token: token,
 		})
 	})
@@ -165,11 +164,11 @@ describe("Creatable", () => {
 			"VBIovic5l0xFkEHskAjFTevO86Fsz1C2aSeRKSqGFoOQ0tmJzBEs1R6KqnHInicD" +
 			"TQrKhArgLXX4v3CddjfTRJkFWDbE/CkvKZNOrcf1nhaGCPspRJj2KUkj1Fhl9Cnc" +
 			"dn/RsYEONbwQSjIfMPkvxF+8HQ=="
-		const signedIssuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "issuefab")
-		const unsignedIssuer = model.User.Key.Unsigned.Issuer.create("userwidgets", "issuefab")
+		const signedIssuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "example")
+		const unsignedIssuer = model.User.Key.Unsigned.Issuer.create("userwidgets", "example")
 		const creatable: model.User.Key.Creatable = {
 			name: { first: "john", last: "doe" },
-			email: "john@issuefab.com",
+			email: "john@example.com",
 			permissions: { "*": "" },
 		}
 		const signedToken = await signedIssuer.sign(creatable)

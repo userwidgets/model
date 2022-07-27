@@ -11,13 +11,37 @@ describe("User", () => {
 			permissions: {
 				applications: {
 					exampleApplicationId: {
-						user: {
+						application: {
+							// change app
 							read: true,
+							write: false,
+						},
+						organization: {
+							// create / change orgs connected to app
+							read: true,
+							write: false,
+						},
+						user: {
+							// create / change users connected to app
+							read: true,
+							write: true,
 						},
 					},
-					otherApplicationId: {},
 				},
-				organizations: {},
+				organizations: {
+					exampleOrganizationId: {
+						organization: {
+							// change org
+							read: true,
+							write: true,
+						},
+						user: {
+							// create / change users connected to org
+							read: true,
+							write: false,
+						},
+					},
+				},
 			},
 			modified: isoly.DateTime.now(),
 		}
