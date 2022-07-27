@@ -10,10 +10,8 @@ export interface User {
 	name: UserName
 	permissions: Record<
 		string /* applicationId */,
-		{
-			permissions: UserPermissions.Application
-			organizations: Record<string /* organizationId */, UserPermissions.Organization>
-		}
+		Record<"*", UserPermissions.Application> &
+			Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>
 	>
 	modified: isoly.DateTime
 }
@@ -26,13 +24,12 @@ export namespace User {
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
 			Object.values(value.permissions).every(
-				(p: any) =>
-					typeof p == "object" &&
-					p &&
-					UserPermissions.Application.is(p.permissions) &&
-					typeof p.organizations == "object" &&
-					p.organizations &&
-					Object.values(p.organizations).every(organization => UserPermissions.Organization.is(organization))
+				(application: any) =>
+					typeof application == "object" &&
+					UserPermissions.Application.is(application?.["*"]) &&
+					Object.entries(application)
+						.filter(([id, _]) => id != "*")
+						.every(([_, organization]) => UserPermissions.Organization.is(organization))
 			) &&
 			isoly.DateTime.is(value.modified)
 		)
