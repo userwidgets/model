@@ -34,6 +34,25 @@ export namespace User {
 			isoly.DateTime.is(value.modified)
 		)
 	}
+	export function toKey(user: User, applicationId: string, organizationIds?: string[]): UserKey.Creatable | undefined {
+		return !user.permissions[applicationId]
+			? undefined
+			: {
+					email: user.email,
+					name: user.name,
+					permissions: {
+						...(organizationIds
+							? (Object.fromEntries(
+									Object.entries(user.permissions[applicationId]).filter(([organizationId, _]) =>
+										organizationIds.includes(organizationId)
+									)
+							  ) as Record<"*", UserPermissions.Application> &
+									Record<string, UserPermissions.Organization | undefined>)
+							: user.permissions[applicationId]),
+						"*": user.permissions[applicationId]["*"],
+					},
+			  }
+	}
 	export type Name = UserName
 	export const Name = UserName
 	export type Key = UserKey
