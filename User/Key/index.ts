@@ -32,7 +32,7 @@ const publicKeys: { [system in Issuers]: string } = {
 }
 
 export namespace Key {
-	export function is(value: Key | any): value is Key & Record<string, string> {
+	export function is(value: Key | any): value is Key & Record<string, any> {
 		return (
 			CreatableKey.is(value) &&
 			typeof value.issuer == "string" &&
