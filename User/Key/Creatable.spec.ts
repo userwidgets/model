@@ -14,6 +14,10 @@ describe("Creatable", () => {
 					organization: {},
 					user: {},
 				},
+				acme: {
+					organization: {},
+					user: {},
+				},
 			},
 		}
 		expect(model.User.Key.Creatable.is(creatable)).toBe(true)
