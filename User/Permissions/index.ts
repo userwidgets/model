@@ -1,15 +1,15 @@
-import { Applications as PermissionsApplications } from "./Applications"
+import { Application as PermissionsApplication } from "./Application"
 import { Collection as PermissionsCollection } from "./Collection"
-import { Organizations as PermissionsOrganizations } from "./Organizations"
+import { Organization as PermissionsOrganization } from "./Organization"
 import { Permission as PermissionsPermission } from "./Permission"
 
 export namespace Permissions {
-	export type Applications = PermissionsApplications
-	export const Applications = PermissionsApplications
+	export type Application = PermissionsApplication
+	export const Application = PermissionsApplication
 	export type Collection = PermissionsCollection
 	export const Collection = PermissionsCollection
-	export type Organizations = PermissionsOrganizations
-	export const Organizations = PermissionsOrganizations
+	export type Organization = PermissionsOrganization
+	export const Organization = PermissionsOrganization
 	export type Permission = PermissionsPermission
 	export const Permission = PermissionsPermission
 }

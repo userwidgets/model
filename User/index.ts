@@ -8,10 +8,13 @@ import { Permissions as UserPermissions } from "./Permissions"
 export interface User {
 	email: string
 	name: UserName
-	permissions: {
-		applications: Record<string /* applicationId */, UserPermissions.Applications | undefined>
-		organizations: Record<string /* organizationId */, UserPermissions.Organizations | undefined>
-	}
+	permissions: Record<
+		string /* applicationId */,
+		{
+			permissions: UserPermissions.Application
+			organizations: Record<string /* organizationId */, UserPermissions.Organization>
+		}
+	>
 	modified: isoly.DateTime
 }
 
@@ -19,15 +22,17 @@ export namespace User {
 	export function is(value: User | any): value is User & Record<string, any> {
 		return (
 			typeof value == "object" &&
+			value &&
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
-			typeof value.permissions.applications == "object" &&
-			typeof value.permissions.organizations == "object" &&
-			Object.values(value.permissions.applications).every(permissions =>
-				UserPermissions.Applications.is(permissions)
-			) &&
-			Object.values(value.permissions.organizations).every(permissions =>
-				UserPermissions.Organizations.is(permissions)
+			Object.values(value.permissions).every(
+				(p: any) =>
+					typeof p == "object" &&
+					p &&
+					UserPermissions.Application.is(p.permissions) &&
+					typeof p.organizations == "object" &&
+					p.organizations &&
+					Object.values(p.organizations).every(organization => UserPermissions.Organization.is(organization))
 			) &&
 			isoly.DateTime.is(value.modified)
 		)
@@ -64,12 +69,12 @@ export namespace User {
 		export const Set = UserPassword.Set
 	}
 	export namespace Permissions {
-		export type Applications = UserPermissions.Applications
-		export const Applications = UserPermissions.Applications
+		export type Application = UserPermissions.Application
+		export const Application = UserPermissions.Application
 		export type Collection = UserPermissions.Collection
 		export const Collection = UserPermissions.Collection
-		export type Organizations = UserPermissions.Organizations
-		export const Organizations = UserPermissions.Organizations
+		export type Organization = UserPermissions.Organization
+		export const Organization = UserPermissions.Organization
 		export type Permission = UserPermissions.Permission
 		export const Permission = UserPermissions.Permission
 	}

@@ -3,7 +3,7 @@ import { Permissions } from "../Permissions"
 export interface Creatable {
 	name: { first: string; last: string }
 	email: string
-	permissions: Record<"*", Permissions.Applications> & Record<string /* organizationIds */, Permissions.Organizations>
+	permissions: Record<"*", Permissions.Application> & Record<string /* organizationIds */, Permissions.Organization>
 }
 
 export namespace Creatable {
@@ -16,10 +16,10 @@ export namespace Creatable {
 			typeof value.name.last == "string" &&
 			typeof value.permissions == "object" &&
 			Object.keys(value.permissions).includes("*") &&
-			Permissions.Applications.is(value.permissions["*"]) &&
+			Permissions.Application.is(value.permissions["*"]) &&
 			Object.entries(value.permissions)
 				.filter(([key, _]) => key != "*")
-				.every(([_, organization]) => Permissions.Organizations.is(organization))
+				.every(([_, organization]) => Permissions.Organization.is(organization))
 		)
 	}
 }

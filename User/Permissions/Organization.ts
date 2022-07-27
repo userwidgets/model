@@ -1,9 +1,9 @@
 import { Collection } from "./Collection"
 import { Permission } from "./Permission"
 
-export type Organizations = Record<"organization" | "user", Permission> & Collection
-export namespace Organizations {
-	export function is(value: Organizations | any): value is Organizations & Record<string, any> {
+export type Organization = Record<"organization" | "user", Permission> & Collection
+export namespace Organization {
+	export function is(value: Organization | any): value is Organization & Record<string, any> {
 		return (
 			typeof value == "object" &&
 			["organization", "user"].every(resource => Object.keys(value).includes(resource)) &&
