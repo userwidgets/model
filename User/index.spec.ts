@@ -9,36 +9,22 @@ describe("User", () => {
 				last: "doe",
 			},
 			permissions: {
-				applications: {
-					exampleApplicationId: {
-						application: {
-							// change app
-							read: true,
-							write: false,
-						},
-						organization: {
-							// create / change orgs connected to app
-							read: true,
-							write: false,
-						},
-						user: {
-							// create / change users connected to app
-							read: true,
-							write: true,
-						},
+				applicationId: {
+					permissions: {
+						application: {},
+						organization: {},
+						user: {},
 					},
-				},
-				organizations: {
-					exampleOrganizationId: {
-						organization: {
-							// change org
-							read: true,
-							write: true,
+					organizations: {
+						organizationId: {
+							organization: {},
+							user: {},
 						},
-						user: {
-							// create / change users connected to org
-							read: true,
-							write: false,
+						orgId: {
+							organization: {},
+							user: {
+								read: true,
+							},
 						},
 					},
 				},
