@@ -1,7 +1,7 @@
 export interface Creatable {
 	name: { first: string; last: string }
 	email: string
-	permissions: Record<"*", string> & Record<string /* organizationIds */, string>
+	permissions: Record<"*", string> & Record<string /* organizationIds */, string | undefined>
 }
 
 export namespace Creatable {

@@ -3,11 +3,15 @@ import { Credentials as UserCredentials } from "./Credentials"
 import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
+import { Permissions as UserPermissions } from "./Permissions"
 
 export interface User {
 	email: string
 	name: UserName
-	permissions: Record<string /* app id */, Record<string /* org id & * */, string>>
+	permissions: {
+		applications: Record<string /* applicationId */, UserPermissions | undefined>
+		organizations: Record<string /* organizationId */, UserPermissions | undefined>
+	}
 	modified: isoly.DateTime
 }
 
@@ -17,15 +21,10 @@ export namespace User {
 			typeof value == "object" &&
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
-			Object.entries(value.permissions).every(
-				([appId, org]) =>
-					typeof appId == "string" &&
-					typeof org == "object" &&
-					org != null &&
-					Object.entries(org).every(
-						([orgId, permissions]) => typeof orgId == "string" && typeof permissions == "string"
-					)
-			) &&
+			typeof value.permissions.applications == "object" &&
+			typeof value.permissions.organizations == "object" &&
+			Object.values(value.permissions.applications).every(permissions => UserPermissions.is(permissions)) &&
+			Object.values(value.permissions.organizations).every(permissions => UserPermissions.is(permissions)) &&
 			isoly.DateTime.is(value.modified)
 		)
 	}
@@ -59,5 +58,11 @@ export namespace User {
 		export const Change = UserPassword.Change
 		export type Set = UserPassword.Set
 		export const Set = UserPassword.Set
+	}
+	export type Permissions = UserPermissions
+	export namespace Permissions {
+		export const is = UserPermissions.is
+		export type Permission = UserPermissions.Permission
+		export const Permission = UserPermissions.Permission
 	}
 }
