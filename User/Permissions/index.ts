@@ -1,10 +1,15 @@
+import { Applications as PermissionsApplications } from "./Applications"
+import { Collection as PermissionsCollection } from "./Collection"
+import { Organizations as PermissionsOrganizations } from "./Organizations"
 import { Permission as PermissionsPermission } from "./Permission"
 
-export type Permissions = Record<string /* resource */, PermissionsPermission | undefined>
 export namespace Permissions {
-	export function is(value: Permissions | any): value is Permissions & Record<string, any> {
-		return typeof value == "object" && Object.values(value).every(permission => Permission.is(permission))
-	}
+	export type Applications = PermissionsApplications
+	export const Applications = PermissionsApplications
+	export type Collection = PermissionsCollection
+	export const Collection = PermissionsCollection
+	export type Organizations = PermissionsOrganizations
+	export const Organizations = PermissionsOrganizations
 	export type Permission = PermissionsPermission
 	export const Permission = PermissionsPermission
 }
