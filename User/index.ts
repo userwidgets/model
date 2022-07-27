@@ -54,6 +54,7 @@ export namespace User {
 	export const Credentials = UserCredentials
 	export type Password = UserPassword
 	export namespace Password {
+		export const is = UserPassword.is
 		export type Change = UserPassword.Change
 		export const Change = UserPassword.Change
 		export type Set = UserPassword.Set
