@@ -10,21 +10,19 @@ describe("User", () => {
 			},
 			permissions: {
 				applicationId: {
-					permissions: {
+					"*": {
 						application: {},
 						organization: {},
 						user: {},
 					},
-					organizations: {
-						organizationId: {
-							organization: {},
-							user: {},
-						},
-						orgId: {
-							organization: {},
-							user: {
-								read: true,
-							},
+					organizationId: {
+						organization: {},
+						user: {},
+					},
+					orgId: {
+						organization: {},
+						user: {
+							read: true,
 						},
 					},
 				},
