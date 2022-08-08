@@ -10,8 +10,9 @@ export interface User {
 	name: UserName
 	permissions: Record<
 		string /* applicationId */,
-		Record<"*", UserPermissions.Application> &
-			Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>
+		| (Record<"*", UserPermissions.Application> &
+				Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>)
+		| undefined
 	>
 	modified: isoly.DateTime
 }
@@ -23,6 +24,7 @@ export namespace User {
 			value &&
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
+			value.permissions &&
 			Object.values(value.permissions).every(
 				(application: any) =>
 					typeof application == "object" &&
@@ -35,7 +37,8 @@ export namespace User {
 		)
 	}
 	export function toKey(user: User, applicationId: string, organizationIds?: string[]): UserKey.Creatable | undefined {
-		return !user.permissions[applicationId]
+		const permissions = user.permissions[applicationId]
+		return !permissions
 			? undefined
 			: {
 					email: user.email,
@@ -43,13 +46,11 @@ export namespace User {
 					permissions: {
 						...(organizationIds
 							? (Object.fromEntries(
-									Object.entries(user.permissions[applicationId]).filter(([organizationId, _]) =>
-										organizationIds.includes(organizationId)
-									)
+									Object.entries(permissions).filter(([organizationId, _]) => organizationIds.includes(organizationId))
 							  ) as Record<"*", UserPermissions.Application> &
 									Record<string, UserPermissions.Organization | undefined>)
 							: user.permissions[applicationId]),
-						"*": user.permissions[applicationId]["*"],
+						"*": permissions["*"],
 					},
 			  }
 	}
