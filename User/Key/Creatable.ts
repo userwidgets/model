@@ -3,10 +3,8 @@ import { Permissions } from "../Permissions"
 export interface Creatable {
 	name: { first: string; last: string }
 	email: string
-	permissions:
-		| (Record<"*", Permissions.Application> &
-				Record<Exclude<string, "*"> /* organizationIds */, Permissions.Organization | undefined>)
-		| undefined
+	permissions: Record<"*", Permissions.Application> &
+		Record<Exclude<string, "*"> /* organizationIds */, Permissions.Organization | undefined>
 }
 
 export namespace Creatable {
