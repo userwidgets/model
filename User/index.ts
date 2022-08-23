@@ -35,6 +35,7 @@ export namespace User {
 						.filter(([id, _]) => id != "*")
 						.every(([_, organization]) => UserPermissions.Organization.is(organization))
 			) &&
+			typeof value.active == "boolean" &&
 			isoly.DateTime.is(value.modified)
 		)
 	}

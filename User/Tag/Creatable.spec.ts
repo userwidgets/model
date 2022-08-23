@@ -1,6 +1,6 @@
 import * as model from "../../index"
 
-describe("User.Signature.Creatable", () => {
+describe("User.Tag.Creatable", () => {
 	it("is", () => {
 		const signature: model.User.Tag.Creatable = {
 			email: "jane@example.com",
