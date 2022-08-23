@@ -26,6 +26,7 @@ describe("User", () => {
 				},
 			},
 		},
+		active: false,
 		modified: isoly.DateTime.now(),
 	}
 	it("is", () => {

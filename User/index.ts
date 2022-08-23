@@ -4,6 +4,7 @@ import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
+import { Tag as UserTag } from "./Tag"
 
 export interface User {
 	email: string
@@ -14,6 +15,7 @@ export interface User {
 				Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>)
 		| undefined
 	>
+	active: boolean
 	modified: isoly.DateTime
 }
 
@@ -84,6 +86,17 @@ export namespace User {
 		export const Change = UserPassword.Change
 		export type Set = UserPassword.Set
 		export const Set = UserPassword.Set
+	}
+	export type Tag = UserTag
+	export namespace Tag {
+		export type Issuer = UserTag.Issuer
+		export type Verifier = UserTag.Verifier
+		export const is = UserTag.is
+		export const unpack = UserTag.unpack
+		export const Signed = UserTag.Signed
+		export const Unsigned = UserTag.Unsigned
+		export type Creatable = UserTag.Creatable
+		export const Creatable = UserTag.Creatable
 	}
 	export namespace Permissions {
 		export type Application = UserPermissions.Application
