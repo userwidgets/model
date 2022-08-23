@@ -24,7 +24,7 @@ const transformers: (authly.Property.Transformer | undefined)[] = [
 	}),
 ]
 export type Issuers = "userwidgets" | "local"
-const publicKeys: { [system in Issuers]: string } = {
+export const publicKeys: { [system in Issuers]: string } = {
 	userwidgets:
 		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqU98n52HN6Up2jO79MDvwnVc3nJrg8ahe40qarkvKGYDPP7TTJIM5JMMHFLQDk/dvRuFFvxmOFj29lI1shqICAhktOyQWB+BdwmnNuKwK1k6vwHGPPdijP7gZMeUXifO0BPbb+swtbwkATx+YT90haNi0Be3b7oUVOalnUC1LaEIT8xw+vSCs/wIdYkizNJl67d+6nHkeSOkkv8oAzaLU6OosflrGYk5IMeSuEJgw7TCM8jVSnqIVluGV0QtGGnZMuhFI3Rwc9L7ZbFaraX8RrcdR1S2MG8qksJwcL5QOzR02pHkFNtAg2LQcf0Lio6JOVAdGh1hCbHvGL46UfA1QIDAQAB",
 	local:
@@ -48,7 +48,9 @@ export namespace Key {
 	export async function unpack(token: string): Promise<Key | undefined> {
 		let result: Key | undefined
 		const textDecoder = new cryptly.TextDecoder()
-		if (token.split(".").length == 3) {
+		if (token.split(".").length != 3)
+			result = undefined
+		else {
 			const issuer = JSON.parse(textDecoder.decode(cryptly.Base64.decode(token.split(".")[1])))["iss"]
 			if (Object.keys(publicKeys).includes(issuer) && token.split(".").pop()) {
 				const verifier = Signed.Verifier.create(issuer)
@@ -57,8 +59,7 @@ export namespace Key {
 				const verifier = Unsigned.Verifier.create()
 				result = await verifier.verify(token)
 			}
-		} else
-			result = undefined
+		}
 		return result
 	}
 
