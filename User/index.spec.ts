@@ -1,6 +1,7 @@
 import * as isoly from "isoly"
 import * as model from "../index"
 describe("User", () => {
+	const now = isoly.DateTime.now()
 	const user: model.User = {
 		email: "jane@example.com",
 		name: {
@@ -27,7 +28,8 @@ describe("User", () => {
 			},
 		},
 		active: false,
-		modified: isoly.DateTime.now(),
+		created: now,
+		modified: now,
 	}
 	it("is", () => {
 		expect(model.User.is(user)).toEqual(true)
