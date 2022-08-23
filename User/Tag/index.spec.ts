@@ -4,7 +4,7 @@ import * as model from "../../index"
 const now = new Date()
 authly.Issuer.defaultIssuedAt = Math.floor(now.getTime() / 1000)
 
-describe("Tag", () => {
+describe("User.Tag", () => {
 	const privateKey =
 		"MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC7VJTUt9Us8cKj" +
 		"MzEfYyjiWA4R4/M2bS1GB4t7NXp98C3SC6dVMvDuictGeurT8jNbvJZHtCSuYEvu" +
