@@ -16,6 +16,7 @@ export interface User {
 		| undefined
 	>
 	active: boolean
+	created: isoly.DateTime
 	modified: isoly.DateTime
 }
 

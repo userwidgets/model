@@ -1,6 +1,7 @@
 export interface Creatable {
 	name: string
 	permissions: ["organization", "user", ...string[]]
+	users: string[]
 }
 
 export namespace Creatable {
@@ -10,6 +11,8 @@ export namespace Creatable {
 			typeof value.name == "string" &&
 			Array.isArray(value.permissions) &&
 			value.permissions.every((permission: string | any) => typeof permission == "string") &&
+			Array.isArray(value.users) &&
+			value.users.every((user: any) => typeof user == "string") &&
 			["organization", "user"].every(permission => value.permissions.includes(permission))
 		)
 	}

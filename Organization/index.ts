@@ -3,7 +3,7 @@ import { Creatable as CreatableOrganization } from "./Creatable"
 
 export interface Organization extends CreatableOrganization {
 	id: string
-	users: string[]
+	created: isoly.DateTime
 	modified: isoly.DateTime
 }
 
@@ -12,8 +12,7 @@ export namespace Organization {
 		return (
 			Creatable.is(value) &&
 			typeof value.name == "string" &&
-			Array.isArray(value.users) &&
-			value.users.every(user => typeof user == "string") &&
+			isoly.DateTime.is(value.created) &&
 			isoly.DateTime.is(value.modified)
 		)
 	}
