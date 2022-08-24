@@ -80,7 +80,15 @@ export namespace User {
 	}
 
 	export type Credentials = UserCredentials
-	export const Credentials = UserCredentials
+	export namespace Credentials {
+		export const is = UserCredentials.is
+		export const fromBasic = UserCredentials.fromBasic
+		export const toBasic = UserCredentials.toBasic
+		export type Register = UserCredentials.Register
+		export namespace Register {
+			export const is = UserCredentials.Register.is
+		}
+	}
 	export type Password = UserPassword
 	export namespace Password {
 		export const is = UserPassword.is

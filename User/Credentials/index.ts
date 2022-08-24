@@ -1,4 +1,5 @@
 import * as authly from "authly"
+import { Register as CredentialsRegister } from "./Register"
 
 export interface Credentials {
 	user: string
@@ -26,4 +27,6 @@ export namespace Credentials {
 			"="
 		)}`
 	}
+	export type Register = CredentialsRegister
+	export const Register = CredentialsRegister
 }
