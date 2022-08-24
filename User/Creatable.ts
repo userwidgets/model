@@ -1,17 +1,13 @@
 import { Name as UserName } from "./Name"
 import { Password } from "./Password"
-import { Permissions as UserPermissions } from "./Permissions"
+import { Permissions as Permissions } from "./Permissions"
 
 export interface Creatable {
 	email: string
 	password: Password.Set
 	name: UserName
-	permissions: Record<
-		string /* applicationId */,
-		| (Record<"*", UserPermissions.Application> &
-				Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>)
-		| undefined
-	>
+	permissions: Record<"*", Permissions.Application> &
+		Record<Exclude<string, "*"> /* organizationIds */, Permissions.Organization | undefined>
 }
 
 export namespace Creatable {
@@ -23,14 +19,11 @@ export namespace Creatable {
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
-			Object.values(value.permissions).every(
-				(application: any) =>
-					typeof application == "object" &&
-					UserPermissions.Application.is(application?.["*"]) &&
-					Object.entries(application)
-						.filter(([id, _]) => id != "*")
-						.every(([_, organization]) => UserPermissions.Organization.is(organization))
-			)
+			Object.keys(value.permissions).includes("*") &&
+			Permissions.Application.is(value.permissions["*"]) &&
+			Object.entries(value.permissions)
+				.filter(([key, _]) => key != "*")
+				.every(([_, organization]) => Permissions.Organization.is(organization))
 		)
 	}
 }

@@ -12,22 +12,14 @@ describe("User.Creatable", () => {
 			last: "doe",
 		},
 		permissions: {
-			applicationId: {
-				"*": {
-					application: {},
-					organization: {},
-					user: {},
-				},
-				organizationId: {
-					organization: {},
-					user: {},
-				},
-				orgId: {
-					organization: {},
-					user: {
-						read: true,
-					},
-				},
+			"*": {
+				application: {},
+				organization: {},
+				user: {},
+			},
+			acme: {
+				organization: {},
+				user: {},
 			},
 		},
 	}

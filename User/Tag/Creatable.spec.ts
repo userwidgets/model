@@ -4,6 +4,7 @@ describe("User.Tag.Creatable", () => {
 	it("is", () => {
 		const signature: model.User.Tag.Creatable = {
 			email: "jane@example.com",
+			active: true,
 			permissions: {
 				"*": {
 					application: {},
