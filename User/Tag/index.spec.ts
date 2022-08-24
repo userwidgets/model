@@ -42,12 +42,28 @@ describe("User.Tag", () => {
 		"mwIDAQAB"
 	const creatable: model.User.Tag.Creatable = {
 		email: "jane@example.com",
-		organizationId: "acme",
+		permissions: {
+			"*": {
+				application: {},
+				organization: {},
+				user: {},
+			},
+			acme: {
+				organization: {},
+				user: {},
+			},
+		},
 	}
 	it("is", () => {
 		const tag: model.User.Tag = {
 			email: "jane@example.com",
-			organizationId: "acme",
+			permissions: {
+				"*": {
+					application: {},
+					organization: {},
+					user: {},
+				},
+			},
 			audience: "applicationId",
 			issuer: "jest",
 			issued: "2022-08-03T10:53:14.130Z",

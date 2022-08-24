@@ -27,7 +27,6 @@ describe("User", () => {
 				},
 			},
 		},
-		active: false,
 		created: now,
 		modified: now,
 	}
