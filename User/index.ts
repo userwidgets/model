@@ -1,4 +1,5 @@
 import * as isoly from "isoly"
+import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
 import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
@@ -6,16 +7,13 @@ import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
 import { Tag as UserTag } from "./Tag"
 
-export interface User {
-	email: string
-	name: UserName
+export interface User extends Omit<UserCreatable, "password" | "permissions"> {
 	permissions: Record<
 		string /* applicationId */,
 		| (Record<"*", UserPermissions.Application> &
 				Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>)
 		| undefined
 	>
-	active: boolean
 	created: isoly.DateTime
 	modified: isoly.DateTime
 }
@@ -25,6 +23,7 @@ export namespace User {
 		return (
 			typeof value == "object" &&
 			value &&
+			typeof value.email == "string" &&
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
@@ -36,7 +35,7 @@ export namespace User {
 						.filter(([id, _]) => id != "*")
 						.every(([_, organization]) => UserPermissions.Organization.is(organization))
 			) &&
-			typeof value.active == "boolean" &&
+			isoly.DateTime.is(value.created) &&
 			isoly.DateTime.is(value.modified)
 		)
 	}
@@ -118,4 +117,6 @@ export namespace User {
 		export type Permission = UserPermissions.Permission
 		export const Permission = UserPermissions.Permission
 	}
+	export type Creatable = UserCreatable
+	export const Creatable = UserCreatable
 }
