@@ -124,19 +124,4 @@ describe("Key", () => {
 		expect(await model.User.Key.unpack(unsignedToken)).toBeTruthy()
 		expect(await model.User.Key.unpack(signedToken)).toBeTruthy()
 	})
-	it("mixup", async () => {
-		const signatureIssuer = model.User.Tag.Signed.Issuer.create("userwidgets", privateKey, "example")
-		const keyVerifier = model.User.Key.Signed.Verifier.create("userwidgets")
-		const creatableSignature: model.User.Tag.Creatable = {
-			email: "jane@example.com",
-			organizationId: "acme",
-		}
-		const signatureToken = await signatureIssuer.sign(creatableSignature, now.getTime() / 1000)
-		if (!signatureToken) {
-			expect(signatureToken).toBeTruthy()
-			return
-		}
-		expect(await keyVerifier.verify(signatureToken)).not.toBeTruthy()
-		expect(await model.User.Key.unpack(signatureToken)).not.toBeTruthy()
-	})
 })
