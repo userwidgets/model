@@ -42,6 +42,7 @@ describe("User.Tag", () => {
 		"mwIDAQAB"
 	const creatable: model.User.Tag.Creatable = {
 		email: "jane@example.com",
+		active: false,
 		permissions: {
 			"*": {
 				application: {},
@@ -57,6 +58,7 @@ describe("User.Tag", () => {
 	it("is", () => {
 		const tag: model.User.Tag = {
 			email: "jane@example.com",
+			active: true,
 			permissions: {
 				"*": {
 					application: {},

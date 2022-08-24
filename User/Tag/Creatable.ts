@@ -2,6 +2,7 @@ import { Permissions } from "../Permissions"
 
 export interface Creatable {
 	email: string
+	active: boolean
 	permissions: Record<"*", Permissions.Application> &
 		Record<Exclude<string, "*"> /* organizationIds */, Permissions.Organization | undefined>
 }
@@ -11,6 +12,7 @@ export namespace Creatable {
 		return (
 			typeof value == "object" &&
 			typeof value.email == "string" &&
+			typeof value.active == "boolean" &&
 			Object.keys(value.permissions).includes("*") &&
 			Permissions.Application.is(value.permissions["*"]) &&
 			Object.entries(value.permissions)
