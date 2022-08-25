@@ -1,8 +1,9 @@
+import * as isoly from "isoly"
 import * as authly from "authly"
 import * as model from "../../index"
 
-const now = new Date()
-authly.Issuer.defaultIssuedAt = Math.floor(now.getTime() / 1000)
+const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
+authly.Issuer.defaultIssuedAt = now.getTime() / 1000
 describe("Key", () => {
 	const privateKey =
 		"MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC7VJTUt9Us8cKj" +
@@ -93,20 +94,20 @@ describe("Key", () => {
 		if (!issuer || !verifier || !unsignedVerifier) {
 			return
 		}
-		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
+		const token = await issuer.sign(creatable)
 		const result = await verifier.verify(token)
-		expect(result).toEqual({ ...creatable, iss: "userwidgets", iat: Math.floor(now.getTime() / 1000), token: token })
+		expect(result).toEqual({ ...creatable, iss: "userwidgets", iat: now.getTime() / 1000, token: token })
 	})
 	it("signing and verifying", async () => {
 		const issuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "example")
 		const verifier = model.User.Key.Signed.Verifier.create("userwidgets")
-		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
+		const token = await issuer.sign(creatable)
 		const result = await verifier.verify(token)
 		expect(result).toEqual({
 			...creatable,
 			issuer: "userwidgets",
-			issued: Math.floor(now.getTime() / 1000),
-			expires: Math.floor(now.getTime() / 1000) + 60 * 60 * 12,
+			issued: isoly.DateTime.create(now.getTime() / 1000),
+			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 12),
 			audience: "example",
 			token: token,
 		})
@@ -120,8 +121,7 @@ describe("Key", () => {
 		expect(unsignedToken).toBeTruthy()
 		if (!signedToken || !unsignedToken)
 			return
-
-		expect(await model.User.Key.unpack(unsignedToken)).toBeTruthy()
-		expect(await model.User.Key.unpack(signedToken)).toBeTruthy()
+		expect(model.User.Key.is(await model.User.Key.unpack(unsignedToken))).toEqual(true)
+		expect(model.User.Key.is(await model.User.Key.unpack(signedToken))).toEqual(true)
 	})
 })
