@@ -1,8 +1,9 @@
+import * as isoly from "isoly"
 import * as authly from "authly"
 import * as model from "../../index"
 
-const now = new Date()
-authly.Issuer.defaultIssuedAt = Math.floor(now.getTime() / 1000)
+const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
+authly.Issuer.defaultIssuedAt = now.getTime() / 1000
 
 describe("User.Tag", () => {
 	const privateKey =
@@ -65,6 +66,11 @@ describe("User.Tag", () => {
 					organization: {},
 					user: {},
 				},
+				acme: {
+					organization: {},
+					user: {},
+					custom: {},
+				},
 			},
 			audience: "applicationId",
 			issuer: "jest",
@@ -108,8 +114,8 @@ describe("User.Tag", () => {
 		expect(result).toEqual({
 			...creatable,
 			issuer: "userwidgets",
-			issued: Math.floor(now.getTime() / 1000),
-			expires: Math.floor(now.getTime() / 1000) + 60 * 60 * 12,
+			issued: isoly.DateTime.create(now.getTime() / 1000),
+			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 12),
 			audience: "applicationId",
 			token: token,
 		})
@@ -124,7 +130,7 @@ describe("User.Tag", () => {
 			expect(unsignedToken).toBeTruthy()
 			return
 		}
-		expect(await model.User.Tag.unpack(signedToken)).toBeTruthy()
-		expect(await model.User.Tag.unpack(unsignedToken)).toBeTruthy()
+		expect(model.User.Tag.is(await model.User.Tag.unpack(signedToken))).toBeTruthy()
+		expect(model.User.Tag.is(await model.User.Tag.unpack(unsignedToken))).toBeTruthy()
 	})
 })
