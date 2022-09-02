@@ -15,7 +15,6 @@ export namespace Organization {
 			typeof value.name == "string" &&
 			Array.isArray(value.permissions) &&
 			value.permissions.every((permission: string | any) => typeof permission == "string") &&
-			["organization", "user"].every(permission => value.permissions.includes(permission)) &&
 			Array.isArray(value.users) &&
 			value.users.every((user: any) => typeof user == "string") &&
 			typeof value.id == "string" &&

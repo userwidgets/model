@@ -2,7 +2,7 @@ import { Permissions } from "../User/Permissions"
 
 export interface Creatable {
 	name: string
-	permissions: ["organization", "user", ...string[]]
+	permissions: string[]
 	users: { email: string; permissions?: [Permissions.Application, Permissions.Organization] }[]
 }
 
@@ -13,7 +13,6 @@ export namespace Creatable {
 			typeof value.name == "string" &&
 			Array.isArray(value.permissions) &&
 			value.permissions.every((permission: string | any) => typeof permission == "string") &&
-			["organization", "user"].every(permission => value.permissions.includes(permission)) &&
 			Array.isArray(value.users) &&
 			value.users.every(
 				(user: any) =>
