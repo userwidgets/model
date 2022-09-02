@@ -12,12 +12,10 @@ describe("User", () => {
 			applicationId: {
 				"*": {
 					application: {},
-					organization: {},
 					user: {},
 				},
 				organizationId: {
 					organization: {},
-					user: {},
 				},
 				orgId: {
 					organization: {},
@@ -32,6 +30,18 @@ describe("User", () => {
 	}
 	it("is", () => {
 		expect(model.User.is(user)).toEqual(true)
+		const u: model.User = {
+			email: "jessie@example.com",
+			name: { first: "jessie", last: "doe " },
+			permissions: {
+				someAppId: {
+					"*": { user: { write: true } },
+				},
+			},
+			created: now,
+			modified: now,
+		}
+		expect(model.User.is(u)).toEqual(true)
 	})
 	it("toKey", () => {
 		let key = model.User.toKey(user, "applicationId")

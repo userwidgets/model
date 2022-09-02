@@ -3,8 +3,10 @@ import { Permissions } from "../Permissions"
 export interface Creatable {
 	name: { first: string; last: string }
 	email: string
-	permissions: Record<"*", Permissions.Application> &
-		Record<Exclude<string, "*"> /* organizationIds */, Permissions.Organization | undefined>
+	permissions: {
+		"*"?: Permissions.Application
+		[organizationId: string]: Permissions.Organization | undefined
+	}
 }
 
 export namespace Creatable {
@@ -17,8 +19,7 @@ export namespace Creatable {
 			typeof value.name.last == "string" &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
-			Object.keys(value.permissions).includes("*") &&
-			Permissions.Application.is(value.permissions["*"]) &&
+			(value.permissions["*"] == undefined || Permissions.Application.is(value.permissions["*"])) &&
 			Object.entries(value.permissions)
 				.filter(([key, _]) => key != "*")
 				.every(([_, organization]) => Permissions.Organization.is(organization))
