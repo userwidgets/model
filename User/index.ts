@@ -8,12 +8,12 @@ import { Permissions as UserPermissions } from "./Permissions"
 import { Tag as UserTag } from "./Tag"
 
 export interface User extends Omit<UserCreatable, "password" | "permissions"> {
-	permissions: Record<
-		string /* applicationId */,
-		| (Record<"*", UserPermissions.Application> &
-				Record<Exclude<string, "*"> /* organizationId */, UserPermissions.Organization | undefined>)
-		| undefined
-	>
+	permissions: {
+		[applicationId: string]: {
+			"*"?: UserPermissions.Application | undefined
+			[organizationId: string]: UserPermissions.Organization | undefined
+		}
+	}
 	created: isoly.DateTime
 	modified: isoly.DateTime
 }
@@ -25,18 +25,18 @@ export namespace User {
 			value &&
 			typeof value.email == "string" &&
 			UserName.is(value.name) &&
+			isoly.DateTime.is(value.created) &&
+			isoly.DateTime.is(value.modified) &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
 			Object.values(value.permissions).every(
 				(application: any) =>
 					typeof application == "object" &&
-					UserPermissions.Application.is(application?.["*"]) &&
+					(application["*"] == undefined || UserPermissions.Application.is(application["*"])) &&
 					Object.entries(application)
 						.filter(([id, _]) => id != "*")
 						.every(([_, organization]) => UserPermissions.Organization.is(organization))
-			) &&
-			isoly.DateTime.is(value.created) &&
-			isoly.DateTime.is(value.modified)
+			)
 		)
 	}
 	export function toKey(user: User, applicationId: string, organizationIds?: string[]): UserKey.Creatable | undefined {
@@ -48,10 +48,9 @@ export namespace User {
 					name: user.name,
 					permissions: {
 						...(organizationIds
-							? (Object.fromEntries(
+							? Object.fromEntries(
 									Object.entries(permissions).filter(([organizationId, _]) => organizationIds.includes(organizationId))
-							  ) as Record<"*", UserPermissions.Application> &
-									Record<string, UserPermissions.Organization | undefined>)
+							  )
 							: user.permissions[applicationId]),
 						"*": permissions["*"],
 					},

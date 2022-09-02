@@ -6,8 +6,10 @@ export interface Creatable {
 	email: string
 	password: Password.Set
 	name: UserName
-	permissions: Record<"*", Permissions.Application> &
-		Record<Exclude<string, "*"> /* organizationIds */, Permissions.Organization | undefined>
+	permissions: {
+		"*"?: Permissions.Application
+		[organizationId: string]: Permissions.Organization | undefined
+	}
 }
 
 export namespace Creatable {
