@@ -2,7 +2,7 @@ import { Permissions } from "../User/Permissions"
 
 export interface Creatable {
 	name: string
-	permissions: ["organization", "user", ...string[]]
+	permissions: string[]
 	users: { email: string; permissions?: [Permissions.Application, Permissions.Organization] }[]
 }
 

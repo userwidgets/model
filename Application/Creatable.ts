@@ -2,7 +2,7 @@ import { Organization } from "../Organization"
 
 export interface Creatable {
 	name: string
-	permissions: ["application", "organization", "user", ...string[]]
+	permissions: string[]
 	organizations: Record<string /* organizationId */, Organization>
 }
 
