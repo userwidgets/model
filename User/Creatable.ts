@@ -21,8 +21,7 @@ export namespace Creatable {
 			UserName.is(value.name) &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
-			Object.keys(value.permissions).includes("*") &&
-			Permissions.Application.is(value.permissions["*"]) &&
+			(value.permission?.["*"] == undefined || Permissions.Application.is(value.permissions["*"])) &&
 			Object.entries(value.permissions)
 				.filter(([key, _]) => key != "*")
 				.every(([_, organization]) => Permissions.Organization.is(organization))
