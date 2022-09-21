@@ -64,15 +64,9 @@ export namespace User {
 		export const isIssuer = UserKey.isIssuer
 		export const unpack = UserKey.unpack
 		export type Issuer = UserKey.Issuer
+		export const Issuer = UserKey.Issuer
 		export type Verifier = UserKey.Verifier
-		export namespace Unsigned {
-			export const Issuer = UserKey.Unsigned.Issuer
-			export const Verifier = UserKey.Unsigned.Verifier
-		}
-		export namespace Signed {
-			export const Issuer = UserKey.Signed.Issuer
-			export const Verifier = UserKey.Signed.Verifier
-		}
+		export const Verifier = UserKey.Verifier
 		export type Creatable = UserKey.Creatable
 		export const Creatable = UserKey.Creatable
 	}
@@ -101,8 +95,8 @@ export namespace User {
 		export type Verifier = UserTag.Verifier
 		export const is = UserTag.is
 		export const unpack = UserTag.unpack
-		export const Signed = UserTag.Signed
-		export const Unsigned = UserTag.Unsigned
+		export const Issuer = UserTag.Issuer
+		export const Verifier = UserTag.Verifier
 		export type Creatable = UserTag.Creatable
 		export const Creatable = UserTag.Creatable
 	}
