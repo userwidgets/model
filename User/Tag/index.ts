@@ -1,7 +1,7 @@
 import * as cryptly from "cryptly"
 import * as isoly from "isoly"
 import * as authly from "authly"
-import { Issuers, publicKeys } from "../Key"
+import { Issuers, Key, publicKeys } from "../Key"
 import { Creatable as CreatableTag } from "./Creatable"
 
 export interface Tag extends CreatableTag {
@@ -55,48 +55,36 @@ export namespace Tag {
 			result = undefined
 		else {
 			const issuer = JSON.parse(textDecoder.decode(cryptly.Base64.decode(token.split(".")[1])))["iss"]
-			if (issuer in publicKeys && token.split(".").pop()) {
-				const verifier = Signed.Verifier.create(issuer)
-				result = await verifier.verify(token)
+			if (!Key.isIssuer(issuer)) {
+				result = undefined
 			} else {
-				const verifier = Unsigned.Verifier.create()
+				const verifier = Verifier.create(issuer)
 				result = await verifier.verify(token)
 			}
 		}
 		return result
 	}
-	export namespace Signed {
-		export namespace Issuer {
-			export function create(issuer: Issuers, privateKey: string, audience?: string): Issuer {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const result = authly.Issuer.create<Tag>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(
-					...transformers
-				)
-				Object.assign(result, { audience: audience, duration: 60 * 60 * 12 })
-				return result
-			}
-		}
-		export namespace Verifier {
-			export function create(issuer: Issuers): Verifier {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				return authly.Verifier.create<Tag>(authly.Algorithm.RS256(publicKeys[issuer]))!.add(...transformers)
-			}
+	export namespace Issuer {
+		export function create(issuer: Issuers, audience: string): Issuer
+		export function create(issuer: Issuers, audience: string, privateKey: string): Issuer
+		export function create(issuer: Issuers, audience: string, privateKey?: string) {
+			return Object.assign(
+				privateKey == undefined
+					? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					  authly.Issuer.create<Tag>(issuer, authly.Algorithm.none())!.add(...transformers)
+					: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					  authly.Issuer.create<Tag>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(...transformers),
+				{ audience: audience, duration: 60 * 60 * 12 }
+			)
 		}
 	}
-	export namespace Unsigned {
-		export namespace Issuer {
-			export function create(issuer: string, audience?: string): Issuer {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const result = authly.Issuer.create<Tag>(issuer, authly.Algorithm.none())!.add(...transformers)
-				Object.assign(result, { audience: audience, duration: 60 * 60 * 12 })
-				return result
-			}
-		}
-		export namespace Verifier {
-			export function create(): Verifier {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				return authly.Verifier.create<Tag>(authly.Algorithm.none())!.add(...transformers)
-			}
+	export namespace Verifier {
+		export function create(issuer: Issuers) {
+			return !publicKeys[issuer]
+				? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				  authly.Verifier.create<Tag>(authly.Algorithm.none())!.add(...transformers)
+				: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				  authly.Verifier.create<Tag>(authly.Algorithm.RS256(publicKeys[issuer]))!.add(...transformers)
 		}
 	}
 	export type Creatable = CreatableTag

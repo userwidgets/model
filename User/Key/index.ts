@@ -34,11 +34,10 @@ const transformers: (authly.Property.Transformer | undefined)[] = [
 	}),
 ]
 export type Issuers = "userwidgets" | "local"
-export const publicKeys: { [system in Issuers]: string } = {
+export const publicKeys: { [system in Issuers]: string | undefined } = {
 	userwidgets:
-		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqU98n52HN6Up2jO79MDvwnVc3nJrg8ahe40qarkvKGYDPP7TTJIM5JMMHFLQDk/dvRuFFvxmOFj29lI1shqICAhktOyQWB+BdwmnNuKwK1k6vwHGPPdijP7gZMeUXifO0BPbb+swtbwkATx+YT90haNi0Be3b7oUVOalnUC1LaEIT8xw+vSCs/wIdYkizNJl67d+6nHkeSOkkv8oAzaLU6OosflrGYk5IMeSuEJgw7TCM8jVSnqIVluGV0QtGGnZMuhFI3Rwc9L7ZbFaraX8RrcdR1S2MG8qksJwcL5QOzR02pHkFNtAg2LQcf0Lio6JOVAdGh1hCbHvGL46UfA1QIDAQAB",
-	local:
-		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqU98n52HN6Up2jO79MDvwnVc3nJrg8ahe40qarkvKGYDPP7TTJIM5JMMHFLQDk/dvRuFFvxmOFj29lI1shqICAhktOyQWB+BdwmnNuKwK1k6vwHGPPdijP7gZMeUXifO0BPbb+swtbwkATx+YT90haNi0Be3b7oUVOalnUC1LaEIT8xw+vSCs/wIdYkizNJl67d+6nHkeSOkkv8oAzaLU6OosflrGYk5IMeSuEJgw7TCM8jVSnqIVluGV0QtGGnZMuhFI3Rwc9L7ZbFaraX8RrcdR1S2MG8qksJwcL5QOzR02pHkFNtAg2LQcf0Lio6JOVAdGh1hCbHvGL46UfA1QIDAQAB",
+		"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvjvE27DrNuprNCac26rz/MXod4l5lGSPbrch9ewsUBHeu47swKil0dd2j4HTdKR4EODHiFf5QTDISPqQWn1A0WUmvejyw3WUAQCycNeJ4+I/LySwWansW1QR8Lcq7EABNQeAI6edCnmJ1CTL1gsH7vBan077mSCiy+gS3al2o2wIDAQAB",
+	local: undefined,
 }
 
 export namespace Key {
@@ -52,7 +51,7 @@ export namespace Key {
 			typeof value.token == "string"
 		)
 	}
-	export function isIssuer(value: Key | any): value is Issuers {
+	export function isIssuer(value: string): value is Issuers {
 		return Object.keys(publicKeys).includes(value)
 	}
 	export async function unpack(token: string): Promise<Key | undefined> {
@@ -62,54 +61,38 @@ export namespace Key {
 			result = undefined
 		else {
 			const issuer = JSON.parse(textDecoder.decode(cryptly.Base64.decode(token.split(".")[1])))["iss"]
-			if (Object.keys(publicKeys).includes(issuer) && token.split(".").pop()) {
-				const verifier = Signed.Verifier.create(issuer)
-				result = await verifier.verify(token)
+			if (!isIssuer(issuer)) {
+				result = undefined
 			} else {
-				const verifier = Unsigned.Verifier.create()
+				const verifier = Verifier.create(issuer)
 				result = await verifier.verify(token)
 			}
 		}
 		return result
 	}
-
-	export type Issuer = authly.Issuer<CreatableKey>
-	export type Verifier = authly.Verifier<Key>
-	export namespace Signed {
-		export namespace Issuer {
-			export function create(issuer: Issuers, privateKey: string, audience?: string): Issuer {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const result = authly.Issuer.create<Key>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(
-					...transformers
-				)
-				result.audience = audience
-				result.duration = 60 * 60 * 12
-				return result
-			}
-		}
-		export namespace Verifier {
-			export function create(issuer: Issuers): Verifier {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				return authly.Verifier.create<Key>(authly.Algorithm.RS256(publicKeys[issuer]))!.add(...transformers)
-			}
+	export namespace Issuer {
+		export function create(issuer: Issuers, audience: string): Issuer
+		export function create(issuer: Issuers, audience: string, privateKey: string): Issuer
+		export function create(issuer: Issuers, audience: string, privateKey?: string): Issuer {
+			return Object.assign(
+				privateKey == undefined
+					? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					  authly.Issuer.create<Key>(issuer, authly.Algorithm.none())!.add(...transformers)
+					: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					  authly.Issuer.create<Key>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(...transformers),
+				{ audience: audience, duration: 60 * 60 * 12 }
+			)
 		}
 	}
-
-	export namespace Unsigned {
-		export namespace Issuer {
-			export function create(issuer: string, audience?: string): Issuer {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const result = authly.Issuer.create<Key>(issuer, authly.Algorithm.none())!.add(...transformers)
-				result.audience = audience
-				result.duration = 60 * 60 * 12
-				return result
-			}
-		}
-		export namespace Verifier {
-			export function create(): Verifier {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				return authly.Verifier.create<Key>(authly.Algorithm.none())!.add(...transformers)
-			}
+	export type Issuer = authly.Issuer<CreatableKey>
+	export type Verifier = authly.Verifier<Key>
+	export namespace Verifier {
+		export function create(issuer: Issuers): Verifier {
+			return !publicKeys[issuer]
+				? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				  authly.Verifier.create<Key>(authly.Algorithm.none())!.add(...transformers)
+				: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				  authly.Verifier.create<Key>(authly.Algorithm.RS256(publicKeys[issuer]))!.add(...transformers)
 		}
 	}
 

@@ -75,10 +75,10 @@ describe("Key", () => {
 		expect(model.User.Key.is(key)).toBe(true)
 	})
 	it("signing", async () => {
-		const issuer = model.User.Key.Signed.Issuer.create(
+		const issuer = model.User.Key.Issuer.create(
 			"userwidgets",
-			"MIIEpAIBAAKCAQEAuqU98n52HN6Up2jO79MDvwnVc3nJrg8ahe40qarkvKGYDPP7TTJIM5JMMHFLQDk/dvRuFFvxmOFj29lI1shqICAhktOyQWB+BdwmnNuKwK1k6vwHGPPdijP7gZMeUXifO0BPbb+swtbwkATx+YT90haNi0Be3b7oUVOalnUC1LaEIT8xw+vSCs/wIdYkizNJl67d+6nHkeSOkkv8oAzaLU6OosflrGYk5IMeSuEJgw7TCM8jVSnqIVluGV0QtGGnZMuhFI3Rwc9L7ZbFaraX8RrcdR1S2MG8qksJwcL5QOzR02pHkFNtAg2LQcf0Lio6JOVAdGh1hCbHvGL46UfA1QIDAQABAoIBABHnrjSoGw6T77DLpiZtmMtn1xk30rgm7MVyX4zzPvQ1kE+VzELQkwqXe0WeaLilhUgVFMZRN7ER1jGN+6XXHg8s5eue8VfCOPS49N9RVFM9jxPXz5p+Mn+CkxsQEPWB28ykU7pUi+85DWTThJ8KOgtAbJ2yNCeTm9fJbGgIm5fqLHLOpkqvWx4KloOBghZweBBYXlYWE8nxyZ/atVhaN+70krrRYVUbVMLwC0RL3EpKyvN7zQ6V+F//uk68NB95vtCYobQN6jPU4H/aceOqMyhNsOFZ174zgfEeegI8pJ6DpJmEd02NUe06OKonvMtEX4UFpkJz3vxNB33SYf49KtUCgYEA4/Uz3k6+qzPX8HZidiNQs999FZgxF4N0do740h4xcBpDLIjWng0WNAEeDxlV/IUGSrmqNJJsUVOAOe0q/UzQ+0V8gNDT6vkJiebTWrtfB8WE79w9FLIaX/NXwrodVWy1r3duzQAGkskQW8arEqYRRAtkSSLADBYsIvcWnTYBQ48CgYEA0ZsKQ2adA8O4fspbTqMRWbUVDFR4U4rFIewZ/Q/75XyG0K2VvMqmoxA79zI67sXMDg9ELsu9B0ad3SMtCE0k1jY3NjmP3nzo7PSGBeas6tSylTZtxysfZVJRFrVJattUnC8RES6r6WNz7SJpG+G2jWUnFoFqdeHyLruH5ZcM81sCgYAm+JB5fPTTx/Uuws5qa/csCRUVUAN0haCvdBnNsiO5ioPZZTtrockd8uL0qdwtY4CD3eHfQvkJnkDZplYnH67KhkKWsxzHmvOqg6+2XzoL1hS3/OrkUt53cN6cB71kEUWuTbi/izWUepM1XW15rrJc86Wdazdx2YiKIbvX/JeSuQKBgQCCowy8gWHvDLcaXuiVlFCmBpR9wM/V0bGXuN1hueqXVwt3WBjxN6SwENgu8yGD28eYI6+tMtI3jK2rO9c/S0VgNR4oL6wZUOSjeqtlViYDnllHYkr9TUUeEzXy3z5I2TZcuYD7ookGxzNjYoT8Gat7aMX54uMFYbNdqQfD8mbh7QKBgQC2v/IHxVBTzQdnb6eAy8zlW7QZFg4rMwnsGJ58vx6fWwzK0lFLd2eG5pHA40xcO6Ga7Qi5W3VcREBZZKvDOT8yurthRLIWsULfO1QyUhAyWQDBLkUHVnZXFQbm6QwJcB8WF6Bi+++ghXYV75xjHoHxbJnammKDNBmRmaWYjXfRIQ==",
-			"a"
+			"a",
+			"MIIEpAIBAAKCAQEAuqU98n52HN6Up2jO79MDvwnVc3nJrg8ahe40qarkvKGYDPP7TTJIM5JMMHFLQDk/dvRuFFvxmOFj29lI1shqICAhktOyQWB+BdwmnNuKwK1k6vwHGPPdijP7gZMeUXifO0BPbb+swtbwkATx+YT90haNi0Be3b7oUVOalnUC1LaEIT8xw+vSCs/wIdYkizNJl67d+6nHkeSOkkv8oAzaLU6OosflrGYk5IMeSuEJgw7TCM8jVSnqIVluGV0QtGGnZMuhFI3Rwc9L7ZbFaraX8RrcdR1S2MG8qksJwcL5QOzR02pHkFNtAg2LQcf0Lio6JOVAdGh1hCbHvGL46UfA1QIDAQABAoIBABHnrjSoGw6T77DLpiZtmMtn1xk30rgm7MVyX4zzPvQ1kE+VzELQkwqXe0WeaLilhUgVFMZRN7ER1jGN+6XXHg8s5eue8VfCOPS49N9RVFM9jxPXz5p+Mn+CkxsQEPWB28ykU7pUi+85DWTThJ8KOgtAbJ2yNCeTm9fJbGgIm5fqLHLOpkqvWx4KloOBghZweBBYXlYWE8nxyZ/atVhaN+70krrRYVUbVMLwC0RL3EpKyvN7zQ6V+F//uk68NB95vtCYobQN6jPU4H/aceOqMyhNsOFZ174zgfEeegI8pJ6DpJmEd02NUe06OKonvMtEX4UFpkJz3vxNB33SYf49KtUCgYEA4/Uz3k6+qzPX8HZidiNQs999FZgxF4N0do740h4xcBpDLIjWng0WNAEeDxlV/IUGSrmqNJJsUVOAOe0q/UzQ+0V8gNDT6vkJiebTWrtfB8WE79w9FLIaX/NXwrodVWy1r3duzQAGkskQW8arEqYRRAtkSSLADBYsIvcWnTYBQ48CgYEA0ZsKQ2adA8O4fspbTqMRWbUVDFR4U4rFIewZ/Q/75XyG0K2VvMqmoxA79zI67sXMDg9ELsu9B0ad3SMtCE0k1jY3NjmP3nzo7PSGBeas6tSylTZtxysfZVJRFrVJattUnC8RES6r6WNz7SJpG+G2jWUnFoFqdeHyLruH5ZcM81sCgYAm+JB5fPTTx/Uuws5qa/csCRUVUAN0haCvdBnNsiO5ioPZZTtrockd8uL0qdwtY4CD3eHfQvkJnkDZplYnH67KhkKWsxzHmvOqg6+2XzoL1hS3/OrkUt53cN6cB71kEUWuTbi/izWUepM1XW15rrJc86Wdazdx2YiKIbvX/JeSuQKBgQCCowy8gWHvDLcaXuiVlFCmBpR9wM/V0bGXuN1hueqXVwt3WBjxN6SwENgu8yGD28eYI6+tMtI3jK2rO9c/S0VgNR4oL6wZUOSjeqtlViYDnllHYkr9TUUeEzXy3z5I2TZcuYD7ookGxzNjYoT8Gat7aMX54uMFYbNdqQfD8mbh7QKBgQC2v/IHxVBTzQdnb6eAy8zlW7QZFg4rMwnsGJ58vx6fWwzK0lFLd2eG5pHA40xcO6Ga7Qi5W3VcREBZZKvDOT8yurthRLIWsULfO1QyUhAyWQDBLkUHVnZXFQbm6QwJcB8WF6Bi+++ghXYV75xjHoHxbJnammKDNBmRmaWYjXfRIQ=="
 		)
 		const token = await issuer.sign(creatable, now.getTime() / 1000)
 		expect(token).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/)
@@ -99,8 +99,8 @@ describe("Key", () => {
 		expect(result).toEqual({ ...creatable, iss: "userwidgets", iat: now.getTime() / 1000, token: token })
 	})
 	it("signing and verifying", async () => {
-		const issuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "example")
-		const verifier = model.User.Key.Signed.Verifier.create("userwidgets")
+		const issuer = model.User.Key.Issuer.create("userwidgets", "example", privateKey)
+		const verifier = model.User.Key.Verifier.create("userwidgets")
 		const token = await issuer.sign(creatable)
 		const result = await verifier.verify(token)
 		expect(result).toEqual({
@@ -113,8 +113,8 @@ describe("Key", () => {
 		})
 	})
 	it("unpack", async () => {
-		const signedIssuer = model.User.Key.Signed.Issuer.create("userwidgets", privateKey, "example")
-		const unsignedIssuer = model.User.Key.Unsigned.Issuer.create("userwidgets", "example")
+		const signedIssuer = model.User.Key.Issuer.create("userwidgets", "example", privateKey)
+		const unsignedIssuer = model.User.Key.Issuer.create("local", "example")
 		const signedToken = await signedIssuer.sign(creatable)
 		const unsignedToken = await unsignedIssuer.sign(creatable)
 		expect(signedToken).toBeTruthy()
