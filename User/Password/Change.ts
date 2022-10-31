@@ -8,4 +8,7 @@ export namespace Change {
 	export function is(value: Change | any): value is Change & Record<string, any> {
 		return Set.is(value) && typeof value.old == "string"
 	}
+	export function validate(): any { //implement
+		return 1
+	}
 }
