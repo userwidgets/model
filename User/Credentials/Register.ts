@@ -16,4 +16,7 @@ export namespace Register {
 			Password.Set.is(value.password)
 		)
 	}
+	export function validate(credentials: Register): boolean {
+		return Password.Set.validate(credentials.password)
+	}
 }

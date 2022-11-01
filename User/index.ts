@@ -79,6 +79,7 @@ export namespace User {
 		export type Register = UserCredentials.Register
 		export namespace Register {
 			export const is = UserCredentials.Register.is
+			export const validate = UserCredentials.Register.validate
 		}
 	}
 	export type Password = UserPassword
