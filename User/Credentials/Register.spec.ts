@@ -8,11 +8,12 @@ describe("User.Credentials.Register", () => {
 			last: "doe",
 		},
 		password: {
-			new: "asd",
-			repeat: "asd",
+			new: "asd123",
+			repeat: "asd123",
 		},
 	}
 	it("is", () => {
 		expect(model.User.Credentials.Register.is(register)).toEqual(true)
+		expect(model.User.Credentials.Register.validate(register)).toEqual(true)
 	})
 })
