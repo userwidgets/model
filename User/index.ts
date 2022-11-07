@@ -1,6 +1,7 @@
 import * as isoly from "isoly"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
+import { Feedback as UserFeedback } from "./Feedback"
 import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
@@ -110,6 +111,22 @@ export namespace User {
 		export const Organization = UserPermissions.Organization
 		export type Permission = UserPermissions.Permission
 		export const Permission = UserPermissions.Permission
+	}
+	export type Feedback = UserFeedback
+	export namespace Feedback {
+		export const is = UserFeedback.is
+		export type Invitation = UserFeedback.Invitation
+		export namespace Invitation {
+			export const is = UserFeedback.Invitation.is
+			export type Interface = UserFeedback.Invitation.Interface
+			export const Interface = UserFeedback.Invitation.Interface
+		}
+		export type Notification = UserFeedback.Notification
+		export namespace Notification {
+			export const is = UserFeedback.Notification.is
+			export type Interface = UserFeedback.Notification.Interface
+			export const Interface = UserFeedback.Notification.Interface
+		}
 	}
 	export type Creatable = UserCreatable
 	export const Creatable = UserCreatable
