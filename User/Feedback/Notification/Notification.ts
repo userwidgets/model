@@ -12,7 +12,7 @@ export namespace Notification {
 			typeof value == "object" &&
 			value &&
 			typeof value.email == "string" &&
-			(gracely.Result.is(value.response) || http.Response.is(value.response))
+			(gracely.Result.is(value.response) || http.Response.is(value.response) || value.response == undefined)
 		)
 	}
 }

@@ -14,7 +14,7 @@ export namespace Invitation {
 			value &&
 			typeof value.email == "string" &&
 			typeof value.tag == "string" &&
-			(gracely.Result.is(value.response) || http.Response.is(value.response))
+			(gracely.Result.is(value.response) || http.Response.is(value.response) || value.response == undefined)
 		)
 	}
 }
