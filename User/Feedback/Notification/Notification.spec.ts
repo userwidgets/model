@@ -12,5 +12,10 @@ describe("User.Feedback.Notification.Notification", () => {
 		notification = { ...notification, response: { status: 200 } }
 		expect(model.User.Feedback.Notification.Interface.is(notification)).toEqual(true)
 		expect(model.User.Feedback.Notification.is(notification)).toEqual(true)
+		expect(
+			model.User.Feedback.Notification.is(
+				Object.fromEntries(Object.entries(notification).filter(([property, _]) => property != "response"))
+			)
+		).toEqual(true)
 	})
 })

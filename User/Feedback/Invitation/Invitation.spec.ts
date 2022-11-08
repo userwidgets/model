@@ -13,5 +13,10 @@ describe("User.Feedback.Invitation.Invitation", () => {
 		invitation = { ...invitation, response: { status: 200 } }
 		expect(model.User.Feedback.Invitation.Interface.is(invitation)).toEqual(true)
 		expect(model.User.Feedback.Invitation.is(invitation)).toEqual(true)
+		expect(
+			model.User.Feedback.Invitation.is(
+				Object.fromEntries(Object.entries(invitation).filter(([property, _]) => property != "response"))
+			)
+		).toEqual(true)
 	})
 })
