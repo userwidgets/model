@@ -1,14 +1,12 @@
 import * as isoly from "isoly"
+import type { User } from "./index"
 import { Name } from "./Name"
 import { Permissions } from "./Permissions"
 
 export interface Readable {
 	name: Name
 	email: string
-	permissions: {
-		"*"?: Permissions.Application | undefined
-		[organizationId: string]: Permissions.Organization | undefined
-	}
+	permissions: { application?: Permissions.Application; organization?: Permissions.Organization }
 	created?: isoly.DateTime
 	modified?: isoly.DateTime
 }
@@ -21,12 +19,21 @@ export namespace Readable {
 			typeof value.email == "string" &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
-			Object.entries(value.permissions)
-				.filter(([key, _]) => key != "*")
-				.every((entry): entry is [string, Permissions.Organization] => Permissions.Organization.is(entry[0])) &&
-			(value.permissions["*"] == undefined || Permissions.Application.is(value.permissions["*"])) &&
+			(value.permissions.application == undefined || Permissions.Application.is(value.permissions.application)) &&
+			(value.permissions.organization == undefined || Permissions.Organization.is(value.permissions.organization)) &&
 			(value.created == undefined || isoly.DateTime.is(value.created)) &&
 			(value.modified == undefined || isoly.DateTime.is(value.modified))
 		)
+	}
+	export function to(user: User, applicationId: string, organizationId: string): Required<Readable> {
+		return {
+			...user,
+			permissions: {
+				...(user.permissions[applicationId]["*"] && { application: user.permissions[applicationId]["*"] }),
+				...(user.permissions[applicationId][organizationId] && {
+					organization: user.permissions[applicationId][organizationId],
+				}),
+			},
+		}
 	}
 }
