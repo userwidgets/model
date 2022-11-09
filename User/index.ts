@@ -6,6 +6,7 @@ import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
+import { Readable as ReadableUser } from "./Readable"
 import { Tag as UserTag } from "./Tag"
 
 export interface User extends Omit<UserCreatable, "password" | "permissions"> {
@@ -130,4 +131,6 @@ export namespace User {
 	}
 	export type Creatable = UserCreatable
 	export const Creatable = UserCreatable
+	export type Readable = ReadableUser
+	export const Readable = ReadableUser
 }
