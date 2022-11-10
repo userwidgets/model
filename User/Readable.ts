@@ -6,7 +6,7 @@ import { Permissions } from "./Permissions"
 export interface Readable {
 	name: Name
 	email: string
-	permissions: { application?: Permissions.Application; organization?: Permissions.Organization }
+	permissions: Permissions.Readable
 	created?: isoly.DateTime
 	modified?: isoly.DateTime
 }
@@ -19,20 +19,16 @@ export namespace Readable {
 			typeof value.email == "string" &&
 			typeof value.permissions == "object" &&
 			value.permissions &&
-			(value.permissions.application == undefined || Permissions.Application.is(value.permissions.application)) &&
-			(value.permissions.organization == undefined || Permissions.Organization.is(value.permissions.organization)) &&
+			Permissions.Readable.is(value.permissions) &&
 			(value.created == undefined || isoly.DateTime.is(value.created)) &&
 			(value.modified == undefined || isoly.DateTime.is(value.modified))
 		)
 	}
-	export function to(user: User, applicationId: string, organizationId: string): Required<Readable> {
+	export function to(user: User, applicationId: string): Required<Readable> {
 		return {
 			...user,
 			permissions: {
-				...(user.permissions[applicationId]["*"] && { application: user.permissions[applicationId]["*"] }),
-				...(user.permissions[applicationId][organizationId] && {
-					organization: user.permissions[applicationId][organizationId],
-				}),
+				...(user.permissions[applicationId] && user.permissions[applicationId]),
 			},
 		}
 	}

@@ -9,8 +9,8 @@ describe("User.Readable", () => {
 				last: "doe",
 			},
 			permissions: {
-				application: { user: { read: true } },
-				organization: { user: { read: true } },
+				"*": { user: { read: true } },
+				organizationId: { user: { read: true } },
 			},
 		}
 		expect(model.User.Readable.is(readable)).toEqual(true)
@@ -37,7 +37,7 @@ describe("User.Readable", () => {
 			created: isoly.DateTime.now(),
 			modified: isoly.DateTime.now(),
 		}
-		const result = model.User.Readable.to(user, "applicationId", "organizationId")
+		const result = model.User.Readable.to(user, "applicationId")
 		expect(model.User.Readable.is(result)).toEqual(true)
 	})
 })

@@ -10,12 +10,7 @@ import { Readable as ReadableUser } from "./Readable"
 import { Tag as UserTag } from "./Tag"
 
 export interface User extends Omit<UserCreatable, "password" | "permissions"> {
-	permissions: {
-		[applicationId: string]: {
-			"*"?: UserPermissions.Application | undefined
-			[organizationId: string]: UserPermissions.Organization | undefined
-		}
-	}
+	permissions: UserPermissions
 	created: isoly.DateTime
 	modified: isoly.DateTime
 }
@@ -29,16 +24,7 @@ export namespace User {
 			UserName.is(value.name) &&
 			isoly.DateTime.is(value.created) &&
 			isoly.DateTime.is(value.modified) &&
-			typeof value.permissions == "object" &&
-			value.permissions &&
-			Object.values(value.permissions).every(
-				(application: any) =>
-					typeof application == "object" &&
-					(application["*"] == undefined || UserPermissions.Application.is(application["*"])) &&
-					Object.entries(application)
-						.filter(([id, _]) => id != "*")
-						.every(([_, organization]) => UserPermissions.Organization.is(organization))
-			)
+			UserPermissions.is(value.permissions)
 		)
 	}
 	export function toKey(user: User, applicationId: string, organizationIds?: string[]): UserKey.Creatable | undefined {
@@ -103,7 +89,9 @@ export namespace User {
 		export type Creatable = UserTag.Creatable
 		export const Creatable = UserTag.Creatable
 	}
+	export type Permissions = UserPermissions
 	export namespace Permissions {
+		export const is = UserPermissions.is
 		export type Application = UserPermissions.Application
 		export const Application = UserPermissions.Application
 		export type Collection = UserPermissions.Collection
@@ -112,6 +100,8 @@ export namespace User {
 		export const Organization = UserPermissions.Organization
 		export type Permission = UserPermissions.Permission
 		export const Permission = UserPermissions.Permission
+		export type Readable = UserPermissions.Readable
+		export const Readable = UserPermissions.Readable
 	}
 	export type Feedback = UserFeedback
 	export namespace Feedback {
