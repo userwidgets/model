@@ -21,7 +21,20 @@ export namespace Password {
 			)
 		return result
 	}
-	export const verify = PasswordChange.verify
+	export async function verify(
+		password: Password | Change,
+		hash: cryptly.Password.Hash,
+		hashSecret?: string
+	): Promise<boolean | gracely.Error> {
+		return hashSecret
+			? await cryptly.Password.verify(
+					cryptly.Signer.create("HMAC", "SHA-512", hashSecret),
+					hash,
+					typeof password == "string" ? password : password.old
+			  )
+			: gracely.server.misconfigured("hashSecret", "hashSecret is not set in worker environment")
+	}
+
 	export type Change = PasswordChange
 	export const Change = PasswordChange
 	export type Set = PasswordSet
