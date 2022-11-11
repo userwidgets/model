@@ -20,7 +20,7 @@ export namespace Readable {
 		)
 	}
 	export function allowUpdate(key: Key, permissions: Readable): boolean {
-		const result = Object.entries(permissions).every(
+		return Object.entries(permissions).every(
 			([id, perms]) =>
 				perms &&
 				(key.permissions[id]?.organization?.write || key.permissions["*"]?.organization?.write) &&
@@ -34,7 +34,6 @@ export namespace Readable {
 						)
 				)
 		)
-		return result
 	}
 	export function update(current: Readable, alter: Readable): Readable {
 		Object.entries(alter).forEach(
