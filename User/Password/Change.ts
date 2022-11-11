@@ -1,6 +1,6 @@
 import * as cryptly from "cryptly"
 import * as gracely from "gracely"
-import type { Password }from "./index"
+import type { Password } from "./index"
 import { Set } from "./Set"
 export interface Change extends Set {
 	old: string
