@@ -62,7 +62,7 @@ export namespace Readable {
 					([resource, permission]) =>
 						permission &&
 						Object.entries(permission).forEach(([access, permitted]) =>
-							nest(target, [id, resource, access], arguments.length != 1 ? value : permitted)
+							nest(target, [id, resource, access], value != undefined ? value : permitted)
 						)
 				)
 			return target
