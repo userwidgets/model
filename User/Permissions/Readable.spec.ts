@@ -65,7 +65,6 @@ describe("User.Permissions.Readable", () => {
 		expect(result).toEqual(readable)
 		expect(result).not.toBe(readable)
 		result = model.User.Permissions.Readable.copy(readable, false)
-		console.log(result)
 		expect(result).not.toEqual(readable)
 		expect(result).toEqual({ acme: { user: { read: false } } })
 	})
