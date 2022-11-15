@@ -56,4 +56,29 @@ describe("User.Permissions.Readable", () => {
 			bcme: { organization: { read: true } },
 		})
 	})
+	it("copy", () => {
+		const readable: model.User.Permissions.Readable = {
+			acme: { user: { read: true } },
+		}
+		let result = model.User.Permissions.Readable.copy(readable)
+		expect(model.User.Permissions.Readable.is(result)).toEqual(true)
+		expect(result).toEqual(readable)
+		expect(result).not.toBe(readable)
+		result = model.User.Permissions.Readable.copy(readable, false)
+		expect(result).not.toEqual(readable)
+		expect(result).toEqual({ acme: { user: { read: false } } })
+	})
+	it("assign", () => {
+		const target: model.User.Permissions.Readable = {
+			acme: { user: { read: true }, custom: { read: true } },
+		}
+		const source: model.User.Permissions.Readable = {
+			acme: { organization: { write: false }, user: { write: true, read: false } },
+		}
+		const result = model.User.Permissions.Readable.assign(target, source)
+		expect(result).toBe(target)
+		expect(result).toEqual({
+			acme: { organization: { write: false }, user: { write: true, read: false }, custom: { read: true } },
+		})
+	})
 })
