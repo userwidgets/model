@@ -6,12 +6,8 @@
 		"sourceRoot": "../",
 		"outDir": "dist",
 		"baseUrl": ".",
-		"paths": {
-			"*": [
-				"types/*"
-			]
-		},
-		"allowSyntheticDefaultImports": true
+		"paths": { "*": ["types/*"] },
+		"allowSyntheticDefaultImports":true
 	},
 	"files": [
 		"index.ts",

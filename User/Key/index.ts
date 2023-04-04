@@ -14,12 +14,12 @@ export interface Key extends CreatableKey {
 const transformers: (authly.Property.Transformer | undefined)[] = [
 	new authly.Property.Converter({
 		issued: {
-			forward: (value: any) => value,
-			backward: (value: any) => isoly.DateTime.create(value as number),
+			forward: value => value,
+			backward: value => isoly.DateTime.create(value as number),
 		},
 		expires: {
-			forward: (value: any) => value,
-			backward: (value: any) => isoly.DateTime.create(value as number),
+			forward: value => value,
+			backward: value => isoly.DateTime.create(value as number),
 		},
 	}),
 	new authly.Property.Renamer({
