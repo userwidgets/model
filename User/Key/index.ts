@@ -36,7 +36,7 @@ const transformers: (authly.Property.Transformer | undefined)[] = [
 export type Issuers = "userwidgets" | "local"
 export const publicKeys: { [system in Issuers]: string | undefined } = {
 	userwidgets:
-		"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvjvE27DrNuprNCac26rz/MXod4l5lGSPbrch9ewsUBHeu47swKil0dd2j4HTdKR4EODHiFf5QTDISPqQWn1A0WUmvejyw3WUAQCycNeJ4+I/LySwWansW1QR8Lcq7EABNQeAI6edCnmJ1CTL1gsH7vBan077mSCiy+gS3al2o2wIDAQAB",
+		"MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwAfRxvo3TsEXRYFOiQgGN0/+heva3+o3LPWu8mAhbhnFGhwPpYX02O89A1l3h4kFN7yJ3cjglnhSawkhQ1GiVp/neVR1JqdkyhrDl6DrcifPC+Ziub/9Y1/H5P5Dk4YPAxp8Sm0KF46GqvX4HsDQ/lt3r8vwb35nwIGyV3AGfFMigeEgqfAEXpXj36PYsKIRod8UpYY/B1xWW0wdRtQ3cUuUix+dK5ybHMdU287bgSNC0qNt69/xbGjRjlnm72N26fmtl5QnAFMYvdY552P/LQCcbo7aGz5lKH8bDXdURA8bgZOvXLnjXvOLjSInpayWRQfKMWS4bNptbZrw7NBqD0HyM5QyKbBSlr6+VI8mDMf9HICOgYNIcwdJ62HX5JeMvylRPF9asOzZNgO2R10gPym+2tc5tSi+jmTJu2eJNabjN/QFlQQRieewwN6Grwu2UzV71Jk4OqbY0GN/TF4lsF+b9pmEmsg2KiFDqkCl84DIMtIkxSR5A56bDvqH7W5m16xbA2889kgnz7CKThivj2kDT3ZUp8F+qYoAs/FVBjPq1Z+D9vY6vixkGzzFvoBfDvpyVwTIyR998ltueqRwDe4HSD/tipgzLB6Sh8/D/YXiTpLBxQxsH5dHEkK72DCg3LTHAZsR1BoPuBkEfhOZIJSa/8ULvaBPNDWbmB+XmAkCAwEAAQ==",
 	local: undefined,
 }
 
