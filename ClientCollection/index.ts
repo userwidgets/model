@@ -23,31 +23,38 @@ export interface EntityTags {
  * @param ..
  */
 export class ClientCollection {
+	private readonly allClients: http.Client[] = []
 	public constructor(
 		private client: http.Client,
 		readonly userwidgetsPrefix: "" | `/${string}` = "",
-		...listenToClients: http.Client[]
+		...moreClients: http.Client[]
 	) {
-		listenToClients.forEach(client => {
-			this.listenOnUnauthorized(client)
+		;[client, ...moreClients].forEach(client => {
+			this.addClient(client)
+		})
+	}
+	set key(key: string | undefined) {
+		this.allClients.forEach(client => {
+			client.key = key
 		})
 	}
 
 	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
+
 	readonly user = new ClientCollection.User(this.client, this.entityTags, this.userwidgetsPrefix)
-	readonly me = new ClientCollection.Me(this.client, this.userwidgetsPrefix)
+	readonly me = new ClientCollection.Me(this.client, key => (this.key = key), this.userwidgetsPrefix)
 	readonly organization = new ClientCollection.Organization(this.client, this.entityTags, this.userwidgetsPrefix)
 	readonly application = new ClientCollection.Application(this.client, this.entityTags, this.userwidgetsPrefix)
 
 	/** Set by UserWidgets Login-component */
-	set onUnauthorized(callback: () => Promise<boolean>) {
-		this.client.onUnauthorized = callback
-	}
+	onUnauthorized: () => Promise<boolean>
+	private onUnauthorizedCallback = async () => this.onUnauthorized?.()
 	/**
 	 * If it exists other Clients that should trigger login, register with this method.
 	 */
-	listenOnUnauthorized(client: http.Client) {
-		client.onUnauthorized = async () => !!this.client.onUnauthorized && this.client.onUnauthorized(client)
+	addClient(client: http.Client) {
+		this.allClients.push(client)
+		client.onUnauthorized = this.onUnauthorizedCallback
 	}
 }
 export namespace ClientCollection {
