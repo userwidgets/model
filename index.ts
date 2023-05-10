@@ -1,4 +1,2 @@
-export { User } from "./User"
-export { Application } from "./Application"
-export { Organization } from "./Organization"
+export * from "./userwidgets"
 export * as userwidgets from "./userwidgets"
