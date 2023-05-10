@@ -1,0 +1,64 @@
+import { isoly } from "isoly"
+import * as http from "cloudly-http"
+import * as rest from "cloudly-rest"
+import { Application as ClientApplication } from "./Application"
+import { Me as ClientMe } from "./Me"
+import { Organization as ClientOrganization } from "./Organization"
+import { User as ClientUser } from "./User"
+
+export interface EntityTags {
+	application: Record<string, isoly.DateTime | undefined>
+	organization: Record<string, isoly.DateTime | undefined>
+	user: Record<string, isoly.DateTime | undefined>
+}
+
+/**
+ * Collection of rest.Collections to talk to userwidget-API:
+ *
+ * Is created with:
+ * * new Client(httpClient)
+ *
+ * http.Clients that is NOT provided when constructing this object, can
+ * be added with listenOnUnauthorized(...) to trigger login for those.
+ * @param ..
+ */
+export class ClientCollection {
+	public constructor(
+		private client: http.Client,
+		readonly userwidgetsPrefix: "" | `/${string}` = "",
+		...listenToClients: http.Client[]
+	) {
+		listenToClients.forEach(client => {
+			this.listenOnUnauthorized(client)
+		})
+	}
+
+	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
+	readonly user = new ClientCollection.User(this.client, this.entityTags, this.userwidgetsPrefix)
+	readonly me = new ClientCollection.Me(this.client, this.userwidgetsPrefix)
+	readonly organization = new ClientCollection.Organization(this.client, this.entityTags, this.userwidgetsPrefix)
+	readonly application = new ClientCollection.Application(this.client, this.entityTags, this.userwidgetsPrefix)
+
+	/** Set by UserWidgets Login-component */
+	set onUnauthorized(callback: () => Promise<boolean>) {
+		this.client.onUnauthorized = callback
+	}
+	/**
+	 * If it exists other Clients that should trigger login, register with this method.
+	 */
+	listenOnUnauthorized(client: http.Client) {
+		client.onUnauthorized = async () => !!this.client.onUnauthorized && this.client.onUnauthorized(client)
+	}
+}
+export namespace ClientCollection {
+	export type Application = ClientApplication
+	export const Application = ClientApplication
+	export type Organization = ClientOrganization
+	export const Organization = ClientOrganization
+	export type Me = ClientMe
+	export const Me = ClientMe
+	export type User = ClientUser
+	export const User = ClientUser
+
+	export type Unauthorized = (client: rest.Client<never>) => Promise<boolean>
+}
