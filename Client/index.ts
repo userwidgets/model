@@ -26,7 +26,7 @@ export interface EntityTags {
  * be added with listenOnUnauthorized(...) to trigger login for those.
  */
 export class Client extends rest.Client<gracely.Error> {
-	entityTags: EntityTags = { application: {}, organization: {}, user: {} }
+	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
 	readonly user = new Client.User(this.client, this.entityTags, this.userwidgetPrefix)
 	readonly me = new Client.Me(this.client, this.userwidgetPrefix)
 	readonly organization = new Client.Organization(this.client, this.entityTags, this.userwidgetPrefix)
