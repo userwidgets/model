@@ -1,6 +1,6 @@
 {
 	"name": "@userwidgets/model",
-	"version": "0.0.35",
+	"version": "0.1.0",
 	"description": "Model for the  userwidgets app.",
 	"author": "Userwidgets  Contributors",
 	"license": "MIT",
@@ -29,7 +29,7 @@
 			]
 		},
 		"transformIgnorePatterns": [
-			"<rootDir>/node_modules/(?!(cryptly|authly|isoly|gracely|cloudly-http|cloudly-router|cloudly-formdata)/.*)"
+			"<rootDir>/node_modules/(?!(cryptly|authly|isoly|gracely|cloudly-http|cloudly-router|cloudly-formdata|cloudly-rest)/.*)"
 		],
 		"testEnvironment": "node",
 		"testRegex": "((\\.|/)(test|spec))(\\.|\\/.+)(jsx?|tsx?)$",
@@ -69,8 +69,9 @@
 		"watch": "^0.13.0"
 	},
 	"dependencies": {
-		"authly": "^2.0.1",
+		"authly": "^3.0.3",
 		"cloudly-http": "^0.1.3",
+		"cloudly-rest": "^0.1.2",
 		"cryptly": "^3.0.2",
 		"gracely": "^2.0.3",
 		"isoly": "^2.0.13"

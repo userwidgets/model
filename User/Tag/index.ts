@@ -15,12 +15,12 @@ export interface Tag extends CreatableTag {
 const transformers: authly.Property.Transformer[] = [
 	new authly.Property.Converter({
 		issued: {
-			forward: value => value,
-			backward: value => isoly.DateTime.create(value as number),
+			forward: (value: string) => value, // TODO: Does this work?
+			backward: (value: number) => isoly.DateTime.create(value),
 		},
 		expires: {
-			forward: value => value,
-			backward: value => isoly.DateTime.create(value as number),
+			forward: (value: string) => value, // TODO: Does this work?
+			backward: (value: number) => isoly.DateTime.create(value),
 		},
 	}),
 	new authly.Property.Renamer({
