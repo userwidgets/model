@@ -33,7 +33,7 @@ export class ClientCollection {
 			this.addClient(client)
 		})
 	}
-	setKey = (key: string | undefined) => {
+	readonly setKey = (key: string | undefined) => {
 		this.allClients.forEach(client => {
 			client.key = key
 		})
