@@ -29,26 +29,29 @@ export class ClientCollection {
 		readonly userwidgetsPrefix: "" | `/${string}` = "",
 		...moreClients: http.Client[]
 	) {
-		;[client, ...moreClients].forEach(client => {
-			this.addClient(client)
-		})
+		;[client, ...moreClients].forEach(client => this.addClient(client))
 	}
-	readonly setKey = (key: string | undefined) => {
+	#key: ClientCollection["key"]
+	get key(): string | undefined {
+		return this.#key
+	}
+	set key(key: ClientCollection["key"]) {
+		this.#key = key
 		this.allClients.forEach(client => {
-			client.key = key
+			client.key = this.#key
 		})
 	}
 
 	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
 
 	readonly user = new ClientCollection.User(this.client, this.entityTags, this.userwidgetsPrefix)
-	readonly me = new ClientCollection.Me(this.client, this.setKey, this.userwidgetsPrefix)
+	readonly me = new ClientCollection.Me(this.client, key => (this.key = key), this.userwidgetsPrefix)
 	readonly organization = new ClientCollection.Organization(this.client, this.entityTags, this.userwidgetsPrefix)
 	readonly application = new ClientCollection.Application(this.client, this.entityTags, this.userwidgetsPrefix)
 
 	/** Set by UserWidgets Login-component */
 	onUnauthorized: () => Promise<boolean>
-	private onUnauthorizedCallback = async () => this.onUnauthorized?.()
+	private readonly onUnauthorizedCallback = async () => this.onUnauthorized?.()
 	/**
 	 * If it exists other Clients that should trigger login, register with this method.
 	 */
