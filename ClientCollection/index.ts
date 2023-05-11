@@ -37,9 +37,7 @@ export class ClientCollection {
 	}
 	set key(key: ClientCollection["key"]) {
 		this.#key = key
-		this.allClients.forEach(client => {
-			client.key = this.#key
-		})
+		this.allClients.forEach(client => (client.key = this.#key))
 	}
 
 	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
