@@ -13,7 +13,7 @@ export interface EntityTags {
 }
 
 /**
- * Collection of rest.Collections to talk to userwidget-API:
+ * Collection of rest.Collections to talk to userwidgets-API:
  *
  * Is created with:
  * * new Client(httpClient)
@@ -33,7 +33,7 @@ export class ClientCollection {
 			this.addClient(client)
 		})
 	}
-	set key(key: string | undefined) {
+	setKey = (key: string | undefined) => {
 		this.allClients.forEach(client => {
 			client.key = key
 		})
@@ -42,7 +42,7 @@ export class ClientCollection {
 	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
 
 	readonly user = new ClientCollection.User(this.client, this.entityTags, this.userwidgetsPrefix)
-	readonly me = new ClientCollection.Me(this.client, key => (this.key = key), this.userwidgetsPrefix)
+	readonly me = new ClientCollection.Me(this.client, this.setKey, this.userwidgetsPrefix)
 	readonly organization = new ClientCollection.Organization(this.client, this.entityTags, this.userwidgetsPrefix)
 	readonly application = new ClientCollection.Application(this.client, this.entityTags, this.userwidgetsPrefix)
 
