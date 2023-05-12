@@ -4,7 +4,11 @@ import * as rest from "cloudly-rest"
 import { User } from "../User"
 
 export class Me extends rest.Collection<gracely.Error> {
-	constructor(client: http.Client, readonly prefix: `/${string}` | "" = "") {
+	constructor(
+		client: http.Client,
+		private keySetter: (key: string | undefined) => void,
+		readonly prefix: `/${string}` | "" = ""
+	) {
 		super(client)
 	}
 	async login(credentials: User.Credentials): Promise<User.Key | gracely.Error> {
@@ -18,9 +22,8 @@ export class Me extends rest.Collection<gracely.Error> {
 			result = gracely.Error.is(token)
 				? token
 				: (await User.Key.unpack(token)) ?? gracely.client.unauthorized("Failed to verify token.")
-			if (!gracely.Error.is(result)) {
-				this.client.key = result.token
-			}
+			if (!gracely.Error.is(result))
+				this.keySetter(result.token)
 		}
 		return result
 	}
@@ -30,7 +33,7 @@ export class Me extends rest.Collection<gracely.Error> {
 			? token
 			: (await User.Key.unpack(token)) ?? gracely.client.unauthorized("Failed to verify token.")
 		if (!gracely.Error.is(result))
-			this.client.key = result.token
+			this.keySetter(result.token)
 		return result
 	}
 	async join(tag: User.Tag): Promise<User.Key | gracely.Error> {
@@ -39,7 +42,7 @@ export class Me extends rest.Collection<gracely.Error> {
 			? response
 			: (await User.Key.unpack(response)) ?? gracely.client.unauthorized("Failed to verify token.")
 		if (!gracely.Error.is(result))
-			this.client.key = result.token
+			this.keySetter(result.token)
 		return result
 	}
 }
