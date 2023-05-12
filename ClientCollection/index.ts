@@ -48,8 +48,8 @@ export class ClientCollection {
 	readonly application = new ClientCollection.Application(this.client, this.entityTags, this.userwidgetsPrefix)
 
 	/** Set by UserWidgets Login-component */
-	onUnauthorized: () => Promise<boolean>
-	private readonly onUnauthorizedCallback = async () => this.onUnauthorized?.()
+	onUnauthorized?: () => Promise<boolean>
+	private readonly onUnauthorizedCallback = async () => this.onUnauthorized?.() ?? false
 	/**
 	 * If it exists other Clients that should trigger login, register with this method.
 	 */
