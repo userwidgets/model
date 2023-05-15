@@ -33,11 +33,13 @@ const transformers: (authly.Property.Transformer | undefined)[] = [
 		token: "tok",
 	}),
 ]
-export type Issuers = "userwidgets" | "local"
+export type Issuers = "userwidgets" | "local" | "pax2pay"
 export const publicKeys: { [system in Issuers]: string | undefined } = {
 	userwidgets:
 		"MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwAfRxvo3TsEXRYFOiQgGN0/+heva3+o3LPWu8mAhbhnFGhwPpYX02O89A1l3h4kFN7yJ3cjglnhSawkhQ1GiVp/neVR1JqdkyhrDl6DrcifPC+Ziub/9Y1/H5P5Dk4YPAxp8Sm0KF46GqvX4HsDQ/lt3r8vwb35nwIGyV3AGfFMigeEgqfAEXpXj36PYsKIRod8UpYY/B1xWW0wdRtQ3cUuUix+dK5ybHMdU287bgSNC0qNt69/xbGjRjlnm72N26fmtl5QnAFMYvdY552P/LQCcbo7aGz5lKH8bDXdURA8bgZOvXLnjXvOLjSInpayWRQfKMWS4bNptbZrw7NBqD0HyM5QyKbBSlr6+VI8mDMf9HICOgYNIcwdJ62HX5JeMvylRPF9asOzZNgO2R10gPym+2tc5tSi+jmTJu2eJNabjN/QFlQQRieewwN6Grwu2UzV71Jk4OqbY0GN/TF4lsF+b9pmEmsg2KiFDqkCl84DIMtIkxSR5A56bDvqH7W5m16xbA2889kgnz7CKThivj2kDT3ZUp8F+qYoAs/FVBjPq1Z+D9vY6vixkGzzFvoBfDvpyVwTIyR998ltueqRwDe4HSD/tipgzLB6Sh8/D/YXiTpLBxQxsH5dHEkK72DCg3LTHAZsR1BoPuBkEfhOZIJSa/8ULvaBPNDWbmB+XmAkCAwEAAQ==",
 	local: undefined,
+	pax2pay:
+		"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpfH27zs+G+0agMPe9k10WTF5+lVif/H8McZyAc4uwtw80u62G4RB/bUYx2o8k7qJnqHhC/nkBx9UB5nNJKVIKhKKdWG41DoQfRkWrVs9kVpLZjEO/SCsKwwsFdUZE0WO1V3wX1DJ5Hmf05zsKPvywujh5SibQDvoSFn9llEnzSQIDAQAB",
 }
 
 export namespace Key {
