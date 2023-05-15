@@ -74,7 +74,7 @@ export namespace Tag {
 					  authly.Issuer.create<Tag>(issuer, authly.Algorithm.none())!.add(...transformers)
 					: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					  authly.Issuer.create<Tag>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(...transformers),
-				{ audience: audience, duration: 60 * 60 * 12 }
+				{ audience: audience, duration: 60 * 60 * 24 * 3 }
 			)
 		}
 	}

@@ -116,7 +116,7 @@ describe("User.Tag", () => {
 			...creatable,
 			issuer: "userwidgets",
 			issued: isoly.DateTime.create(now.getTime() / 1000),
-			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 12),
+			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 24 * 3),
 			audience: "applicationId",
 			token: token,
 		})
