@@ -2,7 +2,7 @@ import * as gracely from "gracely"
 import * as isoly from "isoly"
 import * as http from "cloudly-http"
 import * as rest from "cloudly-rest"
-import { userwidgets } from "../index"
+import type { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
 export class Organization extends rest.Collection<gracely.Error> {
@@ -11,12 +11,23 @@ export class Organization extends rest.Collection<gracely.Error> {
 	}
 	async create(
 		organization: userwidgets.Organization.Creatable,
-		applicationId: string
-	): Promise<userwidgets.Organization | gracely.Error> {
-		const result = await this.client.post<userwidgets.Organization>(`${this.prefix}/organization`, organization, {
-			application: applicationId,
-		})
-		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
+		applicationId: string,
+		url?: string
+	): Promise<
+		| gracely.Error
+		| { organization: gracely.Error }
+		| { organization: userwidgets.Organization; feedback: userwidgets.User.Feedback[] | gracely.Error }
+	> {
+		const result = await this.client.post<Awaited<ReturnType<Organization["create"]>>>(
+			`${this.prefix}/organization${url ? "?url=" + url : ""}`,
+			organization,
+			{
+				application: applicationId,
+			}
+		)
+		!gracely.Error.is(result) &&
+			!gracely.Error.is(result.organization) &&
+			(this.entityTags.organization[result.organization.id] = isoly.DateTime.now())
 		return result
 	}
 	async fetch(organizationId: string): Promise<userwidgets.Organization | gracely.Error> {
@@ -48,6 +59,15 @@ export class Organization extends rest.Collection<gracely.Error> {
 			}
 		)
 		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
+		return result
+	}
+	async addUsers(organizationId: string, users: string[], url?: string) {
+		const result = await this.client.patch<userwidgets.User.Feedback.Invitation[] | gracely.Error>(
+			`${this.prefix}/organization/user/${organizationId}${url ? "?url=" + url : ""}`,
+			users
+		)
+		if (!gracely.Error.is(rest))
+			this.entityTags.organization[organizationId] = isoly.DateTime.now()
 		return result
 	}
 	async removeUser(organizationId: string, email: string) {
