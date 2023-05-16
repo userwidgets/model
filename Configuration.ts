@@ -15,11 +15,20 @@ export interface Configuration {
 
 export namespace Configuration {
 	export type Required = Partial<Configuration>
-	export function addDefault(configuration: Required): Configuration {
-		return {
+	export function addDefault(configuration: Required): Configuration
+	export function addDefault<K extends keyof Configuration>(
+		configuration: Required,
+		...property: K[]
+	): Pick<Configuration, K>
+	export function addDefault(configuration: Required, ...properties: (keyof Configuration)[]): Partial<Configuration> {
+		const defaultConfiguration: Configuration = {
 			pathPrefix: "",
 			inviteParameterName: "invite",
-			...configuration,
 		}
+		return Object.fromEntries(
+			(properties.length > 0 ? properties : (["publicKey", "pathPrefix", "inviteParameterName"] as const)).map(
+				property => [property, configuration[property] ?? defaultConfiguration[property]]
+			)
+		)
 	}
 }
