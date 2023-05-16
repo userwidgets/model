@@ -61,6 +61,15 @@ export class Organization extends rest.Collection<gracely.Error> {
 		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
 		return result
 	}
+	async addUsers(organizationId: string, users: string[], url?: string) {
+		const result = await this.client.patch<userwidgets.User.Feedback.Invitation[] | gracely.Error>(
+			`${this.prefix}/organization/user/${organizationId}${url ? "?url=" + url : ""}`,
+			users
+		)
+		if (!gracely.Error.is(rest))
+			this.entityTags.organization[organizationId] = isoly.DateTime.now()
+		return result
+	}
 	async removeUser(organizationId: string, email: string) {
 		const entityTag = this.entityTags.organization[organizationId]
 		const result = await this.client.delete<userwidgets.Organization>(
