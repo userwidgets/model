@@ -5,7 +5,7 @@ describe("User.Feedback.Invitation.Invitation", () => {
 	it("is", () => {
 		let invitation: model.User.Feedback.Invitation.Interface = {
 			email: "asd",
-			tag: "asd",
+			invite: "asd",
 			response: gracely.client.notFound(),
 		}
 		expect(model.User.Feedback.Invitation.Interface.is(invitation)).toEqual(true)

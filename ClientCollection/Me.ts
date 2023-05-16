@@ -29,8 +29,8 @@ export class Me extends rest.Collection<gracely.Error> {
 		}
 		return result
 	}
-	async register(tag: User.Tag, credentials: User.Credentials.Register): Promise<User.Key | gracely.Error> {
-		const token = await this.client.post<string>(`${this.configuration.pathPrefix}/me/${tag.token}`, credentials)
+	async register(invite: User.Invite, credentials: User.Credentials.Register): Promise<User.Key | gracely.Error> {
+		const token = await this.client.post<string>(`${this.configuration.pathPrefix}/me/${invite.token}`, credentials)
 		const result = gracely.Error.is(token)
 			? token
 			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
@@ -39,8 +39,8 @@ export class Me extends rest.Collection<gracely.Error> {
 			this.keySetter(result.token)
 		return result
 	}
-	async join(tag: User.Tag): Promise<User.Key | gracely.Error> {
-		const response = await this.client.patch<string>(`${this.configuration.pathPrefix}/me/${tag.token}`, undefined)
+	async join(invite: User.Invite): Promise<User.Key | gracely.Error> {
+		const response = await this.client.patch<string>(`${this.configuration.pathPrefix}/me/${invite.token}`, undefined)
 		const result = gracely.Error.is(response)
 			? response
 			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(response)) ??

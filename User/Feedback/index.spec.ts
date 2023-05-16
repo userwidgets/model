@@ -9,7 +9,7 @@ describe("User.Feedback", () => {
 		}
 		const invitation: model.User.Feedback.Invitation = {
 			email: "asd",
-			tag: "asd",
+			invite: "asd",
 			response: gracely.client.notFound(),
 		}
 		let feedback: model.User.Feedback = notification
