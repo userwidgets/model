@@ -1,7 +1,5 @@
-import * as cryptly from "cryptly"
 import * as isoly from "isoly"
 import * as authly from "authly"
-import { Issuers, Key, publicKeys } from "../Key"
 import { Creatable as CreatableTag } from "./Creatable"
 
 export interface Tag extends CreatableTag {
@@ -15,11 +13,11 @@ export interface Tag extends CreatableTag {
 const transformers: authly.Property.Transformer[] = [
 	new authly.Property.Converter({
 		issued: {
-			forward: (value: string) => value, // TODO: Does this work?
+			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the iat-value.
 			backward: (value: number) => isoly.DateTime.create(value),
 		},
 		expires: {
-			forward: (value: string) => value, // TODO: Does this work?
+			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the iat-value.
 			backward: (value: number) => isoly.DateTime.create(value),
 		},
 	}),
@@ -48,43 +46,25 @@ export namespace Tag {
 			typeof value.token == "string"
 		)
 	}
-	export async function unpack(token: string): Promise<Tag | undefined> {
-		let result: Tag | undefined
-		const textDecoder = new cryptly.TextDecoder()
-		if (token.split(".").length != 3)
-			result = undefined
-		else {
-			const issuer = JSON.parse(textDecoder.decode(cryptly.Base64.decode(token.split(".")[1])))["iss"]
-			if (!Key.isIssuer(issuer)) {
-				result = undefined
-			} else {
-				const verifier = Verifier.create(issuer)
-				result = await verifier.verify(token)
-			}
-		}
-		return result
-	}
 	export namespace Issuer {
-		export function create(issuer: Issuers, audience: string): Issuer
-		export function create(issuer: Issuers, audience: string, privateKey: string): Issuer
-		export function create(issuer: Issuers, audience: string, privateKey?: string) {
+		export function create(issuer: string, audience: string, publicKey: string, privateKey: string): Issuer {
 			return Object.assign(
-				privateKey == undefined
-					? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					  authly.Issuer.create<Tag>(issuer, authly.Algorithm.none())!.add(...transformers)
-					: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					  authly.Issuer.create<Tag>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(...transformers),
-				{ audience: audience, duration: 60 * 60 * 24 * 3 }
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				authly.Issuer.create<Tag>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
+				{ audience, duration: 60 * 60 * 24 * 3 }
 			)
 		}
 	}
 	export namespace Verifier {
-		export function create(issuer: Issuers) {
-			return !publicKeys[issuer]
-				? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				  authly.Verifier.create<Tag>(authly.Algorithm.none())!.add(...transformers)
-				: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				  authly.Verifier.create<Tag>(authly.Algorithm.RS256(publicKeys[issuer]))!.add(...transformers)
+		/**
+		 * Creates a verifier.
+		 * If no public key is provided, verifier skips verification and oly returns payload. Might be used on client-side.
+		 */
+		export function create(publicKey?: string): Verifier {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			return authly.Verifier.create<Tag>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(
+				...transformers
+			)
 		}
 	}
 	export type Creatable = CreatableTag

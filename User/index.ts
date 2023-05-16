@@ -49,8 +49,6 @@ export namespace User {
 	export type Key = UserKey
 	export namespace Key {
 		export const is = UserKey.is
-		export const isIssuer = UserKey.isIssuer
-		export const unpack = UserKey.unpack
 		export type Issuer = UserKey.Issuer
 		export const Issuer = UserKey.Issuer
 		export type Verifier = UserKey.Verifier
@@ -83,7 +81,6 @@ export namespace User {
 		export type Issuer = UserTag.Issuer
 		export type Verifier = UserTag.Verifier
 		export const is = UserTag.is
-		export const unpack = UserTag.unpack
 		export const Issuer = UserTag.Issuer
 		export const Verifier = UserTag.Verifier
 		export type Creatable = UserTag.Creatable
