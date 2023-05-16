@@ -1,6 +1,6 @@
 {
 	"name": "@userwidgets/model",
-	"version": "0.2.5",
+	"version": "0.3.0",
 	"description": "Model for the  userwidgets app.",
 	"author": "Userwidgets  Contributors",
 	"license": "MIT",
@@ -69,7 +69,7 @@
 		"watch": "^0.13.0"
 	},
 	"dependencies": {
-		"authly": "^3.0.4",
+		"authly": "^3.0.5",
 		"cloudly-http": "^0.1.5",
 		"cloudly-rest": "^0.1.2",
 		"cryptly": "^3.0.2",

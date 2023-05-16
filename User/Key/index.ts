@@ -1,4 +1,3 @@
-import * as cryptly from "cryptly"
 import * as isoly from "isoly"
 import * as authly from "authly"
 import { Creatable as CreatableKey } from "./Creatable"
@@ -11,8 +10,8 @@ export interface Key extends CreatableKey {
 	token: string
 }
 
-const transformers: (authly.Property.Transformer | undefined)[] = [
-	new authly.Property.Converter({
+const transformers: authly.Property.Creatable[] = [
+	{
 		issued: {
 			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the iat-value.
 			backward: (value: number) => isoly.DateTime.create(value),
@@ -21,26 +20,18 @@ const transformers: (authly.Property.Transformer | undefined)[] = [
 			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the exp-value.
 			backward: (value: number) => isoly.DateTime.create(value),
 		},
-	}),
-	new authly.Property.Renamer({
+	},
+	{
 		issuer: "iss",
 		audience: "aud",
 		issued: "iat",
 		expires: "exp",
 		email: "sub",
-		permissions: "prm",
+		permissions: "per",
 		name: "nam",
 		token: "tok",
-	}),
+	},
 ]
-export type Issuers = "userwidgets" | "local" | "pax2pay"
-export const publicKeys: { [system in Issuers]: string | undefined } = {
-	userwidgets:
-		"MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwAfRxvo3TsEXRYFOiQgGN0/+heva3+o3LPWu8mAhbhnFGhwPpYX02O89A1l3h4kFN7yJ3cjglnhSawkhQ1GiVp/neVR1JqdkyhrDl6DrcifPC+Ziub/9Y1/H5P5Dk4YPAxp8Sm0KF46GqvX4HsDQ/lt3r8vwb35nwIGyV3AGfFMigeEgqfAEXpXj36PYsKIRod8UpYY/B1xWW0wdRtQ3cUuUix+dK5ybHMdU287bgSNC0qNt69/xbGjRjlnm72N26fmtl5QnAFMYvdY552P/LQCcbo7aGz5lKH8bDXdURA8bgZOvXLnjXvOLjSInpayWRQfKMWS4bNptbZrw7NBqD0HyM5QyKbBSlr6+VI8mDMf9HICOgYNIcwdJ62HX5JeMvylRPF9asOzZNgO2R10gPym+2tc5tSi+jmTJu2eJNabjN/QFlQQRieewwN6Grwu2UzV71Jk4OqbY0GN/TF4lsF+b9pmEmsg2KiFDqkCl84DIMtIkxSR5A56bDvqH7W5m16xbA2889kgnz7CKThivj2kDT3ZUp8F+qYoAs/FVBjPq1Z+D9vY6vixkGzzFvoBfDvpyVwTIyR998ltueqRwDe4HSD/tipgzLB6Sh8/D/YXiTpLBxQxsH5dHEkK72DCg3LTHAZsR1BoPuBkEfhOZIJSa/8ULvaBPNDWbmB+XmAkCAwEAAQ==",
-	local: undefined,
-	pax2pay:
-		"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpfH27zs+G+0agMPe9k10WTF5+lVif/H8McZyAc4uwtw80u62G4RB/bUYx2o8k7qJnqHhC/nkBx9UB5nNJKVIKhKKdWG41DoQfRkWrVs9kVpLZjEO/SCsKwwsFdUZE0WO1V3wX1DJ5Hmf05zsKPvywujh5SibQDvoSFn9llEnzSQIDAQAB",
-}
 
 export namespace Key {
 	export function is(value: Key | any): value is Key & Record<string, any> {
@@ -53,48 +44,28 @@ export namespace Key {
 			typeof value.token == "string"
 		)
 	}
-	export function isIssuer(value: string): value is Issuers {
-		return Object.keys(publicKeys).includes(value)
-	}
-	export async function unpack(token: string): Promise<Key | undefined> {
-		let result: Key | undefined
-		const textDecoder = new cryptly.TextDecoder()
-		if (token.split(".").length != 3)
-			result = undefined
-		else {
-			const issuer = JSON.parse(textDecoder.decode(cryptly.Base64.decode(token.split(".")[1])))["iss"]
-			if (!isIssuer(issuer)) {
-				result = undefined
-			} else {
-				const verifier = Verifier.create(issuer)
-				result = await verifier.verify(token)
-			}
-		}
-		return result
-	}
+
 	export namespace Issuer {
-		export function create(issuer: Issuers, audience: string): Issuer
-		export function create(issuer: Issuers, audience: string, privateKey: string): Issuer
-		export function create(issuer: Issuers, audience: string, privateKey?: string): Issuer {
+		export function create(issuer: string, audience: string, publicKey: string, privateKey: string): Issuer {
 			return Object.assign(
-				privateKey == undefined
-					? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					  authly.Issuer.create<Key>(issuer, authly.Algorithm.none())!.add(...transformers)
-					: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					  authly.Issuer.create<Key>(issuer, authly.Algorithm.RS256(undefined, privateKey))!.add(...transformers),
-				{ audience: audience, duration: 60 * 60 * 12 }
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				authly.Issuer.create<Key>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
+				{ audience, duration: 60 * 60 * 12 }
 			)
 		}
 	}
 	export type Issuer = authly.Issuer<CreatableKey>
 	export type Verifier = authly.Verifier<Key>
 	export namespace Verifier {
-		export function create(issuer: Issuers): Verifier {
-			return !publicKeys[issuer]
-				? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				  authly.Verifier.create<Key>(authly.Algorithm.none())!.add(...transformers)
-				: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				  authly.Verifier.create<Key>(authly.Algorithm.RS256(publicKeys[issuer]))!.add(...transformers)
+		/**
+		 * Creates a verifier.
+		 * If no public key is provided, verifier skips verification and oly returns payload. Might be used on client-side.
+		 */
+		export function create(publicKey?: string): Verifier {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			return authly.Verifier.create<Key>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(
+				...transformers
+			)
 		}
 	}
 

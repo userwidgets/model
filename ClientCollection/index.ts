@@ -1,6 +1,7 @@
 import { isoly } from "isoly"
 import * as http from "cloudly-http"
 import * as rest from "cloudly-rest"
+import { Configuration } from "../Configuration"
 import { Application as ClientApplication } from "./Application"
 import { Me as ClientMe } from "./Me"
 import { Organization as ClientOrganization } from "./Organization"
@@ -24,11 +25,17 @@ export interface EntityTags {
  */
 export class ClientCollection {
 	private readonly allClients: http.Client[] = []
+	readonly configuration: Configuration
 	public constructor(
 		private client: http.Client,
-		readonly userwidgetsPrefix: "" | `/${string}` = "",
+		configuration: Configuration.Required,
 		...moreClients: http.Client[]
 	) {
+		this.configuration = Configuration.addDefault(configuration)
+		this.user = new ClientCollection.User(this.client, this.entityTags, this.configuration)
+		this.me = new ClientCollection.Me(this.client, key => (this.key = key), this.configuration)
+		this.organization = new ClientCollection.Organization(this.client, this.entityTags, this.configuration)
+		this.application = new ClientCollection.Application(this.client, this.entityTags, this.configuration)
 		;[client, ...moreClients].forEach(client => this.addClient(client))
 	}
 	#key: ClientCollection["key"]
@@ -42,10 +49,10 @@ export class ClientCollection {
 
 	readonly entityTags: EntityTags = { application: {}, organization: {}, user: {} }
 
-	readonly user = new ClientCollection.User(this.client, this.entityTags, this.userwidgetsPrefix)
-	readonly me = new ClientCollection.Me(this.client, key => (this.key = key), this.userwidgetsPrefix)
-	readonly organization = new ClientCollection.Organization(this.client, this.entityTags, this.userwidgetsPrefix)
-	readonly application = new ClientCollection.Application(this.client, this.entityTags, this.userwidgetsPrefix)
+	readonly user: ClientCollection.User
+	readonly me: ClientCollection.Me
+	readonly organization: ClientCollection.Organization
+	readonly application: ClientCollection.Application
 
 	/** Set by UserWidgets Login-component */
 	onUnauthorized?: () => Promise<boolean>

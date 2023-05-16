@@ -6,7 +6,7 @@ import type { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
 export class Organization extends rest.Collection<gracely.Error> {
-	constructor(client: http.Client, readonly entityTags: EntityTags, readonly prefix: `/${string}` | "" = "") {
+	constructor(client: http.Client, readonly entityTags: EntityTags, readonly configuration: userwidgets.Configuration) {
 		super(client)
 	}
 	async create(
@@ -19,7 +19,8 @@ export class Organization extends rest.Collection<gracely.Error> {
 		| { organization: userwidgets.Organization; feedback: userwidgets.User.Feedback[] | gracely.Error }
 	> {
 		const result = await this.client.post<Awaited<ReturnType<Organization["create"]>>>(
-			`${this.prefix}/organization${url ? "?url=" + url : ""}`,
+			`${this.configuration.pathPrefix}/organization${url ? "?url=" + url : ""}`,
+
 			organization,
 			{
 				application: applicationId,
@@ -31,12 +32,14 @@ export class Organization extends rest.Collection<gracely.Error> {
 		return result
 	}
 	async fetch(organizationId: string): Promise<userwidgets.Organization | gracely.Error> {
-		const result = await this.client.get<userwidgets.Organization>(`${this.prefix}/organization/${organizationId}`)
+		const result = await this.client.get<userwidgets.Organization>(
+			`${this.configuration.pathPrefix}/organization/${organizationId}`
+		)
 		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
 		return result
 	}
 	async list(): Promise<userwidgets.Organization[] | gracely.Error> {
-		const result = await this.client.get<userwidgets.Organization[]>(`${this.prefix}/organization`)
+		const result = await this.client.get<userwidgets.Organization[]>(`${this.configuration.pathPrefix}/organization`)
 		!gracely.Error.is(result) &&
 			result.reduce(
 				(entityTags, organization) => ((entityTags.organization[organization.id] = isoly.DateTime.now()), entityTags),
@@ -51,7 +54,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 	): Promise<userwidgets.Organization | gracely.Error> {
 		const entityTag = this.entityTags.organization[organizationId]
 		const result = await this.client.put<userwidgets.Organization>(
-			`${this.prefix}/organization/${organizationId}/name`,
+			`${this.configuration.pathPrefix}/organization/${organizationId}/name`,
 			organization,
 			{
 				...(entityTag && { ifMatch: [entityTag] }),
@@ -63,7 +66,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 	}
 	async addUsers(organizationId: string, users: string[], url?: string) {
 		const result = await this.client.patch<userwidgets.User.Feedback.Invitation[] | gracely.Error>(
-			`${this.prefix}/organization/user/${organizationId}${url ? "?url=" + url : ""}`,
+			`${this.configuration.pathPrefix}/organization/user/${organizationId}${url ? "?url=" + url : ""}`,
 			users
 		)
 		if (!gracely.Error.is(rest))
@@ -73,7 +76,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 	async removeUser(organizationId: string, email: string) {
 		const entityTag = this.entityTags.organization[organizationId]
 		const result = await this.client.delete<userwidgets.Organization>(
-			`${this.prefix}/organization/${organizationId}/user/${email}`,
+			`${this.configuration.pathPrefix}/organization/${organizationId}/user/${email}`,
 			{
 				...(entityTag && { ifMatch: [entityTag] }),
 			}
