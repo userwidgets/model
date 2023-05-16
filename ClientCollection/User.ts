@@ -2,11 +2,11 @@ import * as gracely from "gracely"
 import * as isoly from "isoly"
 import * as http from "cloudly-http"
 import * as rest from "cloudly-rest"
-import { Configuration, userwidgets } from "../index"
+import { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
 export class User extends rest.Collection<gracely.Error> {
-	constructor(client: http.Client, readonly entityTags: EntityTags, readonly configuration: Configuration) {
+	constructor(client: http.Client, readonly entityTags: EntityTags, readonly configuration: userwidgets.Configuration) {
 		super(client)
 	}
 	async list(): Promise<userwidgets.User.Readable[] | gracely.Error> {

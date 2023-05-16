@@ -1,14 +1,14 @@
 import * as gracely from "gracely"
 import * as http from "cloudly-http"
 import * as rest from "cloudly-rest"
-import { Configuration } from "../Configuration"
+import { userwidgets } from "../index"
 import { User } from "../User"
 
 export class Me extends rest.Collection<gracely.Error> {
 	constructor(
 		client: http.Client,
 		private keySetter: (key: string | undefined) => void,
-		readonly configuration: Configuration
+		readonly configuration: userwidgets.Configuration
 	) {
 		super(client)
 	}
