@@ -3,7 +3,7 @@ import * as http from "cloudly-http"
 
 export interface Invitation {
 	email: string
-	tag: string
+	invite: string
 	response?: http.Response | gracely.Result
 }
 
@@ -13,7 +13,7 @@ export namespace Invitation {
 			typeof value == "object" &&
 			value &&
 			typeof value.email == "string" &&
-			typeof value.tag == "string" &&
+			typeof value.invite == "string" &&
 			(gracely.Result.is(value.response) || http.Response.is(value.response) || value.response == undefined)
 		)
 	}

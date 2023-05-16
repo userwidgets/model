@@ -2,12 +2,12 @@ import * as isoly from "isoly"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
 import { Feedback as UserFeedback } from "./Feedback"
+import { Invite as UserInvite } from "./Invite"
 import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
 import { Readable as ReadableUser } from "./Readable"
-import { Tag as UserTag } from "./Tag"
 
 export interface User extends Omit<UserCreatable, "password" | "permissions"> {
 	permissions: UserPermissions
@@ -76,15 +76,15 @@ export namespace User {
 		export type Set = UserPassword.Set
 		export const Set = UserPassword.Set
 	}
-	export type Tag = UserTag
-	export namespace Tag {
-		export type Issuer = UserTag.Issuer
-		export type Verifier = UserTag.Verifier
-		export const is = UserTag.is
-		export const Issuer = UserTag.Issuer
-		export const Verifier = UserTag.Verifier
-		export type Creatable = UserTag.Creatable
-		export const Creatable = UserTag.Creatable
+	export type Invite = UserInvite
+	export namespace Invite {
+		export type Issuer = UserInvite.Issuer
+		export type Verifier = UserInvite.Verifier
+		export const is = UserInvite.is
+		export const Issuer = UserInvite.Issuer
+		export const Verifier = UserInvite.Verifier
+		export type Creatable = UserInvite.Creatable
+		export const Creatable = UserInvite.Creatable
 	}
 	export type Permissions = UserPermissions
 	export namespace Permissions {

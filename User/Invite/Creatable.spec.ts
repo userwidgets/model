@@ -1,8 +1,8 @@
 import * as model from "../../index"
 
-describe("User.Tag.Creatable", () => {
+describe("User.Invite.Creatable", () => {
 	it("is", () => {
-		const signature: model.User.Tag.Creatable = {
+		const signature: model.User.Invite.Creatable = {
 			email: "jane@example.com",
 			active: true,
 			permissions: {
@@ -17,6 +17,6 @@ describe("User.Tag.Creatable", () => {
 				},
 			},
 		}
-		expect(model.User.Tag.Creatable.is(signature)).toEqual(true)
+		expect(model.User.Invite.Creatable.is(signature)).toEqual(true)
 	})
 })

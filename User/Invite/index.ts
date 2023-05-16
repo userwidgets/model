@@ -1,8 +1,8 @@
 import * as isoly from "isoly"
 import * as authly from "authly"
-import { Creatable as CreatableTag } from "./Creatable"
+import { Creatable as CreatableInvite } from "./Creatable"
 
-export interface Tag extends CreatableTag {
+export interface Invite extends CreatableInvite {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
@@ -33,12 +33,12 @@ const transformers: authly.Property.Transformer[] = [
 	}),
 ]
 
-export namespace Tag {
+export namespace Invite {
 	export type Issuer = authly.Issuer<Creatable>
-	export type Verifier = authly.Verifier<Tag>
-	export function is(value: Tag | any): value is Tag & Record<string, any> {
+	export type Verifier = authly.Verifier<Invite>
+	export function is(value: Invite | any): value is Invite & Record<string, any> {
 		return (
-			CreatableTag.is(value) &&
+			CreatableInvite.is(value) &&
 			typeof value.issuer == "string" &&
 			typeof value.audience == "string" &&
 			isoly.DateTime.is(value.issued) &&
@@ -50,7 +50,7 @@ export namespace Tag {
 		export function create(issuer: string, audience: string, publicKey: string, privateKey: string): Issuer {
 			return Object.assign(
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				authly.Issuer.create<Tag>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
+				authly.Issuer.create<Invite>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
 				{ audience, duration: 60 * 60 * 24 * 3 }
 			)
 		}
@@ -62,11 +62,11 @@ export namespace Tag {
 		 */
 		export function create(publicKey?: string): Verifier {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			return authly.Verifier.create<Tag>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(
+			return authly.Verifier.create<Invite>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(
 				...transformers
 			)
 		}
 	}
-	export type Creatable = CreatableTag
-	export const Creatable = CreatableTag
+	export type Creatable = CreatableInvite
+	export const Creatable = CreatableInvite
 }
