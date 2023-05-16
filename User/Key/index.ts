@@ -27,7 +27,7 @@ const transformers: authly.Property.Creatable[] = [
 		issued: "iat",
 		expires: "exp",
 		email: "sub",
-		permissions: "per",
+		permissions: "prm",
 		name: "nam",
 		token: "tok",
 	},

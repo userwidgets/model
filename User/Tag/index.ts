@@ -27,7 +27,7 @@ const transformers: authly.Property.Transformer[] = [
 		issued: "iat",
 		expires: "exp",
 		email: "sub",
-		permissions: "per",
+		permissions: "prm",
 		active: "act",
 		token: "tok",
 	}),
