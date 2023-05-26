@@ -8,7 +8,8 @@ export interface Application extends CreatableApplication {
 }
 
 export namespace Application {
-	export function is(value: Application | any): value is Application & Record<string, any> {
+	export const type = isly.object<Application>({})
+	export function is(value: Application | any): value is Application {
 		return (
 			Creatable.is(value) &&
 			typeof value.id == "string" &&

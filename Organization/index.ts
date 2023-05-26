@@ -1,4 +1,5 @@
 import * as isoly from "isoly"
+import { isly } from "isly"
 import { Creatable as CreatableOrganization } from "./Creatable"
 
 export interface Organization extends Omit<CreatableOrganization, "users"> {
@@ -9,7 +10,8 @@ export interface Organization extends Omit<CreatableOrganization, "users"> {
 }
 
 export namespace Organization {
-	export function is(value: Organization | any): value is Organization & Record<string, any> {
+	export const type = isly.object<Organization>({})
+	export function is(value: Organization | any): value is Organization {
 		return (
 			typeof value == "object" &&
 			typeof value.name == "string" &&

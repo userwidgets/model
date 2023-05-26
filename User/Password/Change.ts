@@ -4,8 +4,9 @@ export interface Change extends Set {
 }
 
 export namespace Change {
-	export function is(value: Change | any): value is Change & Record<string, any> {
-		return Set.is(value) && typeof value.old == "string"
+	export const type = isly.object<Change>({})
+	export function is(value: Change | any): value is Change {
+		return Set.is(value) && "old" in value && typeof value.old == "string"
 	}
 
 	export async function validate(value: Change): Promise<boolean> {

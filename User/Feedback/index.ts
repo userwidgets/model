@@ -4,6 +4,7 @@ import { Notification as FeedbackNotification } from "./Notification"
 export type Feedback = FeedbackInvitation | FeedbackNotification
 
 export namespace Feedback {
+	export const type = isly.object<Feedback>({})
 	export function is(value: Feedback | any): value is Feedback {
 		return Invitation.is(value) || Notification.is(value)
 	}

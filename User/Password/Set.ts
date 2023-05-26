@@ -4,7 +4,8 @@ export interface Set {
 }
 
 export namespace Set {
-	export function is(value: Set | any): value is Set & Record<string, any> {
+	export const type = isly.object<Set>({})
+	export function is(value: Set | any): value is Set {
 		return typeof value == "object" && typeof value.new == "string" && typeof value.repeat == "string"
 	}
 	export function validate(passwords: Set): boolean {

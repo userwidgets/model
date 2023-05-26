@@ -34,7 +34,8 @@ const transformers: authly.Property.Creatable[] = [
 ]
 
 export namespace Key {
-	export function is(value: Key | any): value is Key & Record<string, any> {
+	export const type = isly.object<Key>({})
+	export function is(value: Key | any): value is Key {
 		return (
 			CreatableKey.is(value) &&
 			typeof value.issuer == "string" &&

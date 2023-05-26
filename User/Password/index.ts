@@ -6,7 +6,8 @@ import { Set as PasswordSet } from "./Set"
 export type Password = string
 
 export namespace Password {
-	export function is(value: Password | any): value is (PasswordChange | PasswordSet) & Record<string, any> {
+	export const type = isly.object<Password>({})
+	export function is(value: Password | any): value is PasswordChange | PasswordSet {
 		return typeof value == "string"
 	}
 	export async function hash(password: Password, hashSecret?: string): Promise<cryptly.Password.Hash | gracely.Error> {

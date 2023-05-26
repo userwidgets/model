@@ -7,6 +7,7 @@ export interface Credentials {
 }
 
 export namespace Credentials {
+	export const type = isly.object<any>({})
 	export function is(value: any | Credentials): value is Credentials {
 		return (
 			typeof value == "object" && typeof value.user == "string" && value.user != "" && typeof value.password == "string"

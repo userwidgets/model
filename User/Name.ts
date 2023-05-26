@@ -4,7 +4,8 @@ export interface Name {
 }
 
 export namespace Name {
-	export function is(value: Name | any): value is Name & Record<string, any> {
+	export const type = isly.object<Name>({})
+	export function is(value: Name | any): value is Name {
 		return typeof value == "object" && typeof value.first == "string" && typeof value.last == "string"
 	}
 }

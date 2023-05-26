@@ -7,6 +7,7 @@ export interface Notification {
 }
 
 export namespace Notification {
+	export const type = isly.object<Notification>({})
 	export function is(value: Notification | any): value is Notification {
 		return (
 			typeof value == "object" &&

@@ -8,7 +8,8 @@ export interface Register {
 }
 
 export namespace Register {
-	export function is(value: Register | any): value is Register & Record<string, any> {
+	export const type = isly.object<Register>({})
+	export function is(value: Register | any): value is Register {
 		return (
 			typeof value == "object" &&
 			typeof value.user == "string" &&

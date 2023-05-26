@@ -11,6 +11,7 @@ export interface Readable {
 	modified?: isoly.DateTime
 }
 export namespace Readable {
+	export const type = isly.object<any>({})
 	export function is(value: any | Readable): value is Readable {
 		return (
 			typeof value == "object" &&

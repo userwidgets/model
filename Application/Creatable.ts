@@ -1,3 +1,4 @@
+import { isly } from "isly"
 import { Organization } from "../Organization"
 
 export interface Creatable {
@@ -7,7 +8,10 @@ export interface Creatable {
 }
 
 export namespace Creatable {
-	export function is(value: Creatable | any): value is Creatable & Record<string, any> {
+export interface Creatable {
+	export const type = isly.object<
+	export const type = isly.object<Creatable>({})
+	export function is(value: Creatable | any): value is Creatable {
 		return (
 			typeof value == "object" &&
 			typeof value.name == "string" &&

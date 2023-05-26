@@ -10,7 +10,8 @@ export interface Auth {
 }
 
 export namespace Auth {
-	export function is(value: Auth | any): value is Auth & Record<string, any> {
+	export const type = isly.object<Auth>({})
+	export function is(value: Auth | any): value is Auth {
 		return (
 			typeof value.issuer == "string" &&
 			typeof value.audience == "string" &&

@@ -1,3 +1,4 @@
+import { isly } from "isly"
 import { Application as PermissionsApplication } from "./Application"
 import { Collection as PermissionsCollection } from "./Collection"
 import { Organization as PermissionsOrganization } from "./Organization"
@@ -9,6 +10,7 @@ export interface Permissions {
 }
 
 export namespace Permissions {
+	export const type = isly.record<Permissions>(isly.string(), Permissions.Readable.type)
 	export function is(value: Permissions | any): value is Permissions {
 		return typeof value == "object" && value && Object.values(value).every(permissions => Readable.is(permissions))
 	}

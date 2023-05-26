@@ -1,13 +1,11 @@
 import { Collection } from "./Collection"
 import { Permission } from "./Permission"
 
-export interface Organization {
+export interface Organization extends Collection {
 	organization?: Permission
 	user?: Permission
-	[resource: string]: Permission | undefined
 }
 export namespace Organization {
-	export function is(value: Organization | any): value is Organization & Record<string, any> {
-		return typeof value == "object" && Collection.is(value)
-	}
+	export const type = Collection.type
+	export const is = type.is
 }

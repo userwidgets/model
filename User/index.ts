@@ -16,7 +16,8 @@ export interface User extends Omit<UserCreatable, "password" | "permissions"> {
 }
 
 export namespace User {
-	export function is(value: User | any): value is User & Record<string, any> {
+	export const type = isly.object<User>({})
+	export function is(value: User | any): value is User {
 		return (
 			typeof value == "object" &&
 			value &&

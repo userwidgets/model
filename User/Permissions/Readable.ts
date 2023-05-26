@@ -1,3 +1,4 @@
+import { isly } from "isly"
 import type { Key } from "../Key"
 import { Application } from "./Application"
 import { Organization } from "./Organization"
@@ -9,6 +10,10 @@ export interface Readable {
 }
 
 export namespace Readable {
+	export const type = isly.intersection(
+		isly.object<Pick<Readable, "*">>({ "*": Application.type.optional() }),
+		isly.record(isly.string(), Organization.type)
+	)
 	export function is(value: Readable | any): value is Readable {
 		return (
 			typeof value == "object" &&

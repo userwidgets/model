@@ -8,6 +8,7 @@ export interface Invitation {
 }
 
 export namespace Invitation {
+	export const type = isly.object<Invitation>({})
 	export function is(value: Invitation | any): value is Invitation {
 		return (
 			typeof value == "object" &&

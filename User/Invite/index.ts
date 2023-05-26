@@ -36,13 +36,19 @@ const transformers: authly.Property.Transformer[] = [
 export namespace Invite {
 	export type Issuer = authly.Issuer<Creatable>
 	export type Verifier = authly.Verifier<Invite>
-	export function is(value: Invite | any): value is Invite & Record<string, any> {
+	export const type = isly.object<Invite>({})
+	export function is(value: Invite | any): value is Invite {
 		return (
 			CreatableInvite.is(value) &&
+			"issuer" in value &&
 			typeof value.issuer == "string" &&
+			"audience" in value &&
 			typeof value.audience == "string" &&
+			"issued" in value &&
 			isoly.DateTime.is(value.issued) &&
+			"expires" in value &&
 			isoly.DateTime.is(value.expires) &&
+			"token" in value &&
 			typeof value.token == "string"
 		)
 	}
