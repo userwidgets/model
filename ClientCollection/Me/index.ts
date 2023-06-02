@@ -1,10 +1,12 @@
 import * as gracely from "gracely"
 import * as http from "cloudly-http"
 import * as rest from "cloudly-rest"
-import { userwidgets } from "../index"
-import { User } from "../User"
+import { userwidgets } from "../../index"
+import { User } from "../../User"
+import { Invite } from "./Invite"
 
 export class Me extends rest.Collection<gracely.Error> {
+	readonly invite = new Invite(this.client, this.configuration)
 	constructor(
 		client: http.Client,
 		private keySetter: (key: string | undefined) => void,
