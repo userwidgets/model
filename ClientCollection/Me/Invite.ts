@@ -8,6 +8,6 @@ export class Invite extends rest.Collection<gracely.Error> {
 		super(client)
 	}
 	async fetch(id: string): Promise<string | gracely.Error> {
-		return this.client.get<string>(`${this.configuration.pathPrefix}/me/invite${id}`)
+		return this.client.get<string>(`${this.configuration.pathPrefix}/me/invite/${id}`)
 	}
 }
