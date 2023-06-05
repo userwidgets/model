@@ -70,10 +70,10 @@
 	},
 	"dependencies": {
 		"authly": "^3.0.5",
-		"cloudly-http": "^0.1.5",
+		"cloudly-http": "^0.1.6",
 		"cloudly-rest": "^0.1.2",
 		"cryptly": "^3.0.2",
-		"gracely": "^2.0.3",
+		"gracely": "^2.0.4",
 		"isoly": "^2.0.13"
 	}
 }
