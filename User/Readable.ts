@@ -1,4 +1,4 @@
-import * as isoly from "isoly"
+import { isoly } from "isoly"
 import { isly } from "isly"
 import { Email } from "../Email"
 import type { User } from "./index"

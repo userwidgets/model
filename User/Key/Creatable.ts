@@ -5,7 +5,7 @@ import { Permissions } from "../Permissions"
 
 export interface Creatable {
 	name: { first: string; last: string }
-	email: string
+	email: Email
 	permissions: Permissions.Readable
 }
 

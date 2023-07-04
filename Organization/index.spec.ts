@@ -3,7 +3,7 @@ import { userwidgets } from "../index"
 
 describe("Organization", () => {
 	const now = isoly.DateTime.now()
-	const creatable: userwidgets.Organization = {
+	const organization: userwidgets.Organization = {
 		id: "---o1---",
 		name: "My organization name",
 		permissions: ["organization", "user"],
@@ -12,6 +12,6 @@ describe("Organization", () => {
 		modified: now,
 	}
 	it("is", () => {
-		expect(userwidgets.Organization.is(creatable)).toEqual(true)
+		expect(userwidgets.Organization.is(organization)).toEqual(true)
 	})
 })

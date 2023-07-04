@@ -1,6 +1,5 @@
 import { isly } from "isly"
 import { Organization } from "../Organization"
-
 export interface Creatable {
 	name: string
 	permissions: string[]

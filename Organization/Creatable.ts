@@ -6,7 +6,7 @@ export interface Creatable {
 	id?: Identifier
 	name: string
 	permissions: string[]
-	users: { email: string; permissions?: [Permissions.Application, Permissions.Organization] }[]
+	users: { email: Email; permissions?: [Permissions.Application, Permissions.Organization] }[]
 }
 
 export namespace Creatable {
