@@ -4,7 +4,7 @@ import { Email } from "../Email"
 import { Creatable as OrganizationCreatable } from "./Creatable"
 import { Identifier as OrganizationIdentifier } from "./Identifier"
 
-export interface Organization extends Omit<OrganizationCreatable, "users"> {
+export interface Organization extends Omit<Organization.Creatable, "users"> {
 	id: Organization.Identifier
 	created: isoly.DateTime
 	modified: isoly.DateTime
