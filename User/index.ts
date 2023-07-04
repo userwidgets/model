@@ -1,6 +1,8 @@
 import { isoly } from "isoly"
 import { isly } from "isly"
+import type { Application } from "../Application"
 import { Email } from "../Email"
+import type { Organization } from "../Organization"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
 import { Feedback as UserFeedback } from "./Feedback"
@@ -29,7 +31,11 @@ export namespace User {
 	})
 	export const is = type.is
 	export const flaw = type.flaw
-	export function toKey(user: User, applicationId: string, organizationIds?: string[]): UserKey.Creatable | undefined {
+	export function toKey(
+		user: User,
+		applicationId: Application.Identifier,
+		organizationIds?: Organization.Identifier[]
+	): UserKey.Creatable | undefined {
 		const permissions = user.permissions[applicationId]
 		return !permissions
 			? undefined
