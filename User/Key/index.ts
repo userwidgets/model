@@ -1,4 +1,4 @@
-import * as isoly from "isoly"
+import { isoly } from "isoly"
 import * as authly from "authly"
 import { isly } from "isly"
 import { Creatable as KeyCreatable } from "./Creatable"
