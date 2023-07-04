@@ -1,17 +1,21 @@
 import * as authly from "authly"
+import { isly } from "isly"
+import { Email } from "../../Email"
 import { Register as CredentialsRegister } from "./Register"
 
 export interface Credentials {
-	user: string
+	user: Email
 	password: string
 }
 
 export namespace Credentials {
-	export function is(value: any | Credentials): value is Credentials {
-		return (
-			typeof value == "object" && typeof value.user == "string" && value.user != "" && typeof value.password == "string"
-		)
-	}
+	export const type = isly.object<Credentials>({
+		user: Email.type,
+		password: isly.string(/.+/),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
+
 	export function fromBasic(login: string | undefined): Credentials | undefined {
 		let result: Credentials | undefined
 		if (login && login.substring(0, 6).toLowerCase() == "basic ") {
