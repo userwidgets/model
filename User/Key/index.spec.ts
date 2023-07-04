@@ -71,7 +71,7 @@ describe("Key", () => {
 					user: {},
 				},
 			},
-			token: "asd",
+			token: "a.fake.token",
 		}
 		expect(userwidgets.User.Key.is(key)).toBe(true)
 	})

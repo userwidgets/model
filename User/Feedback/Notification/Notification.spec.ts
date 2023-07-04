@@ -4,7 +4,7 @@ import { userwidgets } from "../../../index"
 describe("User.Feedback.Notification.Notification", () => {
 	it("is", () => {
 		let notification: userwidgets.User.Feedback.Notification.Interface = {
-			email: "asd",
+			email: "user@app.com",
 			response: gracely.client.notFound(),
 		}
 		expect(userwidgets.User.Feedback.Notification.Interface.is(notification)).toEqual(true)
