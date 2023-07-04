@@ -1,18 +1,19 @@
+import { isly } from "isly"
+import { Email } from "../../Email"
 import { Permissions } from "../Permissions"
 
 export interface Creatable {
-	email: string
+	email: Email
 	active: boolean
 	permissions: Permissions.Readable
 }
 
 export namespace Creatable {
-	export function is(value: Creatable | any): value is Creatable & Record<string, any> {
-		return (
-			typeof value == "object" &&
-			typeof value.email == "string" &&
-			typeof value.active == "boolean" &&
-			Permissions.Readable.is(value.permissions)
-		)
-	}
+	export const type = isly.object<Creatable>({
+		email: Email.type,
+		active: isly.boolean(),
+		permissions: isly.fromIs("Permissions.Readable", Permissions.Readable.is),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 }

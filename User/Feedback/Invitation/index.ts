@@ -1,4 +1,4 @@
-import * as gracely from "gracely"
+import { gracely } from "gracely"
 import { Invitation as InvitationInterface } from "./Invitation"
 
 export type Invitation = InvitationInterface | gracely.Error

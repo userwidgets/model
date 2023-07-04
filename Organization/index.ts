@@ -1,27 +1,29 @@
-import * as isoly from "isoly"
-import { Creatable as CreatableOrganization } from "./Creatable"
+import { isoly } from "isoly"
+import { isly } from "isly"
+import { Email } from "../Email"
+import { Creatable as OrganizationCreatable } from "./Creatable"
+import { Identifier as OrganizationIdentifier } from "./Identifier"
 
-export interface Organization extends Omit<CreatableOrganization, "users"> {
-	id: string
+export interface Organization extends Omit<OrganizationCreatable, "users"> {
+	id: Organization.Identifier
 	created: isoly.DateTime
 	modified: isoly.DateTime
-	users: string[]
+	users: Email[]
 }
 
 export namespace Organization {
-	export function is(value: Organization | any): value is Organization & Record<string, any> {
-		return (
-			typeof value == "object" &&
-			typeof value.name == "string" &&
-			Array.isArray(value.permissions) &&
-			value.permissions.every((permission: string | any) => typeof permission == "string") &&
-			Array.isArray(value.users) &&
-			value.users.every((user: any) => typeof user == "string") &&
-			typeof value.id == "string" &&
-			isoly.DateTime.is(value.created) &&
-			isoly.DateTime.is(value.modified)
-		)
-	}
-	export type Creatable = CreatableOrganization
-	export const Creatable = CreatableOrganization
+	export type Identifier = OrganizationIdentifier
+	export const Identifier = OrganizationIdentifier
+	export type Creatable = OrganizationCreatable
+	export const Creatable = OrganizationCreatable
+	export const type = isly.object<Organization>({
+		id: Identifier.type,
+		name: isly.string(/.+/),
+		permissions: isly.array(isly.string(/.+/)),
+		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		users: isly.array(Email.type),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 }

@@ -1,7 +1,7 @@
-import * as gracely from "gracely"
-import * as isoly from "isoly"
-import * as http from "cloudly-http"
-import * as rest from "cloudly-rest"
+import { gracely } from "gracely"
+import { isoly } from "isoly"
+import { http } from "cloudly-http"
+import { rest } from "cloudly-rest"
 import type { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 

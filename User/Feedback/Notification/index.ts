@@ -1,4 +1,4 @@
-import * as gracely from "gracely"
+import { gracely } from "gracely"
 import { Notification as NotificationInterface } from "./Notification"
 
 export type Notification = NotificationInterface | gracely.Error

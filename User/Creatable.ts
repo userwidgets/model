@@ -1,22 +1,23 @@
-import { Name as UserName } from "./Name"
+import { isly } from "isly"
+import { Email } from "../Email"
+import { Name } from "./Name"
 import { Password } from "./Password"
 import { Permissions as Permissions } from "./Permissions"
 
 export interface Creatable {
-	email: string
+	email: Email
 	password: Password.Set
-	name: UserName
+	name: Name
 	permissions: Permissions.Readable
 }
 
 export namespace Creatable {
-	export function is(value: Creatable | any): value is Creatable & Record<string, any> {
-		return (
-			typeof value == "object" &&
-			typeof value.email == "string" &&
-			Password.Set.is(value.password) &&
-			UserName.is(value.name) &&
-			Permissions.Readable.is(value.permissions)
-		)
-	}
+	export const type = isly.object<Creatable>({
+		email: Email.type,
+		password: Password.Set.type,
+		name: Name.type,
+		permissions: isly.fromIs("Permissions.Readable", Permissions.Readable.is),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 }

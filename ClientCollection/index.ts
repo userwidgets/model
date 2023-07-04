@@ -1,6 +1,6 @@
 import { isoly } from "isoly"
-import * as http from "cloudly-http"
-import * as rest from "cloudly-rest"
+import { http } from "cloudly-http"
+import { rest } from "cloudly-rest"
 import { Configuration } from "../Configuration"
 import { Application as ClientApplication } from "./Application"
 import { Me as ClientMe } from "./Me"

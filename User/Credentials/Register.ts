@@ -1,8 +1,9 @@
+import { Email } from "../../Email"
 import { Name } from "../Name"
 import { Password } from "../Password"
 
 export interface Register {
-	user: string
+	user: Email
 	name: Name
 	password: Password.Set
 }
