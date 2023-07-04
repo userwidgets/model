@@ -33,21 +33,21 @@ export namespace User {
 	export const flaw = type.flaw
 	export function toKey(
 		user: User,
-		applicationId: Application.Identifier,
-		organizationIds?: Organization.Identifier[]
+		application: Application.Identifier,
+		organizations?: Organization.Identifier[]
 	): UserKey.Creatable | undefined {
-		const permissions = user.permissions[applicationId]
+		const permissions = user.permissions[application]
 		return !permissions
 			? undefined
 			: {
 					email: user.email,
 					name: user.name,
 					permissions: {
-						...(organizationIds
+						...(organizations
 							? Object.fromEntries(
-									Object.entries(permissions).filter(([organizationId, _]) => organizationIds.includes(organizationId))
+									Object.entries(permissions).filter(([organization, _]) => organizations.includes(organization))
 							  )
-							: user.permissions[applicationId]),
+							: user.permissions[application]),
 						"*": permissions["*"],
 					},
 			  }
