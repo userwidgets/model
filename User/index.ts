@@ -27,17 +27,8 @@ export namespace User {
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 	})
-	export function is(value: User | any): value is User & Record<string, any> {
-		return (
-			typeof value == "object" &&
-			value &&
-			typeof value.email == "string" &&
-			UserName.is(value.name) &&
-			isoly.DateTime.is(value.created) &&
-			isoly.DateTime.is(value.modified) &&
-			UserPermissions.is(value.permissions)
-		)
-	}
+	export const is = type.is
+	export const flaw = type.flaw
 	export function toKey(user: User, applicationId: string, organizationIds?: string[]): UserKey.Creatable | undefined {
 		const permissions = user.permissions[applicationId]
 		return !permissions

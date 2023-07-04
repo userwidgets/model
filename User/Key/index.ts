@@ -1,8 +1,9 @@
 import * as isoly from "isoly"
 import * as authly from "authly"
-import { Creatable as CreatableKey } from "./Creatable"
+import { isly } from "isly"
+import { Creatable as KeyCreatable } from "./Creatable"
 
-export interface Key extends CreatableKey {
+export interface Key extends Key.Creatable {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
@@ -34,17 +35,17 @@ const transformers: authly.Property.Creatable[] = [
 ]
 
 export namespace Key {
-	export function is(value: Key | any): value is Key & Record<string, any> {
-		return (
-			CreatableKey.is(value) &&
-			typeof value.issuer == "string" &&
-			typeof value.audience == "string" &&
-			isoly.DateTime.is(value.issued) &&
-			isoly.DateTime.is(value.expires) &&
-			typeof value.token == "string"
-		)
-	}
-
+	export type Creatable = KeyCreatable
+	export const Creatable = KeyCreatable
+	export const type = Creatable.type.extend<Key>({
+		issuer: isly.string(/.+/),
+		audience: isly.string(/.+/),
+		issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		token: isly.string(/^.+\..+\..+$/),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 	export namespace Issuer {
 		export function create(issuer: string, audience: string, publicKey: string, privateKey: string): Issuer {
 			return Object.assign(
@@ -54,7 +55,7 @@ export namespace Key {
 			)
 		}
 	}
-	export type Issuer = authly.Issuer<CreatableKey>
+	export type Issuer = authly.Issuer<KeyCreatable>
 	export type Verifier = authly.Verifier<Key>
 	export namespace Verifier {
 		/**
@@ -68,7 +69,4 @@ export namespace Key {
 			)
 		}
 	}
-
-	export type Creatable = CreatableKey
-	export const Creatable = CreatableKey
 }
