@@ -4,7 +4,6 @@ import { isly } from "isly"
 import { Change as PasswordChange } from "./Change"
 import { Set as PasswordSet } from "./Set"
 
-// maybe not backwards compatible?
 export type Password = string | Password.Change | Password.Set
 
 export namespace Password {
