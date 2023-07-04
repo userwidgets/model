@@ -1,7 +1,7 @@
-import * as model from "../index"
+import { userwidgets } from "../index"
 
 describe("User.Creatable", () => {
-	const creatable: model.User.Creatable = {
+	const creatable: userwidgets.User.Creatable = {
 		email: "jane@example.com",
 		password: { new: "asd", repeat: "asd" },
 		name: { first: "jane", last: "doe" },
@@ -11,9 +11,9 @@ describe("User.Creatable", () => {
 		},
 	}
 	it("is", () => {
-		expect(model.User.Creatable.is(creatable)).toEqual(true)
+		expect(userwidgets.User.Creatable.is(creatable)).toEqual(true)
 		expect(
-			model.User.Creatable.is({
+			userwidgets.User.Creatable.is({
 				email: "jane@example.com",
 				password: { new: "asd", repeat: "asd" },
 				name: { first: "jane", last: "doe" },

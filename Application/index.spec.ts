@@ -1,23 +1,23 @@
-import * as isoly from "isoly"
-import * as model from "../index"
+import { isoly } from "isoly"
+import { userwidgets } from "../index"
 
 describe("Application", () => {
 	const now = isoly.DateTime.now()
 	it("is", () => {
-		const application: model.Application = {
-			id: "exampleAppId",
+		const application: userwidgets.Application = {
+			id: "---a1---",
 			name: "example",
 			organizations: {
-				exampleOrgId: {
-					id: "exampleOrgId",
+				"---o1---": {
+					id: "---o1---",
 					name: "Example AB",
 					users: ["johnny@app.com", "john@app.com", "richard@app.com"],
 					created: now,
 					modified: now,
 					permissions: ["organization", "user"],
 				},
-				acmeOrgId: {
-					id: "acmeOrgId",
+				"---o2---": {
+					id: "---o2---",
 					name: "Acme AB",
 					users: ["john@app.com", "jane@app.com"],
 					created: now,
@@ -29,6 +29,6 @@ describe("Application", () => {
 			created: now,
 			modified: now,
 		}
-		expect(model.Application.is(application)).toEqual(true)
+		expect(userwidgets.Application.is(application)).toEqual(true)
 	})
 })

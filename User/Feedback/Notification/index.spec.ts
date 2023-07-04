@@ -1,15 +1,15 @@
-import * as gracely from "gracely"
-import * as model from "../../../index"
+import { gracely } from "gracely"
+import { userwidgets } from "../../../index"
 
 describe("User.Feedback.Notification", () => {
 	it("is", () => {
-		let notification: model.User.Feedback.Notification = {
-			email: "asd",
+		let notification: userwidgets.User.Feedback.Notification = {
+			email: "user@app.com",
 			response: gracely.client.notFound(),
 		}
-		expect(model.User.Feedback.Notification.is(notification)).toEqual(true)
+		expect(userwidgets.User.Feedback.Notification.is(notification)).toEqual(true)
 		notification = { ...notification, response: { status: 200 } }
-		expect(model.User.Feedback.Notification.is(notification)).toEqual(true)
-		expect(model.User.Feedback.Notification.is(gracely.client.notFound())).toEqual(true)
+		expect(userwidgets.User.Feedback.Notification.is(notification)).toEqual(true)
+		expect(userwidgets.User.Feedback.Notification.is(gracely.client.notFound())).toEqual(true)
 	})
 })

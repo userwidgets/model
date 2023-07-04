@@ -1,12 +1,16 @@
-import * as gracely from "gracely"
+import { gracely } from "gracely"
+import { isly } from "isly"
 import { Notification as NotificationInterface } from "./Notification"
 
-export type Notification = NotificationInterface | gracely.Error
+export type Notification = Notification.Interface | gracely.Error
 
 export namespace Notification {
-	export function is(value: Notification | any): value is Notification {
-		return NotificationInterface.is(value) || gracely.Error.is(value)
-	}
 	export type Interface = NotificationInterface
 	export const Interface = NotificationInterface
+	export const type = isly.union<Notification, Interface, gracely.Error>(
+		NotificationInterface.type,
+		isly.fromIs("gracely.Error", gracely.Error.is)
+	)
+	export const is = type.is
+	export const flaw = type.flaw
 }

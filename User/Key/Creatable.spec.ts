@@ -1,11 +1,11 @@
 import * as authly from "authly"
-import * as model from "../../index"
+import { userwidgets } from "../../index"
 
 const now = new Date()
 authly.Issuer.defaultIssuedAt = Math.floor(now.getTime() / 1000)
 describe("Creatable", () => {
 	it("is", async () => {
-		const creatable: model.User.Key.Creatable = {
+		const creatable: userwidgets.User.Key.Creatable = {
 			name: { first: "john", last: "doe" },
 			email: "john@example.com",
 			permissions: {
@@ -14,12 +14,12 @@ describe("Creatable", () => {
 					organization: {},
 					user: {},
 				},
-				acme: {
+				"---o1---": {
 					organization: {},
 					user: {},
 				},
 			},
 		}
-		expect(model.User.Key.Creatable.is(creatable)).toBe(true)
+		expect(userwidgets.User.Key.Creatable.is(creatable)).toBe(true)
 	})
 })

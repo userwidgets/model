@@ -1,15 +1,20 @@
-import * as cryptly from "cryptly"
-import * as gracely from "gracely"
+import { cryptly } from "cryptly"
+import { gracely } from "gracely"
+import { isly } from "isly"
 import { Change as PasswordChange } from "./Change"
 import { Set as PasswordSet } from "./Set"
 
-export type Password = string
+export type Password = string | Password.Change | Password.Set
 
 export namespace Password {
-	export function is(value: Password | any): value is (PasswordChange | PasswordSet) & Record<string, any> {
-		return typeof value == "string"
-	}
-	export async function hash(password: Password, hashSecret?: string): Promise<cryptly.Password.Hash | gracely.Error> {
+	export type Change = PasswordChange
+	export const Change = PasswordChange
+	export type Set = PasswordSet
+	export const Set = PasswordSet
+	export const type = isly.union<Password, Change, Set, string>(Change.type, Set.type, isly.string(/.+/))
+	export const is = type.is
+	export const flaw = type.flaw
+	export async function hash(password: string, hashSecret?: string): Promise<cryptly.Password.Hash | gracely.Error> {
 		let result: cryptly.Password.Hash | gracely.Error
 		if (!hashSecret)
 			result = gracely.server.misconfigured("hashSecret", "hashSecret is not set in worker environment")
@@ -22,7 +27,7 @@ export namespace Password {
 		return result
 	}
 	export async function verify(
-		password: Password | Change,
+		password: string | Change,
 		hash: cryptly.Password.Hash,
 		hashSecret?: string
 	): Promise<boolean | gracely.Error> {
@@ -34,9 +39,4 @@ export namespace Password {
 			  )
 			: gracely.server.misconfigured("hashSecret", "hashSecret is not set in worker environment")
 	}
-
-	export type Change = PasswordChange
-	export const Change = PasswordChange
-	export type Set = PasswordSet
-	export const Set = PasswordSet
 }

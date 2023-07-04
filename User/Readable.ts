@@ -1,29 +1,27 @@
-import * as isoly from "isoly"
+import { isoly } from "isoly"
+import { isly } from "isly"
+import { Email } from "../Email"
 import type { User } from "./index"
 import { Name } from "./Name"
 import { Permissions } from "./Permissions"
 
 export interface Readable {
 	name: Name
-	email: string
+	email: Email
 	permissions: Permissions.Readable
 	created?: isoly.DateTime
 	modified?: isoly.DateTime
 }
 export namespace Readable {
-	export function is(value: any | Readable): value is Readable {
-		return (
-			typeof value == "object" &&
-			value &&
-			Name.is(value.name) &&
-			typeof value.email == "string" &&
-			typeof value.permissions == "object" &&
-			value.permissions &&
-			Permissions.Readable.is(value.permissions) &&
-			(value.created == undefined || isoly.DateTime.is(value.created)) &&
-			(value.modified == undefined || isoly.DateTime.is(value.modified))
-		)
-	}
+	export const type = isly.object<Readable>({
+		name: Name.type,
+		email: Email.type,
+		permissions: isly.fromIs("Permissions.Readable", Permissions.Readable.is),
+		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is).optional(),
+		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is).optional(),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 	export function to(user: User, applicationId: string): Required<Readable> {
 		return {
 			...user,

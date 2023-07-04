@@ -1,7 +1,7 @@
-import * as gracely from "gracely"
-import * as isoly from "isoly"
-import * as http from "cloudly-http"
-import * as rest from "cloudly-rest"
+import { gracely } from "gracely"
+import { isoly } from "isoly"
+import { http } from "cloudly-http"
+import { rest } from "cloudly-rest"
 import type { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
@@ -11,7 +11,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 	}
 	async create(
 		organization: userwidgets.Organization.Creatable,
-		applicationId: string,
+		application: userwidgets.Application.Identifier,
 		url?: string
 	): Promise<
 		| gracely.Error
@@ -20,20 +20,17 @@ export class Organization extends rest.Collection<gracely.Error> {
 	> {
 		const result = await this.client.post<Awaited<ReturnType<Organization["create"]>>>(
 			`${this.configuration.pathPrefix}/organization${url ? "?url=" + url : ""}`,
-
 			organization,
-			{
-				application: applicationId,
-			}
+			{ application }
 		)
 		!gracely.Error.is(result) &&
 			!gracely.Error.is(result.organization) &&
 			(this.entityTags.organization[result.organization.id] = isoly.DateTime.now())
 		return result
 	}
-	async fetch(organizationId: string): Promise<userwidgets.Organization | gracely.Error> {
+	async fetch(id: userwidgets.Organization.Identifier): Promise<userwidgets.Organization | gracely.Error> {
 		const result = await this.client.get<userwidgets.Organization>(
-			`${this.configuration.pathPrefix}/organization/${organizationId}`
+			`${this.configuration.pathPrefix}/organization/${id}`
 		)
 		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
 		return result
@@ -48,40 +45,37 @@ export class Organization extends rest.Collection<gracely.Error> {
 		return result
 	}
 	async changeName(
-		organizationId: string,
+		id: userwidgets.Organization.Identifier,
 		organization: userwidgets.Organization.Creatable,
-		applicationId: string
+		application: userwidgets.Application.Identifier
 	): Promise<userwidgets.Organization | gracely.Error> {
-		const entityTag = this.entityTags.organization[organizationId]
+		const entityTag = this.entityTags.organization[id]
 		const result = await this.client.put<userwidgets.Organization>(
-			`${this.configuration.pathPrefix}/organization/${organizationId}/name`,
+			`${this.configuration.pathPrefix}/organization/${id}/name`,
 			organization,
-			{
-				...(entityTag && { ifMatch: [entityTag] }),
-				application: applicationId,
-			}
+			{ ...(entityTag && { ifMatch: [entityTag] }), application }
 		)
 		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
 		return result
 	}
-	async addUsers(organizationId: string, users: string[], url?: string) {
+	async addUsers(id: userwidgets.Organization.Identifier, users: userwidgets.Email[], url?: string) {
 		const result = await this.client.patch<userwidgets.User.Feedback.Invitation[] | gracely.Error>(
-			`${this.configuration.pathPrefix}/organization/user/${organizationId}${url ? "?url=" + url : ""}`,
+			`${this.configuration.pathPrefix}/organization/user/${id}${url ? "?url=" + url : ""}`,
 			users
 		)
 		if (!gracely.Error.is(rest))
-			this.entityTags.organization[organizationId] = isoly.DateTime.now()
+			this.entityTags.organization[id] = isoly.DateTime.now()
 		return result
 	}
-	async removeUser(organizationId: string, email: string) {
-		const entityTag = this.entityTags.organization[organizationId]
+	async removeUser(id: userwidgets.Organization.Identifier, email: userwidgets.Email) {
+		const entityTag = this.entityTags.organization[id]
 		const result = await this.client.delete<userwidgets.Organization>(
-			`${this.configuration.pathPrefix}/organization/${organizationId}/user/${email}`,
+			`${this.configuration.pathPrefix}/organization/${id}/user/${email}`,
 			{
 				...(entityTag && { ifMatch: [entityTag] }),
 			}
 		)
-		!gracely.Error.is(result) && (this.entityTags.organization[organizationId] = isoly.DateTime.now())
+		!gracely.Error.is(result) && (this.entityTags.organization[id] = isoly.DateTime.now())
 		return result
 	}
 }

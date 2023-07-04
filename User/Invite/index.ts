@@ -1,8 +1,9 @@
-import * as isoly from "isoly"
+import { isoly } from "isoly"
 import * as authly from "authly"
-import { Creatable as CreatableInvite } from "./Creatable"
+import { isly } from "isly"
+import { Creatable as InviteCreatable } from "./Creatable"
 
-export interface Invite extends CreatableInvite {
+export interface Invite extends Invite.Creatable {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
@@ -34,18 +35,19 @@ const transformers: authly.Property.Transformer[] = [
 ]
 
 export namespace Invite {
+	export type Creatable = InviteCreatable
+	export const Creatable = InviteCreatable
 	export type Issuer = authly.Issuer<Creatable>
 	export type Verifier = authly.Verifier<Invite>
-	export function is(value: Invite | any): value is Invite & Record<string, any> {
-		return (
-			CreatableInvite.is(value) &&
-			typeof value.issuer == "string" &&
-			typeof value.audience == "string" &&
-			isoly.DateTime.is(value.issued) &&
-			isoly.DateTime.is(value.expires) &&
-			typeof value.token == "string"
-		)
-	}
+	export const type = Creatable.type.extend<Invite>({
+		issuer: isly.string(/.+/),
+		audience: isly.string(/.+/),
+		issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		token: isly.string(/^.+\..+\..+$/),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 	export namespace Issuer {
 		export function create(issuer: string, audience: string, publicKey: string, privateKey: string): Issuer {
 			return Object.assign(
@@ -67,6 +69,4 @@ export namespace Invite {
 			)
 		}
 	}
-	export type Creatable = CreatableInvite
-	export const Creatable = CreatableInvite
 }

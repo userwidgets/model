@@ -8,7 +8,7 @@ export interface Application {
 	[resource: string]: Permission | undefined
 }
 export namespace Application {
-	export function is(value: Application | any): value is Application & Record<string, any> {
+	export function is(value: Application | any): value is Application {
 		return typeof value == "object" && Collection.is(value)
 	}
 }

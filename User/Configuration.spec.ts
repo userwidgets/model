@@ -1,14 +1,14 @@
-import * as model from "../index"
+import { userwidgets } from "../index"
 describe("Configuration", () => {
 	it("addDefault", () => {
-		expect(model.Configuration.addDefault({})).toMatchObject<Partial<model.Configuration>>({
+		expect(userwidgets.Configuration.addDefault({})).toMatchObject<Partial<userwidgets.Configuration>>({
 			inviteParameterName: "invite",
 			pathPrefix: "",
 		})
-		expect(model.Configuration.addDefault({}, "inviteParameterName")).toEqual({
+		expect(userwidgets.Configuration.addDefault({}, "inviteParameterName")).toEqual({
 			inviteParameterName: "invite",
 		})
-		expect(model.Configuration.addDefault({}, "inviteParameterName", "pathPrefix")).toEqual({
+		expect(userwidgets.Configuration.addDefault({}, "inviteParameterName", "pathPrefix")).toEqual({
 			inviteParameterName: "invite",
 			pathPrefix: "",
 		})

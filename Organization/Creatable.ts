@@ -1,32 +1,31 @@
+import { isly } from "isly"
+import { Email } from "../Email"
 import { Permissions } from "../User/Permissions"
-
+import { Identifier } from "./Identifier"
 export interface Creatable {
-	id?: string
+	id?: Identifier
 	name: string
 	permissions: string[]
-	users: { email: string; permissions?: [Permissions.Application, Permissions.Organization] }[]
+	users: { email: Email; permissions?: [Permissions.Application, Permissions.Organization] }[]
 }
 
 export namespace Creatable {
-	export function is(value: Creatable | any): value is Creatable & Record<string, any> {
-		return (
-			typeof value == "object" &&
-			typeof value.name == "string" &&
-			(value.id == undefined || typeof value.id == "string") &&
-			Array.isArray(value.permissions) &&
-			value.permissions.every((permission: string | any) => typeof permission == "string") &&
-			Array.isArray(value.users) &&
-			value.users.every(
-				(user: any) =>
-					typeof user == "object" &&
-					user &&
-					typeof user.email == "string" &&
-					(user.permissions == undefined ||
-						(Array.isArray(user.permissions) &&
-							user.permissions.length == 2 &&
-							Permissions.Application.is(user.permissions[0]) &&
-							Permissions.Organization.is(user.permissions[1])))
-			)
-		)
-	}
+	export const type = isly.object<Creatable>({
+		id: Identifier.type.optional(),
+		name: isly.string(/.+/),
+		permissions: isly.array(isly.string(/.+/)),
+		users: isly.array(
+			isly.object({
+				email: Email.type,
+				permissions: isly
+					.tuple(
+						isly.fromIs("Permissions.Application", Permissions.Application.is),
+						isly.fromIs("Permissions.Organization", Permissions.Organization.is)
+					)
+					.optional(),
+			})
+		),
+	})
+	export const is = type.is
+	export const flaw = type.flaw
 }

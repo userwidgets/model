@@ -1,22 +1,21 @@
+import { isly } from "isly"
 import { Invitation as FeedbackInvitation } from "./Invitation"
 import { Notification as FeedbackNotification } from "./Notification"
 
-export type Feedback = FeedbackInvitation | FeedbackNotification
+export type Feedback = Feedback.Invitation | Feedback.Notification
 
 export namespace Feedback {
-	export function is(value: Feedback | any): value is Feedback {
-		return Invitation.is(value) || Notification.is(value)
-	}
 	export type Invitation = FeedbackInvitation
+	export const Invitation = FeedbackInvitation
 	export namespace Invitation {
-		export const is = FeedbackInvitation.is
 		export type Interface = FeedbackInvitation.Interface
-		export const Interface = FeedbackInvitation.Interface
 	}
 	export type Notification = FeedbackNotification
+	export const Notification = FeedbackNotification
 	export namespace Notification {
-		export const is = FeedbackNotification.is
 		export type Interface = FeedbackNotification.Interface
-		export const Interface = FeedbackNotification.Interface
 	}
+	export const type = isly.union<Feedback, Invitation, Notification>(Invitation.type, Notification.type)
+	export const is = type.is
+	export const flaw = type.flaw
 }

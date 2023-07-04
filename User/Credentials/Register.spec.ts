@@ -1,7 +1,7 @@
-import * as model from "../../index"
+import { userwidgets } from "../../index"
 
 describe("User.Credentials.Register", () => {
-	const register: model.User.Credentials.Register = {
+	const register: userwidgets.User.Credentials.Register = {
 		user: "jane@example.com",
 		name: {
 			first: "jane",
@@ -13,7 +13,7 @@ describe("User.Credentials.Register", () => {
 		},
 	}
 	it("is", () => {
-		expect(model.User.Credentials.Register.is(register)).toEqual(true)
-		expect(model.User.Credentials.Register.validate(register)).toEqual(true)
+		expect(userwidgets.User.Credentials.Register.is(register)).toEqual(true)
+		expect(userwidgets.User.Credentials.Register.validate(register)).toEqual(true)
 	})
 })
