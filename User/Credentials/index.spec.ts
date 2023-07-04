@@ -1,17 +1,17 @@
-import * as model from "../../index"
+import { userwidgets } from "../../index"
 
 describe("User.Credentials", () => {
-	const credentials: model.User.Credentials = {
+	const credentials: userwidgets.User.Credentials = {
 		user: "jane@example.com",
 		password: "asd",
 	}
 	it("is", () => {
-		expect(model.User.Credentials.is(credentials)).toEqual(true)
+		expect(userwidgets.User.Credentials.is(credentials)).toEqual(true)
 	})
 	it("to basic", () => {
-		expect(model.User.Credentials.toBasic(credentials)).toEqual("Basic amFuZUBleGFtcGxlLmNvbTphc2Q=")
+		expect(userwidgets.User.Credentials.toBasic(credentials)).toEqual("Basic amFuZUBleGFtcGxlLmNvbTphc2Q=")
 	})
 	it("from basic", () => {
-		expect(model.User.Credentials.fromBasic("Basic amFuZUBleGFtcGxlLmNvbTphc2Q=")).toEqual(credentials)
+		expect(userwidgets.User.Credentials.fromBasic("Basic amFuZUBleGFtcGxlLmNvbTphc2Q=")).toEqual(credentials)
 	})
 })

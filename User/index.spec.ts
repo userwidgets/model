@@ -1,23 +1,24 @@
-import * as isoly from "isoly"
-import * as model from "../index"
+import { isoly } from "isoly"
+import { userwidgets } from "../index"
+
 describe("User", () => {
 	const now = isoly.DateTime.now()
-	const user: model.User = {
+	const user: userwidgets.User = {
 		email: "jane@example.com",
 		name: {
 			first: "jane",
 			last: "doe",
 		},
 		permissions: {
-			applicationId: {
+			"---a1---": {
 				"*": {
 					application: {},
 					user: {},
 				},
-				organizationId: {
+				"---o1---": {
 					organization: {},
 				},
-				orgId: {
+				"---o2---": {
 					organization: {},
 					user: {
 						read: true,
@@ -29,34 +30,34 @@ describe("User", () => {
 		modified: now,
 	}
 	it("is", () => {
-		expect(model.User.is(user)).toEqual(true)
-		const u: model.User = {
+		expect(userwidgets.User.is(user)).toEqual(true)
+		const u: userwidgets.User = {
 			email: "jessie@example.com",
 			name: { first: "jessie", last: "doe " },
 			permissions: {
-				someAppId: {
+				"---a1---": {
 					"*": { user: { write: true } },
 				},
 			},
 			created: now,
 			modified: now,
 		}
-		expect(model.User.is(u)).toEqual(true)
+		expect(userwidgets.User.is(u)).toEqual(true)
 	})
 	it("toKey", () => {
-		let key = model.User.toKey(user, "applicationId")
+		let key = userwidgets.User.toKey(user, "---a1---")
 		let keys = Object.keys(key?.permissions ?? {})
 		expect(keys.length).toEqual(3)
-		expect(model.User.Key.Creatable.is(key)).toEqual(true)
+		expect(userwidgets.User.Key.Creatable.is(key)).toEqual(true)
 
-		key = model.User.toKey(user, "applicationId", ["orgId"])
+		key = userwidgets.User.toKey(user, "---a1---", ["---o2---"])
 		keys = Object.keys(key?.permissions ?? {})
 		expect(keys.length).toEqual(2)
-		expect(keys.includes("orgId")).toEqual(true)
-		expect(keys.includes("organizationId")).toEqual(false)
+		expect(keys.includes("---o2---")).toEqual(true)
+		expect(keys.includes("---o3---")).toEqual(false)
 		expect(keys.includes("*")).toEqual(true)
 
-		key = model.User.toKey(user, "asd")
+		key = userwidgets.User.toKey(user, "---a4---")
 		expect(key).toEqual(undefined)
 	})
 })

@@ -1,20 +1,20 @@
-import * as gracely from "gracely"
-import * as model from "../../../index"
+import { gracely } from "gracely"
+import { userwidgets } from "../../../index"
 
 describe("User.Feedback.Invitation.Invitation", () => {
 	it("is", () => {
-		let invitation: model.User.Feedback.Invitation.Interface = {
-			email: "asd",
+		let invitation: userwidgets.User.Feedback.Invitation.Interface = {
+			email: "user@app.com",
 			invite: "asd",
 			response: gracely.client.notFound(),
 		}
-		expect(model.User.Feedback.Invitation.Interface.is(invitation)).toEqual(true)
-		expect(model.User.Feedback.Invitation.is(invitation)).toEqual(true)
+		expect(userwidgets.User.Feedback.Invitation.Interface.is(invitation)).toEqual(true)
+		expect(userwidgets.User.Feedback.Invitation.is(invitation)).toEqual(true)
 		invitation = { ...invitation, response: { status: 200 } }
-		expect(model.User.Feedback.Invitation.Interface.is(invitation)).toEqual(true)
-		expect(model.User.Feedback.Invitation.is(invitation)).toEqual(true)
+		expect(userwidgets.User.Feedback.Invitation.Interface.is(invitation)).toEqual(true)
+		expect(userwidgets.User.Feedback.Invitation.is(invitation)).toEqual(true)
 		expect(
-			model.User.Feedback.Invitation.is(
+			userwidgets.User.Feedback.Invitation.is(
 				Object.fromEntries(Object.entries(invitation).filter(([property, _]) => property != "response"))
 			)
 		).toEqual(true)

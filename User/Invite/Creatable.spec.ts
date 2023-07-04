@@ -1,8 +1,8 @@
-import * as model from "../../index"
+import { userwidgets } from "../../index"
 
 describe("User.Invite.Creatable", () => {
 	it("is", () => {
-		const signature: model.User.Invite.Creatable = {
+		const signature: userwidgets.User.Invite.Creatable = {
 			email: "jane@example.com",
 			active: true,
 			permissions: {
@@ -17,6 +17,6 @@ describe("User.Invite.Creatable", () => {
 				},
 			},
 		}
-		expect(model.User.Invite.Creatable.is(signature)).toEqual(true)
+		expect(userwidgets.User.Invite.Creatable.is(signature)).toEqual(true)
 	})
 })

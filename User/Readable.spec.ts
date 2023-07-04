@@ -1,8 +1,9 @@
-import * as isoly from "isoly"
-import * as model from "../index"
+import { isoly } from "isoly"
+import { userwidgets } from "../index"
+
 describe("User.Readable", () => {
 	it("is", () => {
-		const readable: model.User.Readable = {
+		const readable: userwidgets.User.Readable = {
 			email: "jessie@example.com",
 			name: {
 				first: "jessie",
@@ -13,19 +14,19 @@ describe("User.Readable", () => {
 				organizationId: { user: { read: true } },
 			},
 		}
-		expect(model.User.Readable.is(readable)).toEqual(true)
+		expect(userwidgets.User.Readable.is(readable)).toEqual(true)
 		expect(
-			model.User.Readable.is({
+			userwidgets.User.Readable.is({
 				...readable,
 				permissions: { "*": { user: { read: true } }, organizationId: { user: { read: true } } },
 			})
 		).toEqual(true)
 		expect(
-			model.User.Readable.is({ ...readable, created: isoly.DateTime.now(), modified: isoly.DateTime.now() })
+			userwidgets.User.Readable.is({ ...readable, created: isoly.DateTime.now(), modified: isoly.DateTime.now() })
 		).toEqual(true)
 	})
 	it("to", () => {
-		const user: model.User = {
+		const user: userwidgets.User = {
 			email: "jessie@example.com",
 			name: {
 				first: "jessie",
@@ -37,7 +38,7 @@ describe("User.Readable", () => {
 			created: isoly.DateTime.now(),
 			modified: isoly.DateTime.now(),
 		}
-		const result = model.User.Readable.to(user, "applicationId")
-		expect(model.User.Readable.is(result)).toEqual(true)
+		const result = userwidgets.User.Readable.to(user, "applicationId")
+		expect(userwidgets.User.Readable.is(result)).toEqual(true)
 	})
 })
