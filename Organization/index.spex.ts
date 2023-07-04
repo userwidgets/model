@@ -1,8 +1,8 @@
-import * as isoly from "isoly"
-import * as model from "../index"
+import { isoly } from "isoly"
+import { userwidgets } from "../index"
 describe("Organization", () => {
 	const now = isoly.DateTime.now()
-	const creatable: model.Organization = {
+	const creatable: userwidgets.Organization = {
 		id: "myId",
 		name: "My organization name",
 		permissions: ["organization", "user"],
@@ -11,6 +11,6 @@ describe("Organization", () => {
 		modified: now,
 	}
 	it("is", () => {
-		expect(model.Organization.is(creatable)).toEqual(true)
+		expect(userwidgets.Organization.is(creatable)).toEqual(true)
 	})
 })
