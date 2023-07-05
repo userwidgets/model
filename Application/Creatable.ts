@@ -5,7 +5,6 @@ export interface Creatable {
 	permissions: string[]
 	organizations: Record<Organization.Identifier, Organization>
 }
-
 export namespace Creatable {
 	export const type = isly.object<Creatable>({
 		name: isly.string(/.+/),

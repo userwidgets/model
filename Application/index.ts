@@ -1,5 +1,6 @@
 import { isoly } from "isoly"
 import { isly } from "isly"
+import { Changeable as ApplicationChangeable } from "./Changeable"
 import { Creatable as ApplicationCreatable } from "./Creatable"
 import { Identifier as ApplicationIdentifier } from "./Identifier"
 export interface Application extends Application.Creatable {
@@ -13,6 +14,8 @@ export namespace Application {
 	export const Identifier = ApplicationIdentifier
 	export type Creatable = ApplicationCreatable
 	export const Creatable = ApplicationCreatable
+	export const Changeable = ApplicationChangeable
+	export type Changeable = ApplicationChangeable
 	export const type = Creatable.type.extend<Application>({
 		id: Identifier.type,
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),

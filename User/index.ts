@@ -3,6 +3,7 @@ import { isly } from "isly"
 import type { Application } from "../Application"
 import { Email } from "../Email"
 import type { Organization } from "../Organization"
+import { Changeable as UserChangeable } from "./Changeable"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
 import { Feedback as UserFeedback } from "./Feedback"
@@ -14,7 +15,7 @@ import { Permissions as UserPermissions } from "./Permissions"
 import { Readable as ReadableUser } from "./Readable"
 
 export interface User extends Omit<User.Creatable, "password" | "permissions"> {
-	permissions: UserPermissions
+	permissions: User.Permissions
 	created: isoly.DateTime
 	modified: isoly.DateTime
 }
@@ -101,6 +102,8 @@ export namespace User {
 	}
 	export type Creatable = UserCreatable
 	export const Creatable = UserCreatable
+	export type Changeable = UserChangeable
+	export const Changeable = UserChangeable
 	export type Readable = ReadableUser
 	export const Readable = ReadableUser
 }

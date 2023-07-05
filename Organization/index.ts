@@ -1,9 +1,9 @@
 import { isoly } from "isoly"
 import { isly } from "isly"
 import { Email } from "../Email"
+import { Changeable as OrganizationChangeable } from "./Changeable"
 import { Creatable as OrganizationCreatable } from "./Creatable"
 import { Identifier as OrganizationIdentifier } from "./Identifier"
-
 export interface Organization extends Omit<Organization.Creatable, "users"> {
 	id: Organization.Identifier
 	created: isoly.DateTime
@@ -16,6 +16,8 @@ export namespace Organization {
 	export const Identifier = OrganizationIdentifier
 	export type Creatable = OrganizationCreatable
 	export const Creatable = OrganizationCreatable
+	export type Changeable = OrganizationChangeable
+	export const Changeable = OrganizationChangeable
 	export const type = isly.object<Organization>({
 		id: Identifier.type,
 		name: isly.string(/.+/),
