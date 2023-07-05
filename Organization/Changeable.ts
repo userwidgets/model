@@ -6,7 +6,7 @@ export interface Changeable {
 	permissions?: Organization["permissions"]
 }
 export namespace Changeable {
-	export const type = isly.object({
+	export const type = isly.object<Changeable>({
 		name: isly.string(/.+/).optional(),
 		permissions: isly.array(isly.string(/.+/)).optional(),
 	})
