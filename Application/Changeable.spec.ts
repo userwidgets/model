@@ -1,3 +1,4 @@
+import { isoly } from "isoly"
 import { userwidgets } from "../index"
 
 describe("Application.Changeable", () => {
@@ -20,5 +21,11 @@ describe("Application.Changeable", () => {
 		expect(userwidgets.Application.Changeable.is({ name: "" })).toEqual(false)
 		expect(userwidgets.Application.Changeable.is({ permissions: ["a", ""] })).toEqual(false)
 		expect(userwidgets.Application.Changeable.is({ name: 1 })).toEqual(false)
+	})
+
+	it("get", () => {
+		expect(userwidgets.Application.Changeable.type.get({ ...application, created: isoly.Date.now() })).toEqual(
+			application
+		)
 	})
 })
