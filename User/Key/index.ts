@@ -3,13 +3,26 @@ import * as authly from "authly"
 import { isly } from "isly"
 import { Creatable as KeyCreatable } from "./Creatable"
 
-export interface Key extends Key.Creatable {
+type Key<
+	T extends Record<string, unknown>,
+	TDeep extends T["deep"] extends Record<string, unknown> ? T["deep"] : unknown = T["deep"]
+> = {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
 	expires: isoly.DateTime
 	token: string
-}
+	permissions: Key.Creatable["permissions"] & TDeep
+} & Key.Creatable &
+	T
+
+// export interface Key extends Key.Creatable {
+// 	issuer: string
+// 	audience: string
+// 	issued: isoly.DateTime
+// 	expires: isoly.DateTime
+// 	token: string
+// }
 
 const transformers: authly.Property.Creatable[] = [
 	{
