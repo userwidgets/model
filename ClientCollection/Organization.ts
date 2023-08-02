@@ -2,7 +2,7 @@ import { gracely } from "gracely"
 import { isoly } from "isoly"
 import { http } from "cloudly-http"
 import { rest } from "cloudly-rest"
-import type { userwidgets } from "../index"
+import { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
 export class Organization extends rest.Collection<gracely.Error> {
@@ -42,6 +42,21 @@ export class Organization extends rest.Collection<gracely.Error> {
 				(entityTags, organization) => ((entityTags.organization[organization.id] = isoly.DateTime.now()), entityTags),
 				this.entityTags
 			)
+		return result
+	}
+
+	async update(
+		id: userwidgets.Organization.Identifier,
+		organization: userwidgets.Organization.Changeable,
+		application: userwidgets.Application.Identifier
+	): Promise<userwidgets.Organization | gracely.Error> {
+		const entityTag = this.entityTags.organization[id]
+		const result = await this.client.patch<userwidgets.Organization>(
+			`${this.configuration.pathPrefix}/organization/${id}`,
+			organization,
+			{ ...(entityTag && { ifMatch: [entityTag] }), application }
+		)
+		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
 		return result
 	}
 	async changeName(
