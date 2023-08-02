@@ -2,7 +2,7 @@ import { gracely } from "gracely"
 import { isoly } from "isoly"
 import { http } from "cloudly-http"
 import { rest } from "cloudly-rest"
-import { userwidgets } from "../index"
+import type { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
 export class Organization extends rest.Collection<gracely.Error> {
