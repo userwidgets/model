@@ -46,8 +46,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 	}
 	async update(
 		id: userwidgets.Organization.Identifier,
-		organization: userwidgets.Organization.Changeable,
-		application: userwidgets.Application.Identifier
+		organization: userwidgets.Organization.Changeable
 	): Promise<
 		| gracely.Error
 		| { organization: gracely.Error }
@@ -63,7 +62,6 @@ export class Organization extends rest.Collection<gracely.Error> {
 			organization,
 			{
 				...(entityTag && { ifMatch: [entityTag] }),
-				application,
 			}
 		)
 		!gracely.Error.is(result) && (this.entityTags.organization[id] = isoly.DateTime.now())
