@@ -59,38 +59,4 @@ export class Organization extends rest.Collection<gracely.Error> {
 		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
 		return result
 	}
-	async changeName(
-		id: userwidgets.Organization.Identifier,
-		organization: userwidgets.Organization.Creatable,
-		application: userwidgets.Application.Identifier
-	): Promise<userwidgets.Organization | gracely.Error> {
-		const entityTag = this.entityTags.organization[id]
-		const result = await this.client.put<userwidgets.Organization>(
-			`${this.configuration.pathPrefix}/organization/${id}/name`,
-			organization,
-			{ ...(entityTag && { ifMatch: [entityTag] }), application }
-		)
-		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
-		return result
-	}
-	async addUsers(id: userwidgets.Organization.Identifier, users: userwidgets.Email[], url?: string) {
-		const result = await this.client.patch<userwidgets.User.Feedback.Invitation[] | gracely.Error>(
-			`${this.configuration.pathPrefix}/organization/user/${id}${url ? "?url=" + url : ""}`,
-			users
-		)
-		if (!gracely.Error.is(rest))
-			this.entityTags.organization[id] = isoly.DateTime.now()
-		return result
-	}
-	async removeUser(id: userwidgets.Organization.Identifier, email: userwidgets.Email) {
-		const entityTag = this.entityTags.organization[id]
-		const result = await this.client.delete<userwidgets.Organization>(
-			`${this.configuration.pathPrefix}/organization/${id}/user/${email}`,
-			{
-				...(entityTag && { ifMatch: [entityTag] }),
-			}
-		)
-		!gracely.Error.is(result) && (this.entityTags.organization[id] = isoly.DateTime.now())
-		return result
-	}
 }
