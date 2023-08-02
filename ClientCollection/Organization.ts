@@ -58,17 +58,14 @@ export class Organization extends rest.Collection<gracely.Error> {
 		  }
 	> {
 		const entityTag = this.entityTags.organization[id]
-		const result = await this.client.patch<
-			| { organization: gracely.Error }
-			| {
-					organization: userwidgets.Organization
-					invites: userwidgets.User.Feedback.Invitation[]
-					removals: userwidgets.User.Feedback.Notification[]
-			  }
-		>(`${this.configuration.pathPrefix}/organization/${id}`, organization, {
-			...(entityTag && { ifMatch: [entityTag] }),
-			application,
-		})
+		const result = await this.client.patch<ReturnType<Organization["update"]>>(
+			`${this.configuration.pathPrefix}/organization/${id}`,
+			organization,
+			{
+				...(entityTag && { ifMatch: [entityTag] }),
+				application,
+			}
+		)
 		!gracely.Error.is(result) && (this.entityTags.organization[id] = isoly.DateTime.now())
 		return result
 	}
