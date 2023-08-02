@@ -48,14 +48,28 @@ export class Organization extends rest.Collection<gracely.Error> {
 		id: userwidgets.Organization.Identifier,
 		organization: userwidgets.Organization.Changeable,
 		application: userwidgets.Application.Identifier
-	): Promise<userwidgets.Organization | gracely.Error> {
+	): Promise<
+		| gracely.Error
+		| { organization: gracely.Error }
+		| {
+				organization: userwidgets.Organization
+				invites: userwidgets.User.Feedback.Invitation[]
+				removals: userwidgets.User.Feedback.Notification[]
+		  }
+	> {
 		const entityTag = this.entityTags.organization[id]
-		const result = await this.client.patch<userwidgets.Organization>(
-			`${this.configuration.pathPrefix}/organization/${id}`,
-			organization,
-			{ ...(entityTag && { ifMatch: [entityTag] }), application }
-		)
-		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
+		const result = await this.client.patch<
+			| { organization: gracely.Error }
+			| {
+					organization: userwidgets.Organization
+					invites: userwidgets.User.Feedback.Invitation[]
+					removals: userwidgets.User.Feedback.Notification[]
+			  }
+		>(`${this.configuration.pathPrefix}/organization/${id}`, organization, {
+			...(entityTag && { ifMatch: [entityTag] }),
+			application,
+		})
+		!gracely.Error.is(result) && (this.entityTags.organization[id] = isoly.DateTime.now())
 		return result
 	}
 }
