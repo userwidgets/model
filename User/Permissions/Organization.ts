@@ -1,7 +1,8 @@
+import { authly } from "authly"
 import { isly } from "isly"
 import { Identifier } from "../../Organization/Identifier"
 
-export type Organization<T extends Record<string, unknown> = Record<string, unknown>> = {
+export type Organization<T extends authly.Payload.Data = authly.Payload.Data> = {
 	// users permissions on organization in current application
 	[id: Identifier]:
 		| ({
@@ -38,8 +39,8 @@ export type Organization<T extends Record<string, unknown> = Record<string, unkn
 		| undefined
 }
 export namespace Organization {
-	function createType<T extends Record<string, unknown>>(
-		type: isly.Type<T> = isly.record(isly.string(), isly.union(isly.undefined(), isly.unknown()))
+	function createType<T extends authly.Payload.Data>(
+		type: isly.Type<T> = isly.record(isly.string(), isly.undefined())
 	): isly.Type<Organization<T>> {
 		return isly.record<Organization<T>>(
 			isly.string(),

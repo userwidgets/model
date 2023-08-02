@@ -1,6 +1,7 @@
+import { authly } from "authly"
 import { isly } from "isly"
 
-export type Application<T extends Record<string, unknown> = Record<string, unknown>> = {
+export type Application<T extends authly.Payload.Data = authly.Payload.Data> = {
 	// permissions on current application user is logged into
 	"*"?:
 		| ({
@@ -41,8 +42,8 @@ export type Application<T extends Record<string, unknown> = Record<string, unkno
 		| true
 }
 export namespace Application {
-	export function createType<T extends Record<string, unknown>>(
-		type: isly.Type<T> = isly.record(isly.string(), isly.union(isly.undefined(), isly.unknown()))
+	export function createType<T extends authly.Payload.Data>(
+		type: isly.Type<T> = isly.record(isly.string(), isly.undefined())
 	): isly.Type<Application<T>> {
 		return isly.record<Application<T>>(
 			isly.string(),

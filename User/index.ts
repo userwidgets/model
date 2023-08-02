@@ -1,4 +1,5 @@
 import { isoly } from "isoly"
+import { authly } from "authly"
 import { isly } from "isly"
 import type { Application } from "../Application"
 import { Email } from "../Email"
@@ -53,12 +54,18 @@ export namespace User {
 					},
 			  }
 	}
-	export type Key = UserKey
+	export type Key<
+		K extends authly.Payload.Data = authly.Payload.Data,
+		P extends authly.Payload.Data = authly.Payload.Data
+	> = UserKey<K, P>
 	export const Key = UserKey
 	export namespace Key {
-		export type Issuer = UserKey.Issuer
-		export type Verifier = UserKey.Verifier
-		export type Creatable = UserKey.Creatable
+		export type Issuer<T extends Key> = UserKey.Issuer<T>
+		export type Verifier<T extends Key> = UserKey.Verifier<T>
+		export type Creatable<
+			K extends authly.Payload.Data = authly.Payload.Data,
+			P extends authly.Payload.Data = authly.Payload.Data
+		> = UserKey.Creatable<K, P>
 	}
 
 	export type Credentials = UserCredentials

@@ -1,106 +1,77 @@
 import { isoly } from "isoly"
-import * as authly from "authly"
+import { authly } from "authly"
 import { isly } from "isly"
 import { Creatable as KeyCreatable } from "./Creatable"
+import { Transformer as KeyTransformer, transformers } from "./Transformers"
 
-// type Key<
-// 	T extends Record<string, unknown>,
-// 	TDeep extends T["deep"] extends Record<string, unknown> ? T["deep"] : unknown = T["deep"]
-// > = {
-// 	issuer: string
-// 	audience: string
-// 	issued: isoly.DateTime
-// 	expires: isoly.DateTime
-// 	token: string
-// 	permissions: Key.Creatable["permissions"] & TDeep
-// } & Key.Creatable &
-// 	T
-
-// export interface Key extends Key.Creatable {
-// 	issuer: string
-// 	audience: string
-// 	issued: isoly.DateTime
-// 	expires: isoly.DateTime
-// 	token: string
-// }
-
-const transformers: authly.Property.Creatable[] = [
-	{
-		issued: {
-			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the iat-value.
-			backward: (value: number) => isoly.DateTime.create(value),
-		},
-		expires: {
-			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the exp-value.
-			backward: (value: number) => isoly.DateTime.create(value),
-		},
-	},
-	{
-		issuer: "iss",
-		audience: "aud",
-		issued: "iat",
-		expires: "exp",
-		email: "sub",
-		permissions: "per",
-		name: "nam",
-		token: "tok",
-	},
-]
-
-type Base<T extends Record<string, unknown> = Record<string, unknown>> = {
+type Properties = {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
 	expires: isoly.DateTime
 	token: string
-} & KeyCreatable<T>
+}
+type Base<
+	K extends authly.Payload.Data = authly.Payload.Data,
+	P extends authly.Payload.Data = authly.Payload.Data
+> = Properties & KeyCreatable<K, P>
 export type Key<
-	K extends Record<string, unknown> = Record<string, unknown>,
-	P extends Record<string, unknown> = Record<string, unknown>
-> = Base<P> & K
+	K extends authly.Payload.Data = authly.Payload.Data,
+	P extends authly.Payload.Data = authly.Payload.Data
+> = Base<K, P> & K
 export namespace Key {
-	export type Creatable = KeyCreatable
+	export type Transformer = KeyTransformer
+	export const Transformer = KeyTransformer
+	export type Creatable<
+		K extends authly.Payload.Data = authly.Payload.Data,
+		P extends authly.Payload.Data = authly.Payload.Data
+	> = KeyCreatable<K, P>
 	export const Creatable = KeyCreatable
-	function createType<K extends Record<string, unknown>, P extends Record<string, unknown>>(
-		key: isly.Type<K> = isly.record(isly.string(), isly.union(isly.undefined(), isly.unknown())),
-		permissions: isly.Type<P> = isly.record(isly.string(), isly.union(isly.undefined(), isly.unknown()))
+	function createType<K extends authly.Payload.Data, P extends authly.Payload.Data>(
+		key: isly.Type<K> = isly.record(isly.string(), isly.undefined()),
+		permissions: isly.Type<P> = isly.record(isly.string(), isly.undefined())
 	): isly.Type<Key<K, P>> {
-		return isly.intersection<Key<K, P>, K, Base<P>>(key, isly.intersection(isly.object({}), isly.object({})))
+		return isly.intersection<Key<K, P>, K, Base<K, P>>(
+			key,
+			isly.intersection<Base<K, P>, Key.Creatable<K, P>, Properties>(
+				Key.Creatable.type.create(key, permissions),
+				isly.object({
+					issuer: isly.string(),
+					audience: isly.string(),
+					issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+					expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+					token: isly.string(/^[^.]+\.[^.]+\.[^.]*/),
+				})
+			)
+		)
 	}
 	export const type = Object.assign(createType(), { create: createType })
+	export const is = type.is
+	export type Issuer<T extends Key.Creatable> = authly.Issuer<T>
+	export namespace Issuer {
+		export function create<T extends Key>(
+			issuer: string,
+			audience: string,
+			publicKey: string,
+			privateKey: string
+		): Issuer<Exclude<T, "issuer" | "audience" | "issued" | "expires" | "token">> {
+			return Object.assign(
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				authly.Issuer.create<T>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
+				{ audience, duration: 60 * 60 * 12 }
+			)
+		}
+	}
 
-	// export type Creatable = KeyCreatable
-	// export const Creatable = KeyCreatable
-	// export const type = Creatable.type.extend<Key>({
-	// 	issuer: isly.string(/.+/),
-	// 	audience: isly.string(/.+/),
-	// 	issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-	// 	expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-	// 	token: isly.string(/^.+\..+\..+$/),
-	// })
-	// export const is = type.is
-	// export const flaw = type.flaw
-	// export namespace Issuer {
-	// 	export function create(issuer: string, audience: string, publicKey: string, privateKey: string): Issuer {
-	// 		return Object.assign(
-	// 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	// 			authly.Issuer.create<Key>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
-	// 			{ audience, duration: 60 * 60 * 12 }
-	// 		)
-	// 	}
-	// }
-	// export type Issuer = authly.Issuer<KeyCreatable>
-	// export type Verifier = authly.Verifier<Key>
-	// export namespace Verifier {
-	// 	/**
-	// 	 * Creates a verifier.
-	// 	 * If no public key is provided, verifier skips verification and oly returns payload. Might be used on client-side.
-	// 	 */
-	// 	export function create(publicKey?: string): Verifier {
-	// 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	// 		return authly.Verifier.create<Key>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(
-	// 			...transformers
-	// 		)
-	// 	}
-	// }
+	export type Verifier<T extends Key> = authly.Verifier<T>
+	export namespace Verifier {
+		/**
+		 * Creates a verifier.
+		 * If no public key is provided, verifier skips verification and oly returns payload. Might be used on client-side.
+		 */
+		export function create<T extends Key>(publicKey?: string): Verifier<Key> {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			return authly.Verifier.create<T>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(...transformers)
+		}
+	}
 }
