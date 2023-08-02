@@ -44,7 +44,6 @@ export class Organization extends rest.Collection<gracely.Error> {
 			)
 		return result
 	}
-
 	async update(
 		id: userwidgets.Organization.Identifier,
 		organization: userwidgets.Organization.Changeable,
