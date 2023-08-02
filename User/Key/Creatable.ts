@@ -3,18 +3,23 @@ import { Email } from "../../Email"
 import { Name } from "../../User/Name"
 import { Permissions } from "../Permissions"
 
-export interface Creatable {
+export interface Creatable<T extends Record<string, unknown> = Record<string, unknown>> {
 	name: { first: string; last: string }
 	email: Email
-	permissions: Permissions.Readable
+	permissions: Permissions<T>
 }
 
 export namespace Creatable {
-	export const type = isly.object<Creatable>({
-		name: Name.type,
-		email: Email.type,
-		permissions: isly.fromIs("Permissions.Readable", Permissions.Readable.is),
-	})
+	function createType<T extends Record<string, unknown>>(
+		type: isly.Type<T> = isly.record(isly.string(), isly.union(isly.undefined(), isly.unknown()))
+	): isly.Type<Creatable<T>> {
+		return isly.object<Creatable<T>>({
+			name: Name.type,
+			email: Email.type,
+			permissions: Permissions.type.create(type),
+		})
+	}
+	export const type = Object.assign(createType(), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
 }
