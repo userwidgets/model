@@ -75,7 +75,7 @@
 		"cryptly": "^3.0.4",
 		"flagly": "../../utily/flagly",
 		"gracely": "^2.0.4",
-		"isly": "^0.1.9",
+		"isly": "^0.1.10",
 		"isoly": "^2.0.21"
 	},
 	"overrides": {

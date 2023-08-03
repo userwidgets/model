@@ -1,9 +1,10 @@
+import { flagly } from "flagly"
 import { authly } from "authly"
 import { isly } from "isly"
 import { Email } from "../Email"
 import { Permissions } from "../User/Permissions"
 import { Identifier } from "./Identifier"
-export interface Creatable<T extends authly.Payload.Data = authly.Payload.Data> {
+export interface Creatable<T extends flagly.Flags = flagly.Flags> {
 	id?: Identifier
 	name: string
 	permissions: string[]
@@ -11,9 +12,7 @@ export interface Creatable<T extends authly.Payload.Data = authly.Payload.Data> 
 }
 
 export namespace Creatable {
-	function createType<T extends authly.Payload.Data = authly.Payload.Data>(
-		type: isly.Type<T> = isly.record(isly.string(), isly.undefined())
-	): isly.Type<Creatable<T>> {
+	function createType<T extends flagly.Flags = flagly.Flags>(type: isly.Type<T>): isly.Type<Creatable<T>> {
 		return isly.object<Creatable<T>>({
 			id: Identifier.type.optional(),
 			name: isly.string(/.+/),
@@ -28,7 +27,7 @@ export namespace Creatable {
 			),
 		})
 	}
-	export const type = Object.assign(createType(), { create: createType })
+	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
 }

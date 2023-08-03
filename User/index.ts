@@ -1,5 +1,6 @@
+import { flagly } from "flagly"
 import { isoly } from "isoly"
-import { authly } from "authly"
+// import { authly } from "authly"
 import { isly } from "isly"
 import { Email } from "../Email"
 import { Changeable as UserChangeable } from "./Changeable"
@@ -12,42 +13,47 @@ import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
 
-export interface User<T extends authly.Payload.Data = authly.Payload.Data> extends Omit<User.Creatable, "password"> {
-	permissions: User.Permissions<T>
+export interface User<T extends flagly.Flags = flagly.Flags> extends Omit<User.Creatable<T>, "password"> {
 	created: isoly.DateTime
 	modified: isoly.DateTime
 }
 
 export namespace User {
-	export type Permissions<T extends authly.Payload.Data = authly.Payload.Data> = UserPermissions<T>
+	export type Permissions<T extends flagly.Flags = flagly.Flags> = UserPermissions<T>
 	export const Permissions = UserPermissions
 	export namespace Permissions {
-		export type Organization<T extends authly.Payload.Data = authly.Payload.Data> = UserPermissions.Organization<T>
-		export type Application<T extends authly.Payload.Data = authly.Payload.Data> = UserPermissions.Application<T>
+		export type Organization<T extends flagly.Flags = flagly.Flags> = UserPermissions.Organization<T>
+		export type Application<T extends flagly.Flags = flagly.Flags> = UserPermissions.Application<T>
 	}
 	export type Name = UserName
 	export const Name = UserName
-	export const type = isly.object<User>({
-		email: Email.type,
-		name: Name.type,
-		permissions: Permissions.type,
-		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-	})
+	function createType<T extends flagly.Flags>(type: isly.Type<T>): isly.Type<User<T>> {
+		return isly.object<User<T>>({
+			email: Email.type,
+			name: Name.type,
+			permissions: Permissions.type.create(type),
+			created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		})
+	}
+	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
 	export type Key<
-		K extends authly.Payload.Data = authly.Payload.Data,
-		P extends authly.Payload.Data = authly.Payload.Data
+		K extends UserKey.Creatable.Properties = UserKey.Creatable.Properties,
+		P extends flagly.Flags = flagly.Flags
 	> = UserKey<K, P>
 	export const Key = UserKey
 	export namespace Key {
 		export type Issuer<T extends Key.Creatable> = UserKey.Issuer<T>
 		export type Verifier<T extends Key> = UserKey.Verifier<T>
 		export type Creatable<
-			K extends authly.Payload.Data = authly.Payload.Data,
-			P extends authly.Payload.Data = authly.Payload.Data
+			K extends UserKey.Creatable.Properties = UserKey.Creatable.Properties,
+			P extends flagly.Flags = flagly.Flags
 		> = UserKey.Creatable<K, P>
+		export namespace Creatable {
+			export type Properties = UserKey.Creatable.Properties
+		}
 	}
 
 	export type Credentials = UserCredentials
@@ -61,10 +67,10 @@ export namespace User {
 		export type Change = UserPassword.Change
 		export type Set = UserPassword.Set
 	}
-	export type Invite<T extends authly.Payload.Data = authly.Payload.Data> = UserInvite<T>
+	export type Invite<T extends flagly.Flags = flagly.Flags> = UserInvite<T>
 	export const Invite = UserInvite
 	export namespace Invite {
-		export type Creatable<T extends authly.Payload.Data = authly.Payload.Data> = UserInvite.Creatable<T>
+		export type Creatable<T extends flagly.Flags = flagly.Flags> = UserInvite.Creatable<T>
 		export type Issuer<T extends Invite.Creatable> = UserInvite.Issuer<T>
 		export type Verifier<T extends Invite> = UserInvite.Verifier<T>
 	}
@@ -80,7 +86,7 @@ export namespace User {
 			export type Interface = UserFeedback.Notification.Interface
 		}
 	}
-	export type Creatable<T extends authly.Payload.Data = authly.Payload.Data> = UserCreatable<T>
+	export type Creatable<T extends flagly.Flags = flagly.Flags> = UserCreatable<T>
 	export const Creatable = UserCreatable
 	export type Changeable = UserChangeable
 	export const Changeable = UserChangeable

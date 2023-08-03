@@ -1,9 +1,10 @@
+import { flagly } from "flagly"
 import { isoly } from "isoly"
-import * as authly from "authly"
+import { authly } from "authly"
 import { isly } from "isly"
 import { Creatable as InviteCreatable } from "./Creatable"
 
-export interface Invite<T extends authly.Payload.Data = authly.Payload.Data> extends Invite.Creatable<T> {
+export interface Invite<T extends flagly.Flags = flagly.Flags> extends Invite.Creatable<T> {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
@@ -35,17 +36,27 @@ const transformers: authly.Property.Transformer[] = [
 ]
 
 export namespace Invite {
-	export type Creatable<T extends authly.Payload.Data = authly.Payload.Data> = InviteCreatable<T>
+	export type Creatable<T extends flagly.Flags = flagly.Flags> = InviteCreatable<T>
 	export const Creatable = InviteCreatable
-	export type Issuer<T extends Invite.Creatable> = authly.Issuer<Creatable<T>>
-	export type Verifier<T extends Invite> = authly.Verifier<Invite<T>>
-	export const type = Creatable.type.extend<Invite>({
-		issuer: isly.string(/.+/),
-		audience: isly.string(/.+/),
-		issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-		expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-		token: isly.string(/^.+\..+\..+$/),
-	})
+	export type Issuer<T extends Invite.Creatable> = authly.Issuer<T>
+	export type Verifier<T extends Invite> = authly.Verifier<T>
+	function createType<T extends flagly.Flags>(type: isly.Type<T>): isly.Type<Invite<T>> {
+		return Creatable.type.create(type).extend<Invite<T>>({
+			issuer: isly.string(/.+/),
+			audience: isly.string(/.+/),
+			issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			token: isly.string(/^.+\..+\..+$/),
+		})
+	}
+	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
+	// export const type = Creatable.type.extend<Invite>({
+	// 	issuer: isly.string(/.+/),
+	// 	audience: isly.string(/.+/),
+	// 	issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+	// 	expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+	// 	token: isly.string(/^.+\..+\..+$/),
+	// })
 	export const is = type.is
 	export const flaw = type.flaw
 	export namespace Issuer {
@@ -57,7 +68,7 @@ export namespace Invite {
 		): Issuer<T> {
 			return Object.assign(
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				authly.Issuer.create<Invite<T>>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
+				authly.Issuer.create<T>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),
 				{ audience, duration: 60 * 60 * 24 * 3 }
 			)
 		}
@@ -69,9 +80,7 @@ export namespace Invite {
 		 */
 		export function create<T extends Invite>(publicKey?: string): Verifier<T> {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			return authly.Verifier.create<Invite<T>>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(
-				...transformers
-			)
+			return authly.Verifier.create<T>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(...transformers)
 		}
 	}
 }

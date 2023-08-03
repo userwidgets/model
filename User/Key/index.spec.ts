@@ -1,6 +1,6 @@
 import { cryptly } from "cryptly"
 import { isoly } from "isoly"
-import * as authly from "authly"
+import { authly } from "authly"
 import { userwidgets } from "../../index"
 
 const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
@@ -62,19 +62,19 @@ describe("Key", () => {
 			name: { first: "john", last: "doe" },
 			email: "john@example.com",
 			permissions: {
-				// "*": {
-				// 	app: {},
-				// 	org: {},
-				// 	user: {},
-				// },
-				// "---o1---": {
-				// 	org: { view: true },
-				// 	user: {},
-				// },
+				"*": {
+					application: {},
+					org: {},
+					user: {},
+				},
+				"---o1---": {
+					org: { view: true },
+					user: {},
+				},
 			},
 			token: "a.fake.token",
 		}
-		expect(userwidgets.User.Key.is(key)).toBe(true)
+		expect(userwidgets.User.Key.is(key)).toEqual(true)
 	})
 	it("signing", async () => {
 		const issuer = userwidgets.User.Key.Issuer.create(

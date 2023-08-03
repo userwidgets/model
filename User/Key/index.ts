@@ -1,10 +1,11 @@
+import { flagly } from "flagly"
 import { isoly } from "isoly"
 import { authly } from "authly"
 import { isly } from "isly"
 import { Creatable as KeyCreatable } from "./Creatable"
 import { Transformer as KeyTransformer, transformers } from "./Transformers"
 
-type Properties = {
+type BaseProperties = {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
@@ -12,28 +13,31 @@ type Properties = {
 	token: string
 }
 type Base<
-	K extends authly.Payload.Data = authly.Payload.Data,
-	P extends authly.Payload.Data = authly.Payload.Data
-> = Properties & KeyCreatable<K, P>
+	K extends Key.Creatable.Properties = Key.Creatable.Properties,
+	P extends flagly.Flags = flagly.Flags
+> = BaseProperties & KeyCreatable<K, P>
 export type Key<
-	K extends authly.Payload.Data = authly.Payload.Data,
-	P extends authly.Payload.Data = authly.Payload.Data
+	K extends Key.Creatable.Properties = Key.Creatable.Properties,
+	P extends flagly.Flags = flagly.Flags
 > = Base<K, P> & K
 export namespace Key {
 	export type Transformer = KeyTransformer
 	export const Transformer = KeyTransformer
 	export type Creatable<
-		K extends authly.Payload.Data = authly.Payload.Data,
-		P extends authly.Payload.Data = authly.Payload.Data
+		K extends KeyCreatable.Properties = KeyCreatable.Properties,
+		P extends flagly.Flags = flagly.Flags
 	> = KeyCreatable<K, P>
 	export const Creatable = KeyCreatable
-	function createType<K extends authly.Payload.Data, P extends authly.Payload.Data>(
-		key: isly.Type<K> = isly.record(isly.string(), isly.undefined()),
-		permissions: isly.Type<P> = isly.record(isly.string(), isly.undefined())
+	export namespace Creatable {
+		export type Properties = KeyCreatable.Properties
+	}
+	function createType<K extends Creatable.Properties, P extends flagly.Flags>(
+		key: isly.Type<K>,
+		permissions: isly.Type<P>
 	): isly.Type<Key<K, P>> {
 		return isly.intersection<Key<K, P>, K, Base<K, P>>(
 			key,
-			isly.intersection<Base<K, P>, Key.Creatable<K, P>, Properties>(
+			isly.intersection<Base<K, P>, Key.Creatable<K, P>, BaseProperties>(
 				Key.Creatable.type.create(key, permissions),
 				isly.object({
 					issuer: isly.string(),
@@ -45,7 +49,7 @@ export namespace Key {
 			)
 		)
 	}
-	export const type = Object.assign(createType(), { create: createType })
+	export const type = Object.assign(createType(Creatable.Properties.type, flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export type Issuer<T extends Key.Creatable> = authly.Issuer<T>
 	export namespace Issuer {

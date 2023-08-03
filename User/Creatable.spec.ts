@@ -7,7 +7,7 @@ describe("User.Creatable", () => {
 		name: { first: "jane", last: "doe" },
 		permissions: {
 			"*": { application: {}, organization: {} },
-			acme: { organization: {}, user: { read: true } },
+			acme: { organization: {}, user: { view: true } },
 		},
 	}
 	it("is", () => {
