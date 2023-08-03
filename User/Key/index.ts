@@ -49,12 +49,12 @@ export namespace Key {
 	export const is = type.is
 	export type Issuer<T extends Key.Creatable> = authly.Issuer<T>
 	export namespace Issuer {
-		export function create<T extends Key>(
+		export function create<T extends Key.Creatable>(
 			issuer: string,
 			audience: string,
 			publicKey: string,
 			privateKey: string
-		): Issuer<Exclude<T, "issuer" | "audience" | "issued" | "expires" | "token">> {
+		): Issuer<T> {
 			return Object.assign(
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				authly.Issuer.create<T>(issuer, authly.Algorithm.RS256(publicKey, privateKey)!).add(...transformers),

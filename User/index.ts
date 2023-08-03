@@ -1,9 +1,7 @@
 import { isoly } from "isoly"
 import { authly } from "authly"
 import { isly } from "isly"
-import type { Application } from "../Application"
 import { Email } from "../Email"
-import type { Organization } from "../Organization"
 import { Changeable as UserChangeable } from "./Changeable"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
@@ -13,54 +11,38 @@ import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
-import { Readable as ReadableUser } from "./Readable"
 
-export interface User extends Omit<User.Creatable, "password" | "permissions"> {
-	permissions: User.Permissions
+export interface User<T extends authly.Payload.Data = authly.Payload.Data> extends Omit<User.Creatable, "password"> {
+	permissions: User.Permissions<T>
 	created: isoly.DateTime
 	modified: isoly.DateTime
 }
 
 export namespace User {
+	export type Permissions<T extends authly.Payload.Data = authly.Payload.Data> = UserPermissions<T>
+	export const Permissions = UserPermissions
+	export namespace Permissions {
+		export type Organization<T extends authly.Payload.Data = authly.Payload.Data> = UserPermissions.Organization<T>
+		export type Application<T extends authly.Payload.Data = authly.Payload.Data> = UserPermissions.Application<T>
+	}
 	export type Name = UserName
 	export const Name = UserName
 	export const type = isly.object<User>({
 		email: Email.type,
 		name: Name.type,
-		permissions: isly.fromIs("Permissions", UserPermissions.is),
+		permissions: Permissions.type,
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 	})
 	export const is = type.is
 	export const flaw = type.flaw
-	export function toKey(
-		user: User,
-		application: Application.Identifier,
-		organizations?: Organization.Identifier[]
-	): UserKey.Creatable | undefined {
-		const permissions = user.permissions[application]
-		return !permissions
-			? undefined
-			: {
-					email: user.email,
-					name: user.name,
-					permissions: {
-						...(organizations
-							? Object.fromEntries(
-									Object.entries(permissions).filter(([organization, _]) => organizations.includes(organization))
-							  )
-							: user.permissions[application]),
-						"*": permissions["*"],
-					},
-			  }
-	}
 	export type Key<
 		K extends authly.Payload.Data = authly.Payload.Data,
 		P extends authly.Payload.Data = authly.Payload.Data
 	> = UserKey<K, P>
 	export const Key = UserKey
 	export namespace Key {
-		export type Issuer<T extends Key> = UserKey.Issuer<T>
+		export type Issuer<T extends Key.Creatable> = UserKey.Issuer<T>
 		export type Verifier<T extends Key> = UserKey.Verifier<T>
 		export type Creatable<
 			K extends authly.Payload.Data = authly.Payload.Data,
@@ -79,21 +61,12 @@ export namespace User {
 		export type Change = UserPassword.Change
 		export type Set = UserPassword.Set
 	}
-	export type Invite = UserInvite
+	export type Invite<T extends authly.Payload.Data = authly.Payload.Data> = UserInvite<T>
 	export const Invite = UserInvite
 	export namespace Invite {
-		export type Issuer = UserInvite.Issuer
-		export type Verifier = UserInvite.Verifier
-		export type Creatable = UserInvite.Creatable
-	}
-	export type Permissions = UserPermissions
-	export const Permissions = UserPermissions
-	export namespace Permissions {
-		export type Application = UserPermissions.Application
-		export type Collection = UserPermissions.Collection
-		export type Organization = UserPermissions.Organization
-		export type Permission = UserPermissions.Permission
-		export type Readable = UserPermissions.Readable
+		export type Creatable<T extends authly.Payload.Data = authly.Payload.Data> = UserInvite.Creatable<T>
+		export type Issuer<T extends Invite.Creatable> = UserInvite.Issuer<T>
+		export type Verifier<T extends Invite> = UserInvite.Verifier<T>
 	}
 	export type Feedback = UserFeedback
 	export const Feedback = UserFeedback
@@ -107,10 +80,8 @@ export namespace User {
 			export type Interface = UserFeedback.Notification.Interface
 		}
 	}
-	export type Creatable = UserCreatable
+	export type Creatable<T extends authly.Payload.Data = authly.Payload.Data> = UserCreatable<T>
 	export const Creatable = UserCreatable
 	export type Changeable = UserChangeable
 	export const Changeable = UserChangeable
-	export type Readable = ReadableUser
-	export const Readable = ReadableUser
 }

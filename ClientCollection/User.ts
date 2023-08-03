@@ -9,8 +9,8 @@ export class User extends rest.Collection<gracely.Error> {
 	constructor(client: http.Client, readonly entityTags: EntityTags, readonly configuration: userwidgets.Configuration) {
 		super(client)
 	}
-	async list(): Promise<userwidgets.User.Readable[] | gracely.Error> {
-		const result = await this.client.get<userwidgets.User.Readable[]>(`${this.configuration.pathPrefix}/user`)
+	async list(): Promise<userwidgets.User[] | gracely.Error> {
+		const result = await this.client.get<userwidgets.User[]>(`${this.configuration.pathPrefix}/user`)
 		!gracely.Error.is(result) &&
 			result.forEach(user => ((this.entityTags.user[user.email] = isoly.DateTime.now()), this.entityTags))
 		return result
@@ -42,10 +42,10 @@ export class User extends rest.Collection<gracely.Error> {
 	async updatePermissions(
 		email: string,
 		organizationId: string,
-		permissions: userwidgets.User.Permissions.Readable
-	): Promise<userwidgets.User.Readable | gracely.Error> {
+		permissions: userwidgets.User.Permissions
+	): Promise<userwidgets.User | gracely.Error> {
 		const entityTag = this.entityTags.user[email]
-		const result = await this.client.patch<userwidgets.User.Readable>(
+		const result = await this.client.patch<userwidgets.User>(
 			`${this.configuration.pathPrefix}/user/${email}/permission/${organizationId}`,
 			permissions,
 			!entityTag ? undefined : { ifMatch: [entityTag] }
