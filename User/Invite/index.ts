@@ -50,13 +50,6 @@ export namespace Invite {
 		})
 	}
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
-	// export const type = Creatable.type.extend<Invite>({
-	// 	issuer: isly.string(/.+/),
-	// 	audience: isly.string(/.+/),
-	// 	issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-	// 	expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-	// 	token: isly.string(/^.+\..+\..+$/),
-	// })
 	export const is = type.is
 	export const flaw = type.flaw
 	export namespace Issuer {

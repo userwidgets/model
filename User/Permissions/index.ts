@@ -16,10 +16,13 @@ export namespace Permissions {
 	export const Organization = PermissionsOrganization
 	export type Application<T extends flagly.Flags = flagly.Flags> = PermissionsApplication<T>
 	export const Application = PermissionsApplication
-	export function createType<T extends flagly.Flags>(type: isly.Type<T>): isly.Type<Permissions<T>> {
+	function createType<T extends flagly.Flags>(type: isly.Type<T>): isly.Type<Permissions<T>> {
 		return isly.intersection(
 			isly.object({ "*": isly.union(isly.boolean(true), isly.undefined(), Application.type.create(type)) }),
-			isly.record(isly.string(), isly.union(isly.boolean(true), isly.undefined(), Organization.type.create(type)))
+			isly.record(
+				isly.string() /* Organization.Identifier.type */,
+				isly.union(isly.boolean(true), isly.undefined(), Organization.type.create(type))
+			)
 		)
 	}
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })

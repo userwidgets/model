@@ -24,4 +24,6 @@ export namespace Properties {
 			isly.undefined()
 		)
 	)
+	export const is = type.is
+	export const flaw = type.flaw
 }

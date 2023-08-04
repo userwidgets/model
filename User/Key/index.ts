@@ -51,6 +51,7 @@ export namespace Key {
 	}
 	export const type = Object.assign(createType(Creatable.Properties.type, flagly.Flags.type), { create: createType })
 	export const is = type.is
+	export const flaw = type.flaw
 	export type Issuer<T extends Key.Creatable> = authly.Issuer<T>
 	export namespace Issuer {
 		export function create<T extends Key.Creatable>(
