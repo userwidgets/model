@@ -28,6 +28,16 @@ export namespace Permissions {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
-	// export function check(source: Permissions, ...permissions: string[]): boolean {}
-	// export function set(source: Permissions, ...permissions: string[]): Permissions {}
+	export function check<T extends Permissions>(permissions: T, ...flags: string[]): boolean {
+		// needs to check both * and id
+		return flagly.get.path(permissions, ...flags)
+	}
+	export function set<T extends Permissions>(permissions: T, type: isly.Type<T>, ...flags: string[]): T | undefined {
+		const result = flagly.set.path(permissions, ...flags)
+		return type.is(result) ? result : undefined
+	}
+	export function remove<T extends Permissions>(permissions: T, type: isly.Type<T>, ...flags: string[]): T | undefined {
+		const result = flagly.remove.path(permissions, ...flags)
+		return type.is(result) ? result : undefined
+	}
 }
