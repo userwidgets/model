@@ -22,6 +22,10 @@ const transformers: authly.Property.Transformer[] = [
 			forward: (value: string) => isoly.DateTime.epoch(value, "seconds"), // "forward" is never used, since authly.Issuer creates the iat-value.
 			backward: (value: number) => isoly.DateTime.create(value),
 		},
+		permissions: {
+			forward: (value: flagly.Flags) => flagly.Flags.stringify(value),
+			backward: (value: string) => flagly.parse(value),
+		},
 	}),
 	new authly.Property.Renamer({
 		issuer: "iss",

@@ -39,19 +39,19 @@ export namespace User {
 	export const is = type.is
 	export const flaw = type.flaw
 	export type Key<
-		K extends UserKey.Creatable.Properties = UserKey.Creatable.Properties,
+		C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims,
 		P extends flagly.Flags = flagly.Flags
-	> = UserKey<K, P>
+	> = UserKey<C, P>
 	export const Key = UserKey
 	export namespace Key {
 		export type Issuer<T extends Key.Creatable> = UserKey.Issuer<T>
 		export type Verifier<T extends Key> = UserKey.Verifier<T>
 		export type Creatable<
-			K extends UserKey.Creatable.Properties = UserKey.Creatable.Properties,
+			C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims,
 			P extends flagly.Flags = flagly.Flags
-		> = UserKey.Creatable<K, P>
+		> = UserKey.Creatable<C, P>
 		export namespace Creatable {
-			export type Properties = UserKey.Creatable.Properties
+			export type Claims = UserKey.Creatable.Claims
 		}
 	}
 

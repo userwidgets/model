@@ -1,6 +1,7 @@
 import { cryptly } from "cryptly"
 import { isoly } from "isoly"
 import { authly } from "authly"
+import { isly } from "isly"
 import { userwidgets } from "../../index"
 
 const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
@@ -46,10 +47,9 @@ describe("Key", () => {
 		email: "john@example.com",
 		permissions: {
 			"*": {
-				application: {},
-				organization: {},
-				read: true,
-				user: {},
+				app: { view: true },
+				org: { view: true },
+				user: { view: true },
 			},
 		},
 	}
@@ -140,5 +140,43 @@ describe("Key", () => {
 			expect(await verifierPublicKey.verify(corruptedToken)).toBeUndefined()
 			expect(await verifierNone.verify(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
 		}
+	})
+	it("signing and verifying custom key", async () => {
+		type Claims = { id: string }
+		type Permissions = { foo?: { view?: true } }
+		type Key = userwidgets.User.Key<Claims, Permissions>
+		type Creatable = userwidgets.User.Key.Creatable<Claims, Permissions>
+		const claims = isly.object<Claims>({ id: isly.string() })
+		const permissions = isly.object<Permissions>({
+			foo: isly.object({ view: isly.boolean(true).optional() }).optional(),
+		})
+
+		const type = Object.assign(userwidgets.User.Key.type.create({ claims, permissions }), {
+			creatable: userwidgets.User.Key.Creatable.type.create({ claims, permissions }),
+		})
+		const creatable: Creatable = {
+			name: { first: "jessie", last: "doe" },
+			email: "jessie@rocket.com",
+			permissions: { "o--o1--o": { user: { view: true }, foo: { view: true } } },
+			id: "r0ck3t",
+		}
+
+		userwidgets.User.Key.Transformer.add(
+			"rename",
+			new authly.Property.Renamer({
+				id: "jti",
+			})
+		)
+		const issuer = userwidgets.User.Key.Issuer.create<Creatable>("issuer", "audience", publicKey, privateKey)
+		const token = await issuer.sign(creatable)
+		if (token == undefined) {
+			expect(typeof token).toEqual("string")
+			return
+		}
+		const verifier = userwidgets.User.Key.Verifier.create<Key>(publicKey)
+		const key = await verifier.verify(token)
+		expect(type.is(key)).toEqual(true)
+		expect(type.get(key)).not.toEqual(undefined)
+		expect(type.creatable.get(key)).toEqual(creatable)
 	})
 })

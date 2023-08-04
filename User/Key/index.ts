@@ -5,40 +5,42 @@ import { isly } from "isly"
 import { Creatable as KeyCreatable } from "./Creatable"
 import { Transformer as KeyTransformer, transformers } from "./Transformers"
 
-type BaseProperties = {
+type BaseClaims = {
 	issuer: string
 	audience: string
 	issued: isoly.DateTime
 	expires: isoly.DateTime
 	token: string
 }
-type Base<
-	K extends Key.Creatable.Properties = Key.Creatable.Properties,
-	P extends flagly.Flags = flagly.Flags
-> = BaseProperties & KeyCreatable<K, P>
-export type Key<
-	K extends Key.Creatable.Properties = Key.Creatable.Properties,
-	P extends flagly.Flags = flagly.Flags
-> = Base<K, P> & K
+type Base<C extends Key.Creatable.Claims = Key.Creatable.Claims, P extends flagly.Flags = flagly.Flags> = BaseClaims &
+	KeyCreatable<C, P>
+export type Key<C extends Key.Creatable.Claims = Key.Creatable.Claims, P extends flagly.Flags = flagly.Flags> = Base<
+	C,
+	P
+> &
+	C
 export namespace Key {
 	export type Transformer = KeyTransformer
 	export const Transformer = KeyTransformer
 	export type Creatable<
-		K extends KeyCreatable.Properties = KeyCreatable.Properties,
+		C extends KeyCreatable.Claims = KeyCreatable.Claims,
 		P extends flagly.Flags = flagly.Flags
-	> = KeyCreatable<K, P>
+	> = KeyCreatable<C, P>
 	export const Creatable = KeyCreatable
 	export namespace Creatable {
-		export type Properties = KeyCreatable.Properties
+		export type Claims = KeyCreatable.Claims
 	}
-	function createType<K extends Creatable.Properties, P extends flagly.Flags>(
-		key: isly.Type<K>,
-		permissions: isly.Type<P>
-	): isly.Type<Key<K, P>> {
-		return isly.intersection<Key<K, P>, K, Base<K, P>>(
+	function createType<C extends Creatable.Claims, P extends flagly.Flags>({
+		claims: key = Creatable.Claims.type as isly.Type<C>,
+		permissions = flagly.Flags.type as isly.Type<P>,
+	}: {
+		claims?: isly.Type<C>
+		permissions?: isly.Type<P>
+	} = {}): isly.Type<Key<C, P>> {
+		return isly.intersection<Key<C, P>, C, Base<C, P>>(
 			key,
-			isly.intersection<Base<K, P>, Key.Creatable<K, P>, BaseProperties>(
-				Key.Creatable.type.create(key, permissions),
+			isly.intersection<Base<C, P>, Key.Creatable<C, P>, BaseClaims>(
+				Key.Creatable.type.create({ claims: key, permissions }),
 				isly.object({
 					issuer: isly.string(),
 					audience: isly.string(),
@@ -49,7 +51,7 @@ export namespace Key {
 			)
 		)
 	}
-	export const type = Object.assign(createType(Creatable.Properties.type, flagly.Flags.type), { create: createType })
+	export const type = Object.assign(createType(), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
 	export type Issuer<T extends Key.Creatable> = authly.Issuer<T>
@@ -74,7 +76,7 @@ export namespace Key {
 		 * Creates a verifier.
 		 * If no public key is provided, verifier skips verification and oly returns payload. Might be used on client-side.
 		 */
-		export function create<T extends Key>(publicKey?: string): Verifier<Key> {
+		export function create<T extends Key>(publicKey?: string): Verifier<T> {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			return authly.Verifier.create<T>(...(publicKey ? [authly.Algorithm.RS256(publicKey)!] : [])).add(...transformers)
 		}

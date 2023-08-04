@@ -1,5 +1,6 @@
 import { isoly } from "isoly"
-import * as authly from "authly"
+import { authly } from "authly"
+import { isly } from "isly"
 import { userwidgets } from "../../index"
 
 const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
@@ -46,13 +47,13 @@ describe("User.Invite", () => {
 		active: false,
 		permissions: {
 			"*": {
-				application: {},
-				organization: {},
-				user: {},
+				app: { view: true },
+				org: { view: true },
+				user: { view: true },
 			},
 			acme: {
-				organization: {},
-				user: {},
+				organization: { view: true },
+				user: { view: true },
 			},
 		},
 	}
@@ -62,14 +63,14 @@ describe("User.Invite", () => {
 			active: true,
 			permissions: {
 				"*": {
-					application: {},
-					organization: {},
-					user: {},
+					application: { view: true },
+					organization: { view: true },
+					user: { view: true },
 				},
 				"---o1---": {
-					organization: {},
-					user: {},
-					custom: {},
+					organization: { view: true },
+					user: { view: true },
+					custom: { view: true },
 				},
 			},
 			audience: "applicationId",
@@ -126,6 +127,37 @@ describe("User.Invite", () => {
 			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 24 * 3),
 			audience: "applicationId",
 			token: token,
+		})
+	})
+	it("signing and verifying custom invite", async () => {
+		type Permissions = { foo?: { view?: boolean } }
+		type Creatable = userwidgets.User.Invite.Creatable<Permissions>
+		type Invite = userwidgets.User.Invite<Permissions>
+		const permissions = isly.object<Permissions>({
+			foo: isly.object({ view: isly.boolean(true).optional() }).optional(),
+		})
+		const type = Object.assign(userwidgets.User.Invite.type.create(permissions), {
+			creatable: userwidgets.User.Invite.type.create(permissions),
+		})
+		const creatable: Creatable = {
+			email: "jessie@rocket.com",
+			permissions: { "o--o1--o": { user: { view: true }, foo: {} } },
+			active: false,
+		}
+		const issuer = userwidgets.User.Invite.Issuer.create<Creatable>("issuer", "audience", publicKey, privateKey)
+		const token = await issuer.sign(creatable)
+		if (token == undefined) {
+			expect(typeof token).toEqual("string")
+			return
+		}
+		const verifier = userwidgets.User.Invite.Verifier.create<Invite>(publicKey)
+		const invite = await verifier.verify(token)
+		expect(type.is(invite)).toEqual(true)
+		expect(type.get(invite)).not.toEqual(undefined)
+		expect(type.creatable.get(invite)).not.toEqual(creatable)
+		expect(type.creatable.get(invite)).not.toEqual({
+			...creatable,
+			permissions: { "o--o1--o": { user: { view: true } } },
 		})
 	})
 })
