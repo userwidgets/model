@@ -167,14 +167,31 @@ describe("Key", () => {
 				id: "jti",
 			})
 		)
-		const issuer = userwidgets.User.Key.Issuer.create<Creatable>("issuer", "audience", publicKey, privateKey)
-		const token = await issuer.sign(creatable)
+		const issuer = {
+			custom: userwidgets.User.Key.Issuer.create<Creatable>("issuer", "audience", publicKey, privateKey),
+			default: userwidgets.User.Key.Issuer.create("issuer", "audience", publicKey, privateKey),
+		}
+		let token = await issuer.custom.sign(creatable)
 		if (token == undefined) {
-			expect(typeof token).toEqual("string")
+			expect(token).not.toEqual(undefined)
 			return
 		}
-		const verifier = userwidgets.User.Key.Verifier.create<Key>(publicKey)
-		const key = await verifier.verify(token)
+		const verifier = {
+			custom: userwidgets.User.Key.Verifier.create<Key>(publicKey),
+			default: userwidgets.User.Key.Verifier.create(publicKey),
+		}
+
+		let key: unknown = await verifier.custom.verify(token)
+		expect(type.is(key)).toEqual(true)
+		expect(type.get(key)).not.toEqual(undefined)
+		expect(type.creatable.get(key)).toEqual(creatable)
+
+		token = await issuer.default.sign(creatable)
+		if (token == undefined) {
+			expect(token).not.toEqual(undefined)
+			return
+		}
+		key = await verifier.default.verify(token)
 		expect(type.is(key)).toEqual(true)
 		expect(type.get(key)).not.toEqual(undefined)
 		expect(type.creatable.get(key)).toEqual(creatable)
