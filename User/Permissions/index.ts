@@ -28,16 +28,56 @@ export namespace Permissions {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
-	export function check<T extends Permissions>(permissions: T, ...flags: string[]): boolean {
-		// needs to check both * and id
-		return flagly.get.path(permissions, ...flags)
+	export function check<T extends Permissions>(
+		permissions: T,
+		organization: Organization.Identifier | "*",
+		...flags: string[]
+	): boolean {
+		let result: boolean
+		if (flags.length == 0)
+			result = false
+		else {
+			const alternatives = flags.map(flag =>
+				flag.split(".").map((_, index, array) => array.slice(0, index + 1).join("."))
+			)
+			if (organization == "*")
+				result = alternatives.every(alternative => alternative.some(flag => flagly.get.path(permissions, `*.${flag}`)))
+			else
+				result = alternatives.every(alternative =>
+					alternative.some(
+						flag => flagly.get.path(permissions, `*.${flag}`) || flagly.get.path(permissions, `${organization}.${flag}`)
+					)
+				)
+		}
+		return result
 	}
-	export function set<T extends Permissions>(permissions: T, type: isly.Type<T>, ...flags: string[]): T | undefined {
-		const result = flagly.set.path(permissions, ...flags)
+	export function set<T extends Permissions>(
+		type: isly.Type<T>,
+		permissions: T,
+		organization: Organization.Identifier | "*",
+		...flags: string[]
+	): T | undefined {
+		let result: flagly.Flags | undefined
+		const cleaned = remove(type, permissions, organization, ...flags)
+		if (cleaned == undefined)
+			result = undefined
+		else if (!flags.length)
+			result = flagly.set.path(cleaned, organization)
+		else
+			result = flags.reduce((result, flag) => flagly.set.path(result, `${organization}.${flag}`), cleaned)
 		return type.is(result) ? result : undefined
 	}
-	export function remove<T extends Permissions>(permissions: T, type: isly.Type<T>, ...flags: string[]): T | undefined {
-		const result = flagly.remove.path(permissions, ...flags)
+	export function remove<T extends Permissions>(
+		type: isly.Type<T>,
+		permissions: T,
+		organization: Organization.Identifier | "*",
+		...flags: string[]
+	): T | undefined {
+		let result: flagly.Flags
+		if (!flags.length)
+			result = flagly.remove.path(permissions, organization)
+		else
+			result = flags.reduce((result, flag) => flagly.remove.path(result, `${organization}.${flag}`), permissions)
 		return type.is(result) ? result : undefined
 	}
 }
