@@ -5,8 +5,8 @@ describe("User.Permissions", () => {
 	it("is", () => {
 		const permissions: userwidgets.User.Permissions = {
 			"*": { app: true, user: true, garbage: true },
-			// "---o1---": { user: true },
-			// "---o2---": { foo: { bar: { baz: false } } },
+			"---o1---": { user: true },
+			"---o2---": { foo: { bar: { baz: false } } },
 		}
 		expect(userwidgets.User.Permissions.is(permissions)).toEqual(true)
 		expect(userwidgets.User.Permissions.is({})).toEqual(true)
