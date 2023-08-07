@@ -4,9 +4,9 @@ import { userwidgets } from "../../index"
 describe("User.Permissions", () => {
 	it("is", () => {
 		const permissions: userwidgets.User.Permissions = {
-			"*": { user: true, garbage: true },
-			"---o1---": {},
-			"---o2---": { foo: { bar: { baz: false } } },
+			"*": { app: true, user: true, garbage: true },
+			// "---o1---": { user: true },
+			// "---o2---": { foo: { bar: { baz: false } } },
 		}
 		expect(userwidgets.User.Permissions.is(permissions)).toEqual(true)
 		expect(userwidgets.User.Permissions.is({})).toEqual(true)

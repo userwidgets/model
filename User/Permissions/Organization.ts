@@ -30,6 +30,7 @@ type Base = {
 				edit?: true
 		  }
 		| true
+	app?: flagly.Flags | boolean
 	//extend with custom resources with custom formats
 }
 export type Organization<T extends flagly.Flags = flagly.Flags> = Base & T
@@ -55,6 +56,7 @@ export namespace Organization {
 						edit: isly.boolean(true).optional(),
 					})
 				),
+				app: isly.union(flagly.Flags.type, isly.boolean()).optional(),
 			})
 		)
 	}

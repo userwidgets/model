@@ -10,7 +10,7 @@ type OrganizationRecord<T extends flagly.Flags> = {
 type ApplicationRecord<T extends flagly.Flags> = {
 	"*"?: PermissionsApplication<T> | true | undefined
 }
-export type Permissions<T extends flagly.Flags = flagly.Flags> = OrganizationRecord<T> & ApplicationRecord<T>
+export type Permissions<T extends flagly.Flags = flagly.Flags> = Omit<OrganizationRecord<T>, "*"> & ApplicationRecord<T>
 export namespace Permissions {
 	export type Organization<T extends flagly.Flags = flagly.Flags> = PermissionsOrganization<T>
 	export const Organization = PermissionsOrganization
