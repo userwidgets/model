@@ -3,6 +3,7 @@ import { userwidgets } from "../index"
 
 describe("User", () => {
 	const now = isoly.DateTime.now()
+
 	const user: userwidgets.User = {
 		email: "jane@example.com",
 		name: {
@@ -11,7 +12,7 @@ describe("User", () => {
 		},
 		permissions: {
 			"*": {
-				app: true,
+				app: {},
 				org: {},
 				user: {},
 			},
@@ -34,9 +35,7 @@ describe("User", () => {
 			email: "jessie@example.com",
 			name: { first: "jessie", last: "doe " },
 			permissions: {
-				"---a1---": {
-					"*": { user: { write: true } },
-				},
+				"*": { user: { view: true } },
 			},
 			created: now,
 			modified: now,
