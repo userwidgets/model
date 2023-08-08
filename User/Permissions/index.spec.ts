@@ -27,7 +27,8 @@ describe("User.Permissions", () => {
 			"*": { foo: { view: false } },
 			"o--o1--o": { foo: { view: true } },
 		}
-		console.log(type.is(permissions))
+		expect(type.is(permissions)).toEqual(true)
+		expect(userwidgets.User.Permissions.is(permissions)).toEqual(true)
 	})
 	it("check", () => {
 		const permissions: userwidgets.User.Permissions = {
