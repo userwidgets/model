@@ -80,4 +80,9 @@ export namespace Permissions {
 			result = flags.reduce((result, flag) => flagly.remove.path(result, `${organization}.${flag}`), permissions)
 		return type.is(result) ? result : undefined
 	}
+	// Readable only for backwards compatibility
+	export type Readable<T extends flagly.Flags = flagly.Flags> = Permissions<T>
+	export namespace Readable {
+		export const is = type.is
+	}
 }

@@ -23,6 +23,7 @@ export namespace User {
 	export namespace Permissions {
 		export type Organization<T extends flagly.Flags = flagly.Flags> = UserPermissions.Organization<T>
 		export type Application<T extends flagly.Flags = flagly.Flags> = UserPermissions.Application<T>
+		export type Readable<T extends flagly.Flags = flagly.Flags> = Permissions<T>
 	}
 	export type Name = UserName
 	export const Name = UserName
@@ -89,4 +90,9 @@ export namespace User {
 	export const Creatable = UserCreatable
 	export type Changeable = UserChangeable
 	export const Changeable = UserChangeable
+	// Readable only for backwards compatibility
+	export type Readable<T extends flagly.Flags = flagly.Flags> = User<T>
+	export namespace Readable {
+		export const is = type.is
+	}
 }
