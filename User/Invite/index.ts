@@ -42,8 +42,8 @@ const transformers: authly.Property.Transformer[] = [
 export namespace Invite {
 	export type Creatable<T extends flagly.Flags = flagly.Flags> = InviteCreatable<T>
 	export const Creatable = InviteCreatable
-	export type Issuer<T extends Invite.Creatable> = authly.Issuer<T>
-	export type Verifier<T extends Invite> = authly.Verifier<T>
+	export type Issuer<T extends Invite.Creatable = Invite.Creatable> = authly.Issuer<T>
+	export type Verifier<T extends Invite = Invite> = authly.Verifier<T>
 	function createType<T extends flagly.Flags>(type: isly.Type<T>): isly.Type<Invite<T>> {
 		return Creatable.type.create(type).extend<Invite<T>>({
 			issuer: isly.string(/.+/),

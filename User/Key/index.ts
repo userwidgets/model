@@ -70,7 +70,7 @@ export namespace Key {
 		}
 	}
 
-	export type Verifier<T extends Key> = authly.Verifier<T>
+	export type Verifier<T extends Key = Key> = authly.Verifier<T>
 	export namespace Verifier {
 		/**
 		 * Creates a verifier.

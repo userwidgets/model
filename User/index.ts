@@ -39,14 +39,16 @@ export namespace User {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
+	// add tests
+	export const toKey = UserKey.Creatable.from
 	export type Key<
 		C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims,
 		P extends flagly.Flags = flagly.Flags
 	> = UserKey<C, P>
 	export const Key = UserKey
 	export namespace Key {
-		export type Issuer<T extends Key.Creatable> = UserKey.Issuer<T>
-		export type Verifier<T extends Key> = UserKey.Verifier<T>
+		export type Issuer<T extends Key.Creatable = Key.Creatable> = UserKey.Issuer<T>
+		export type Verifier<T extends Key = Key> = UserKey.Verifier<T>
 		export type Creatable<
 			C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims,
 			P extends flagly.Flags = flagly.Flags
@@ -71,8 +73,8 @@ export namespace User {
 	export const Invite = UserInvite
 	export namespace Invite {
 		export type Creatable<T extends flagly.Flags = flagly.Flags> = UserInvite.Creatable<T>
-		export type Issuer<T extends Invite.Creatable> = UserInvite.Issuer<T>
-		export type Verifier<T extends Invite> = UserInvite.Verifier<T>
+		export type Issuer<T extends Invite.Creatable = Invite.Creatable> = UserInvite.Issuer<T>
+		export type Verifier<T extends Invite = Invite> = UserInvite.Verifier<T>
 	}
 	export type Feedback = UserFeedback
 	export const Feedback = UserFeedback

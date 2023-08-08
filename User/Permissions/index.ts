@@ -10,7 +10,7 @@ type OrganizationRecord<T extends flagly.Flags> = {
 type ApplicationRecord<T extends flagly.Flags> = {
 	"*"?: PermissionsApplication<T> | true | undefined
 }
-export type Permissions<T extends flagly.Flags = flagly.Flags> = Omit<OrganizationRecord<T>, "*"> & ApplicationRecord<T>
+export type Permissions<T extends flagly.Flags = flagly.Flags> = OrganizationRecord<T> & ApplicationRecord<T>
 export namespace Permissions {
 	export type Organization<T extends flagly.Flags = flagly.Flags> = PermissionsOrganization<T>
 	export const Organization = PermissionsOrganization
@@ -78,6 +78,14 @@ export namespace Permissions {
 			result = flagly.remove.path(permissions, organization)
 		else
 			result = flags.reduce((result, flag) => flagly.remove.path(result, `${organization}.${flag}`), permissions)
+		return type.is(result) ? result : undefined
+	}
+	// test
+	export function merge<T extends Permissions>(type: isly.Type<T>, target: T, source: Permissions): T | undefined {
+		const result = Object.entries(source).reduce(
+			(result, [id, permissions]) => flagly.reduce(result, { [id]: permissions }),
+			target
+		)
 		return type.is(result) ? result : undefined
 	}
 	// Readable only for backwards compatibility
