@@ -21,6 +21,14 @@ describe("Organization.Changeable", () => {
 		expect(userwidgets.Organization.Changeable.is({ name: "" })).toEqual(false)
 		expect(userwidgets.Organization.Changeable.is({ permissions: ["foo", ""] })).toEqual(false)
 		expect(userwidgets.Organization.Changeable.is({ name: 1 })).toEqual(false)
+		expect(userwidgets.Organization.Changeable.Invite.is({ user: "James@example.com" })).toEqual(true)
+		expect(
+			userwidgets.Organization.Changeable.is({ users: [{ user: "James@example.com" }, "name@example.com"] })
+		).toEqual(true)
+		expect(userwidgets.Organization.Changeable.is({ users: [{ user: 1 }, "name@example.com"] })).toEqual(false)
+		expect(
+			userwidgets.Organization.Changeable.is({ users: [{ name: "James@example.com" }, "name@example.com"] })
+		).toEqual(false)
 	})
 
 	it("get", () => {
