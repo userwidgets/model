@@ -20,11 +20,13 @@ export namespace Changeable {
 			user: Email.type,
 			//permissions
 		})
+		export const is = type.is
+		export const flaw = type.flaw
 	}
 	export const type = isly.object<Changeable>({
 		name: isly.string(/.+/).optional(),
 		permissions: isly.array(isly.string(/.+/)).optional(),
-		users: isly.array(isly.union(Invite.type, Email.type)).optional(), //update this
+		users: isly.array(isly.union(Invite.type, Email.type)).optional(),
 	})
 	export const is = type.is
 	export const flaw = type.flaw
