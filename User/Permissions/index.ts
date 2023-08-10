@@ -28,6 +28,7 @@ export namespace Permissions {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
+	export const flags: readonly string[] = Array.from(new Set([...Application.flags, ...Organization.flags]))
 	export function check<T extends Permissions>(
 		permissions: T,
 		organization: Organization.Identifier | "*",

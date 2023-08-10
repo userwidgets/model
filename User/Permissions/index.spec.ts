@@ -33,29 +33,29 @@ describe("User.Permissions", () => {
 	it("check", () => {
 		const permissions: userwidgets.User.Permissions = {
 			"*": { user: { view: true }, org: { view: true } },
-			a1b2c3d4: { user: { view: true, edit: true } },
+			a1b2c3d4: { user: { view: true, admin: true } },
 		}
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user")).toEqual(false)
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.view")).toEqual(true)
 		expect(userwidgets.User.Permissions.check(permissions, "*", "user.view")).toEqual(true)
-		expect(userwidgets.User.Permissions.check(permissions, "*", "user.edit")).toEqual(false)
-		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.edit")).toEqual(true)
+		expect(userwidgets.User.Permissions.check(permissions, "*", "user.admin")).toEqual(false)
+		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.admin")).toEqual(true)
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "org.view")).toEqual(true)
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "org.edit")).toEqual(false)
-		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.edit", "org.view")).toEqual(true)
-		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.edit", "org.edit")).toEqual(false)
+		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.admin", "org.view")).toEqual(true)
+		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.admin", "org.edit")).toEqual(false)
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4")).toEqual(false)
 	})
 	it("remove", () => {
 		const permissions: userwidgets.User.Permissions = {
 			"*": { user: { view: true }, org: { view: true } },
-			a1b2c3d4: { user: { view: true, edit: true } },
+			a1b2c3d4: { user: { view: true, admin: true } },
 		}
 		expect(
 			userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user.view")
 		).toEqual({
 			"*": { user: { view: true }, org: { view: true } },
-			a1b2c3d4: { user: { edit: true } },
+			a1b2c3d4: { user: { admin: true } },
 		})
 		expect(
 			userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user")
@@ -65,13 +65,13 @@ describe("User.Permissions", () => {
 		expect(
 			userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "*", "user", "org")
 		).toEqual({
-			a1b2c3d4: { user: { view: true, edit: true } },
+			a1b2c3d4: { user: { view: true, admin: true } },
 		})
 		expect(userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "a1b2c3d4")).toEqual({
 			"*": { user: { view: true }, org: { view: true } },
 		})
 		expect(userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "*")).toEqual({
-			a1b2c3d4: { user: { view: true, edit: true } },
+			a1b2c3d4: { user: { view: true, admin: true } },
 		})
 		const partial = userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "*")
 		if (partial == undefined) {
@@ -84,7 +84,7 @@ describe("User.Permissions", () => {
 				partial,
 				"a1b2c3d4",
 				"user.view",
-				"user.edit"
+				"user.admin"
 			)
 		).toEqual({})
 	})
@@ -103,7 +103,7 @@ describe("User.Permissions", () => {
 		expect(
 			userwidgets.User.Permissions.set(
 				userwidgets.User.Permissions.type,
-				{ a1b2c3d4: { user: { view: true, edit: true } } },
+				{ a1b2c3d4: { user: { view: true, admin: true } } },
 				"a1b2c3d4",
 				"user"
 			)
@@ -114,13 +114,40 @@ describe("User.Permissions", () => {
 			a1b2c3d4: { user: { view: true } },
 		})
 		expect(
-			userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user.edit")
+			userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user.admin")
 		).toEqual({
-			a1b2c3d4: { user: { view: true, edit: true } },
+			a1b2c3d4: { user: { view: true, admin: true } },
 		})
-		expect(userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "*", "user.edit")).toEqual({
-			"*": { user: { edit: true } },
-			a1b2c3d4: { user: { view: true } },
-		})
+		expect(userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "*", "user.admin")).toEqual(
+			{
+				"*": { user: { admin: true } },
+				a1b2c3d4: { user: { view: true } },
+			}
+		)
+	})
+	it("assign", () => {
+		// const agent: userwidgets.User.Permissions = {
+		// 	id: { user: { view: true, admin: true }, foo: { view: true, edit: true } },
+		// }
+		// const stored: userwidgets.User.Permissions = {
+		// 	id: { user: { view: true }, bar: { view: true } },
+		// 	di: { user: { view: true }, baz: { view: true } },
+		// }
+		// const visible: userwidgets.User.Permissions = {
+		// 	id: { user: { view: true }, bar: { view: true } },
+		// }
+		// const disallowed: userwidgets.User.Permissions = {
+		// 	di: { user: { view: true }, baz: { view: true } },
+		// }
+		// const payload: userwidgets.User.Permissions = {
+		// 	id: { user: { view: true }, bar: { view: true }, foo: { view: true } },
+		// }
+		// const result: userwidgets.User.Permissions = {
+		// 	id: { user: { view: true }, bar: { view: true }, foo: { view: true } },
+		// 	di: { user: { view: true }, baz: { view: true } },
+		// }
+		// make sure agent have user.admin or all keys in payload exists in agent
+		// make sure all permissions in payload are listed under organization permissions (next version)
+		// shallow merge payload over stored
 	})
 })

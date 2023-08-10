@@ -13,7 +13,7 @@ type Base = {
 				// OBS! These changes will reflect across all orgs!
 				// maybe should not exist
 				// maybe password change?
-				edit?: true
+				admin?: true
 				// allow invite of new users to this org.
 				invite?: true
 		  }
@@ -63,4 +63,6 @@ export namespace Organization {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
+	// test this
+	export const flags: readonly string[] = ["user.view", "user.admin", "user.invite", "org.view", "org.edit"]
 }

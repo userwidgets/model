@@ -7,8 +7,11 @@ import { Identifier } from "./Identifier"
 export interface Creatable<T extends flagly.Flags = flagly.Flags> {
 	id?: Identifier
 	name: string
-	permissions: string[]
-	users: { email: Email; permissions?: [Permissions.Application<T>, Permissions.Organization<T>] }[]
+	permissions?: string[]
+	users: {
+		email: Email
+		permissions?: { "*"?: Permissions.Application<T> | true; organization?: Permissions.Organization<T> }
+	}[]
 }
 
 export namespace Creatable {
@@ -16,12 +19,15 @@ export namespace Creatable {
 		return isly.object<Creatable<T>>({
 			id: Identifier.type.optional(),
 			name: isly.string(/.+/),
-			permissions: isly.array(isly.string(/.+/)),
+			permissions: isly.array(isly.string(/.+/)).optional(),
 			users: isly.array(
 				isly.object({
 					email: Email.type,
 					permissions: isly
-						.tuple(Permissions.Application.type.create(type), Permissions.Organization.type.create(type))
+						.object({
+							application: Permissions.Application.type.create(type),
+							organization: Permissions.Organization.type.create(type),
+						})
 						.optional(),
 				})
 			),
