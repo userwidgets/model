@@ -10,7 +10,7 @@ export interface Creatable<T extends flagly.Flags = flagly.Flags> {
 	permissions?: string[]
 	users: {
 		email: Email
-		permissions?: { "*"?: Permissions.Application<T> | true; organization?: Permissions.Organization<T> }
+		permissions?: { "*"?: Permissions.Application<T> | true | true; organization?: Permissions.Organization<T> | true }
 	}[]
 }
 
@@ -25,8 +25,8 @@ export namespace Creatable {
 					email: Email.type,
 					permissions: isly
 						.object({
-							application: Permissions.Application.type.create(type),
-							organization: Permissions.Organization.type.create(type),
+							application: isly.union(Permissions.Application.type.create(type), isly.boolean(true)).optional(),
+							organization: isly.union(Permissions.Organization.type.create(type), isly.boolean(true)).optional(),
 						})
 						.optional(),
 				})
