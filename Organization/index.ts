@@ -20,6 +20,9 @@ export namespace Organization {
 	export const Creatable = OrganizationCreatable
 	export type Changeable = OrganizationChangeable
 	export const Changeable = OrganizationChangeable
+	export namespace Changeable {
+		export type Invite = OrganizationChangeable.Invite
+	}
 	export const type = isly.object<Organization>({
 		id: Identifier.type,
 		name: isly.string(/.+/),

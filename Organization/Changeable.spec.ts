@@ -28,4 +28,15 @@ describe("Organization.Changeable", () => {
 			organization
 		)
 	})
+	it("invite is", () => {
+		const invite: userwidgets.Organization.Changeable.Invite = {
+			user: "James@example.com",
+		}
+		expect(userwidgets.Organization.Changeable.Invite.is(invite)).toEqual(true)
+		expect(userwidgets.Organization.Changeable.is({ users: [invite, "name@example.com"] })).toEqual(true)
+		expect(userwidgets.Organization.Changeable.is({ users: [{ user: 1 }, "name@example.com"] })).toEqual(false)
+		expect(
+			userwidgets.Organization.Changeable.is({ users: [{ name: "James@example.com" }, "name@example.com"] })
+		).toEqual(false)
+	})
 })
