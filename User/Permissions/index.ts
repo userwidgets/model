@@ -42,12 +42,18 @@ export namespace Permissions {
 				flag.split(".").map((_, index, array) => array.slice(0, index + 1).join("."))
 			)
 			if (organization == "*")
-				result = alternatives.every(alternative => alternative.some(flag => flagly.get.path(permissions, `*.${flag}`)))
+				result = alternatives.every(
+					alternative => alternative.some(flag => flagly.get.path(permissions, `*.${flag}`)) || permissions["*"] == true
+				)
 			else
-				result = alternatives.every(alternative =>
-					alternative.some(
-						flag => flagly.get.path(permissions, `*.${flag}`) || flagly.get.path(permissions, `${organization}.${flag}`)
-					)
+				result = alternatives.every(
+					alternative =>
+						alternative.some(
+							flag =>
+								flagly.get.path(permissions, `*.${flag}`) || flagly.get.path(permissions, `${organization}.${flag}`)
+						) ||
+						permissions[organization] == true ||
+						permissions["*"] == true
 				)
 		}
 		return result
