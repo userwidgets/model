@@ -80,7 +80,7 @@ export namespace Application {
 	export const is = type.is
 	export const flaw = type.flaw
 	// test this
-	export const flags: readonly string[] = [
+	export const flags = [
 		"user.view",
 		"user.admin",
 		"user.invite",
@@ -90,5 +90,5 @@ export namespace Application {
 		"app.view",
 		"app.edit",
 		"app.create",
-	]
+	] as const
 }

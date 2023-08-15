@@ -64,5 +64,5 @@ export namespace Organization {
 	export const is = type.is
 	export const flaw = type.flaw
 	// test this
-	export const flags: readonly string[] = ["user.view", "user.admin", "user.invite", "org.view", "org.edit"]
+	export const flags = ["user.view", "user.admin", "user.invite", "org.view", "org.edit"] as const
 }
