@@ -4,6 +4,7 @@ import { userwidgets } from "../index"
 describe("Organization.Changeable", () => {
 	const organization: userwidgets.Organization.Changeable = {
 		name: "my organization",
+		users: ["jessie@example.com", { user: "james@example.com" }],
 		permissions: ["users", "invite"],
 	}
 	it("is", () => {

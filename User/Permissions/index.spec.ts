@@ -31,6 +31,16 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.is(permissions)).toEqual(true)
 	})
 	it("check", () => {
+		expect(
+			userwidgets.User.Permissions.check(
+				{
+					"8fWbwNUM": { view: true, invite: true },
+					"6RIwQSRP": { user: { view: true, invite: true }, org: true },
+				},
+				"6RIwQSRP",
+				"org.edit"
+			)
+		).toEqual(true)
 		expect(userwidgets.User.Permissions.check({ "*": true, a1b2c3d4: true }, "a1b2c3d4", "org.view")).toEqual(true)
 		expect(userwidgets.User.Permissions.check({ "*": true, a1b2c3d4: true }, "*", "user.read")).toEqual(true)
 		const permissions: userwidgets.User.Permissions = {

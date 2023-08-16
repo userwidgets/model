@@ -101,3 +101,7 @@ export namespace Permissions {
 		export const is = type.is
 	}
 }
+
+const permissions: string[] = ["user.read", "user.write"]
+const t = permissions.reduce((result, flag) => Permissions.set(Permissions.type, result, "myId", flag), {}) ?? {}
+t
