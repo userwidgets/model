@@ -112,29 +112,4 @@ describe("User.Permissions", () => {
 			a1b2c3d4: { user: { view: true } },
 		})
 	})
-	it("assign", () => {
-		// const agent: userwidgets.User.Permissions = {
-		// 	id: { user: { view: true, admin: true }, foo: { view: true, edit: true } },
-		// }
-		// const stored: userwidgets.User.Permissions = {
-		// 	id: { user: { view: true }, bar: { view: true } },
-		// 	di: { user: { view: true }, baz: { view: true } },
-		// }
-		// const visible: userwidgets.User.Permissions = {
-		// 	id: { user: { view: true }, bar: { view: true } },
-		// }
-		// const disallowed: userwidgets.User.Permissions = {
-		// 	di: { user: { view: true }, baz: { view: true } },
-		// }
-		// const payload: userwidgets.User.Permissions = {
-		// 	id: { user: { view: true }, bar: { view: true }, foo: { view: true } },
-		// }
-		// const result: userwidgets.User.Permissions = {
-		// 	id: { user: { view: true }, bar: { view: true }, foo: { view: true } },
-		// 	di: { user: { view: true }, baz: { view: true } },
-		// }
-		// make sure agent have user.admin or all keys in payload exists in agent
-		// make sure all permissions in payload are listed under organization permissions (next version)
-		// shallow merge payload over stored
-	})
 })
