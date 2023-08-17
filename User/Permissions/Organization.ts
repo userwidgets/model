@@ -9,10 +9,7 @@ type Base = {
 				// allow viewing users in this orgs.
 				// should this just be the default always?
 				view?: true
-				// allow editing users in this orgs.
-				// OBS! These changes will reflect across all orgs!
-				// maybe should not exist
-				// maybe password change?
+				// allow editing users permissions in this orgs.
 				admin?: true
 				// allow invite of new users to this org.
 				invite?: true
