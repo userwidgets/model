@@ -112,4 +112,18 @@ describe("User.Permissions", () => {
 			a1b2c3d4: { user: { view: true } },
 		})
 	})
+	it("merge", () => {
+		const target: userwidgets.User.Permissions = {
+			"*": { user: { view: true } },
+			a1b2c3d4: { user: { view: true } },
+		}
+		const source: userwidgets.User.Permissions = {
+			"*": { org: { view: true } },
+			a1b2c3d4: { user: { admin: true } },
+		}
+		expect(userwidgets.User.Permissions.merge(target, source)).toEqual({
+			"*": { user: { view: true }, org: { view: true } },
+			a1b2c3d4: { user: { view: true, admin: true } },
+		})
+	})
 })

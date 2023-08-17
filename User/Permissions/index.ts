@@ -90,7 +90,6 @@ export namespace Permissions {
 			result = flags.reduce((result, flag) => flagly.remove(result, organization, ...flag.split(".")), permissions)
 		return result as Permissions
 	}
-	// test
 	export function merge(target: Permissions, source: Permissions): Permissions {
 		const result = Object.entries(source).reduce(
 			(result, [id, permissions]) => flagly.reduce(result, { [id]: permissions }),
