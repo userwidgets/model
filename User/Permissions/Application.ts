@@ -25,8 +25,6 @@ type Base = {
 				create?: true
 		  }
 		| true
-	// maybe this is unnecessary as there is nothing implemented to support this.
-	// skip for now and implement later if needed?
 	app?:
 		| {
 				// view all applications on userwidgets
