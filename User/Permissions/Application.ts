@@ -79,7 +79,6 @@ export namespace Application {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
-	// test this
 	export const flags = [
 		"user.view",
 		"user.admin",
