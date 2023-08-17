@@ -39,7 +39,7 @@ export namespace User {
 	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
-	// add tests
+
 	export const toKey = UserKey.Creatable.from
 	export type Key<
 		C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims,
