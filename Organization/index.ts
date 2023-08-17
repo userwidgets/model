@@ -1,4 +1,3 @@
-import { flagly } from "flagly"
 import { isoly } from "isoly"
 import { isly } from "isly"
 import { Email } from "../Email"
@@ -16,7 +15,7 @@ export interface Organization extends Omit<Organization.Creatable, "users" | "pe
 export namespace Organization {
 	export type Identifier = OrganizationIdentifier
 	export const Identifier = OrganizationIdentifier
-	export type Creatable<T extends flagly.Flags = flagly.Flags> = OrganizationCreatable<T>
+	export type Creatable = OrganizationCreatable
 	export const Creatable = OrganizationCreatable
 	export type Changeable = OrganizationChangeable
 	export const Changeable = OrganizationChangeable

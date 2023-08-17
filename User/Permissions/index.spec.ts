@@ -63,79 +63,54 @@ describe("User.Permissions", () => {
 			"*": { user: { view: true }, org: { view: true } },
 			a1b2c3d4: { user: { view: true, admin: true } },
 		}
-		expect(
-			userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user.view")
-		).toEqual({
+		expect(userwidgets.User.Permissions.remove(permissions, "a1b2c3d4", ["user.view"])).toEqual({
 			"*": { user: { view: true }, org: { view: true } },
 			a1b2c3d4: { user: { admin: true } },
 		})
-		expect(
-			userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user")
-		).toEqual({
+		expect(userwidgets.User.Permissions.remove(permissions, "a1b2c3d4", ["user"])).toEqual({
 			"*": { user: { view: true }, org: { view: true } },
 		})
-		expect(
-			userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "*", "user", "org")
-		).toEqual({
+		expect(userwidgets.User.Permissions.remove(permissions, "*", ["user", "org"])).toEqual({
 			a1b2c3d4: { user: { view: true, admin: true } },
 		})
-		expect(userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "a1b2c3d4")).toEqual({
+		expect(userwidgets.User.Permissions.remove(permissions, "a1b2c3d4", [])).toEqual({
 			"*": { user: { view: true }, org: { view: true } },
 		})
-		expect(userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "*")).toEqual({
+		expect(userwidgets.User.Permissions.remove(permissions, "*", [])).toEqual({
 			a1b2c3d4: { user: { view: true, admin: true } },
 		})
-		const partial = userwidgets.User.Permissions.remove(userwidgets.User.Permissions.type, permissions, "*")
+		const partial = userwidgets.User.Permissions.remove(permissions, "*", [])
 		if (partial == undefined) {
 			expect(partial).not.toEqual(undefined)
 			return
 		}
-		expect(
-			userwidgets.User.Permissions.remove(
-				userwidgets.User.Permissions.type,
-				partial,
-				"a1b2c3d4",
-				"user.view",
-				"user.admin"
-			)
-		).toEqual({})
+		expect(userwidgets.User.Permissions.remove(partial, "a1b2c3d4", ["user.view", "user.admin"])).toEqual({})
 	})
 	it("set", () => {
 		const permissions: userwidgets.User.Permissions = {
 			a1b2c3d4: { user: { view: true } },
 		}
-		expect(userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "a1b2c3d4")).toEqual({
+		expect(userwidgets.User.Permissions.set(permissions, "a1b2c3d4", true)).toEqual({
 			a1b2c3d4: true,
 		})
-		expect(
-			userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user")
-		).toEqual({
+		expect(userwidgets.User.Permissions.set(permissions, "a1b2c3d4", ["user"])).toEqual({
 			a1b2c3d4: { user: true },
 		})
 		expect(
-			userwidgets.User.Permissions.set(
-				userwidgets.User.Permissions.type,
-				{ a1b2c3d4: { user: { view: true, admin: true } } },
-				"a1b2c3d4",
-				"user"
-			)
+			userwidgets.User.Permissions.set({ a1b2c3d4: { user: { view: true, admin: true } } }, "a1b2c3d4", ["user"])
 		).toEqual({
 			a1b2c3d4: { user: true },
 		})
-		expect(userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "")).toEqual({
+		expect(userwidgets.User.Permissions.set(permissions, "a1b2c3d4", [""])).toEqual({
 			a1b2c3d4: { user: { view: true } },
 		})
-		expect(
-			userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "a1b2c3d4", "user.admin")
-		).toEqual({
+		expect(userwidgets.User.Permissions.set(permissions, "a1b2c3d4", ["user.admin"])).toEqual({
 			a1b2c3d4: { user: { view: true, admin: true } },
 		})
-		expect(userwidgets.User.Permissions.set(userwidgets.User.Permissions.type, permissions, "*", "user.admin")).toEqual(
-			{
-				"*": { user: { admin: true } },
-				a1b2c3d4: { user: { view: true } },
-			}
-		)
+		expect(userwidgets.User.Permissions.set(permissions, "*", ["user.admin"])).toEqual({
+			"*": { user: { admin: true } },
+			a1b2c3d4: { user: { view: true } },
+		})
 	})
 	it("assign", () => {
 		// const agent: userwidgets.User.Permissions = {

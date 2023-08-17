@@ -7,7 +7,7 @@ describe("Organization", () => {
 		users: [
 			{
 				email: "jane@example.com",
-				permissions: { "*": { app: { view: true } }, organization: { custom: { write: true } } },
+				permissions: { "*": ["app.view"], organization: ["custom.write"] },
 			},
 		],
 	}

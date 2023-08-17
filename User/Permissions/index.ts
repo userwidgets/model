@@ -58,42 +58,45 @@ export namespace Permissions {
 		}
 		return result
 	}
-	export function set<T extends Permissions>(
-		type: isly.Type<T>,
-		permissions: T,
+	export function set(
+		permissions: Permissions,
 		organization: Organization.Identifier | "*",
-		...flags: string[]
-	): T | undefined {
-		let result: flagly.Flags | undefined
-		const cleaned = remove(type, permissions, organization, ...flags)
-		if (cleaned == undefined)
-			result = undefined
-		else if (!flags.length)
-			result = flagly.set.path(cleaned, organization)
-		else
-			result = flags.reduce((result, flag) => flagly.set.path(result, `${organization}.${flag}`), cleaned)
-		return type.is(result) ? result : undefined
-	}
-	export function remove<T extends Permissions>(
-		type: isly.Type<T>,
-		permissions: T,
-		organization: Organization.Identifier | "*",
-		...flags: string[]
-	): T | undefined {
+		flags: string[] | boolean
+	): Permissions {
 		let result: flagly.Flags
-		if (!flags.length)
-			result = flagly.remove.path(permissions, organization)
+		if (flags === false)
+			result = remove(permissions, organization, flags)
+		else if (flags == true)
+			result = flagly.set(flagly.remove(permissions, organization), organization)
+		else {
+			result = flags.reduce(
+				(result, flag) => flagly.set(result, organization, ...flag.split(".")),
+				remove(permissions, organization, flags)
+			)
+		}
+		return result as Permissions
+	}
+	export function remove(
+		permissions: Permissions,
+		organization: Organization.Identifier | "*",
+		flags: string[] | false
+	): Permissions {
+		let result: flagly.Flags
+		if (flags === false)
+			result = permissions
+		else if (!flags.length)
+			result = flagly.remove(permissions, organization)
 		else
-			result = flags.reduce((result, flag) => flagly.remove.path(result, `${organization}.${flag}`), permissions)
-		return type.is(result) ? result : undefined
+			result = flags.reduce((result, flag) => flagly.remove(result, organization, ...flag.split(".")), permissions)
+		return result as Permissions
 	}
 	// test
-	export function merge<T extends Permissions>(type: isly.Type<T>, target: T, source: Permissions): T | undefined {
+	export function merge(target: Permissions, source: Permissions): Permissions {
 		const result = Object.entries(source).reduce(
 			(result, [id, permissions]) => flagly.reduce(result, { [id]: permissions }),
 			target
 		)
-		return type.is(result) ? result : undefined
+		return result as Permissions
 	}
 	// Readable only for backwards compatibility
 	export type Readable<T extends flagly.Flags = flagly.Flags> = Permissions<T>
@@ -101,7 +104,3 @@ export namespace Permissions {
 		export const is = type.is
 	}
 }
-
-const permissions: string[] = ["user.read", "user.write"]
-const t = permissions.reduce((result, flag) => Permissions.set(Permissions.type, result, "myId", flag), {}) ?? {}
-t
