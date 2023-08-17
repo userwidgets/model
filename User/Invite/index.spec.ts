@@ -3,8 +3,8 @@ import { authly } from "authly"
 import { isly } from "isly"
 import { userwidgets } from "../../index"
 
-const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
-authly.Issuer.defaultIssuedAt = now.getTime() / 1000
+const now = isoly.DateTime.epoch(isoly.DateTime.now(), "seconds")
+authly.Issuer.defaultIssuedAt = now
 
 describe("User.Invite", () => {
 	const privateKey =
@@ -95,7 +95,7 @@ describe("User.Invite", () => {
 			"MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA0dfU+6pWJ2fxVseAgafPv/2LH3Q8pWYxrau7g1bYN773lMw/2PqlHYfhQZs4HjjaHHHqD/ac4yAl6ZzfQndRHQIDAQABAkA4ASWLwUtbGwezRG2MrQ/qSq3dyDUDY8HwevwBsqTkQ2ytqLEBW0G+Cs0+njKNyvaqh5Ej10JqAGt4LNWS0I/VAiEA6+qckEJ6tUvf+pvbC/4aXmUI/dErNDYa9mSuDV/BW4cCIQDjtP83TsduxKLrpZkMLM0OUavBj3o/fG5LkWX9m9c/OwIgK9+p1jpGz8iYkubBSe2rwbpQfcOUoVUelowKwnn4X6kCIQC7Zy4YpcRq/HideieQppqI61xxLBVPhKf9l4eaBpVLGwIhAL3xxhKrp1jQiAIhaEmR1Zpft6LPXy5agQFvTAQYTjgh"
 		)
 
-		const token = await issuer.sign(creatable, now.getTime() / 1000)
+		const token = await issuer.sign(creatable, now)
 		expect(token).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/)
 	})
 	it("signing and verifying (authly)", async () => {
@@ -111,20 +111,20 @@ describe("User.Invite", () => {
 			expect(unsignedVerifier).not.toEqual(undefined)
 			return
 		}
-		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
+		const token = await issuer.sign(creatable, now)
 		const result = await verifier.verify(token)
-		expect(result).toEqual({ ...creatable, iss: "userwidgets", iat: Math.floor(now.getTime() / 1000), token: token })
+		expect(result).toEqual({ ...creatable, iss: "userwidgets", iat: now, token: token })
 	})
 	it("signing and verifying", async () => {
 		const issuer = userwidgets.User.Invite.Issuer.create("userwidgets", "applicationId", publicKey, privateKey)
 		const verifier = userwidgets.User.Invite.Verifier.create(publicKey)
-		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
+		const token = await issuer.sign(creatable, now)
 		const result = await verifier.verify(token)
 		expect(result).toEqual({
 			...creatable,
 			issuer: "userwidgets",
-			issued: isoly.DateTime.create(now.getTime() / 1000),
-			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 24 * 3),
+			issued: isoly.DateTime.create(now),
+			expires: isoly.DateTime.create(now + 60 * 60 * 24 * 3),
 			audience: "applicationId",
 			token: token,
 		})
