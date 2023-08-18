@@ -1,6 +1,7 @@
 import { cryptly } from "cryptly"
 import { isoly } from "isoly"
-import * as authly from "authly"
+import { authly } from "authly"
+import { isly } from "isly"
 import { userwidgets } from "../../index"
 
 const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
@@ -46,9 +47,9 @@ describe("Key", () => {
 		email: "john@example.com",
 		permissions: {
 			"*": {
-				application: {},
-				organization: {},
-				user: {},
+				app: { view: true },
+				org: { view: true },
+				user: { view: true },
 			},
 		},
 	}
@@ -63,17 +64,17 @@ describe("Key", () => {
 			permissions: {
 				"*": {
 					application: {},
-					organization: {},
+					org: {},
 					user: {},
 				},
 				"---o1---": {
-					organization: {},
+					org: { view: true },
 					user: {},
 				},
 			},
 			token: "a.fake.token",
 		}
-		expect(userwidgets.User.Key.is(key)).toBe(true)
+		expect(userwidgets.User.Key.is(key)).toEqual(true)
 	})
 	it("signing", async () => {
 		const issuer = userwidgets.User.Key.Issuer.create(
@@ -139,5 +140,60 @@ describe("Key", () => {
 			expect(await verifierPublicKey.verify(corruptedToken)).toBeUndefined()
 			expect(await verifierNone.verify(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
 		}
+	})
+	it("signing and verifying custom key", async () => {
+		type Claims = { id: string }
+		type Permissions = { foo?: { view?: true } }
+		type Key = userwidgets.User.Key<Claims, Permissions>
+		type Creatable = userwidgets.User.Key.Creatable<Claims, Permissions>
+		const claims = isly.object<Claims>({ id: isly.string() })
+		const permissions = isly.object<Permissions>({
+			foo: isly.object({ view: isly.boolean(true).optional() }).optional(),
+		})
+
+		const type = Object.assign(userwidgets.User.Key.type.create({ claims, permissions }), {
+			creatable: userwidgets.User.Key.Creatable.type.create({ claims, permissions }),
+		})
+		const creatable: Creatable = {
+			name: { first: "jessie", last: "doe" },
+			email: "jessie@rocket.com",
+			permissions: { "o--o1--o": { user: { view: true }, foo: { view: true } } },
+			id: "r0ck3t",
+		}
+
+		userwidgets.User.Key.Transformer.add(
+			"rename",
+			new authly.Property.Renamer({
+				id: "jti",
+			})
+		)
+		const issuer = {
+			custom: userwidgets.User.Key.Issuer.create<Creatable>("issuer", "audience", publicKey, privateKey),
+			default: userwidgets.User.Key.Issuer.create("issuer", "audience", publicKey, privateKey),
+		}
+		let token = await issuer.custom.sign(creatable)
+		if (token == undefined) {
+			expect(token).not.toEqual(undefined)
+			return
+		}
+		const verifier = {
+			custom: userwidgets.User.Key.Verifier.create<Key>(publicKey),
+			default: userwidgets.User.Key.Verifier.create(publicKey),
+		}
+
+		let key: unknown = await verifier.custom.verify(token)
+		expect(type.is(key)).toEqual(true)
+		expect(type.get(key)).not.toEqual(undefined)
+		expect(type.creatable.get(key)).toEqual(creatable)
+
+		token = await issuer.default.sign(creatable)
+		if (token == undefined) {
+			expect(token).not.toEqual(undefined)
+			return
+		}
+		key = await verifier.default.verify(token)
+		expect(type.is(key)).toEqual(true)
+		expect(type.get(key)).not.toEqual(undefined)
+		expect(type.creatable.get(key)).toEqual(creatable)
 	})
 })

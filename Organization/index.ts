@@ -4,11 +4,12 @@ import { Email } from "../Email"
 import { Changeable as OrganizationChangeable } from "./Changeable"
 import { Creatable as OrganizationCreatable } from "./Creatable"
 import { Identifier as OrganizationIdentifier } from "./Identifier"
-export interface Organization extends Omit<Organization.Creatable, "users"> {
+export interface Organization extends Omit<Organization.Creatable, "users" | "permissions"> {
 	id: Organization.Identifier
 	created: isoly.DateTime
 	modified: isoly.DateTime
 	users: Email[]
+	permissions: string[]
 }
 
 export namespace Organization {

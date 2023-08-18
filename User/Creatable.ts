@@ -1,23 +1,27 @@
+import { flagly } from "flagly"
 import { isly } from "isly"
 import { Email } from "../Email"
 import { Name } from "./Name"
 import { Password } from "./Password"
-import { Permissions as Permissions } from "./Permissions"
+import { Permissions } from "./Permissions"
 
-export interface Creatable {
+export interface Creatable<T extends flagly.Flags = flagly.Flags> {
 	email: Email
 	password: Password.Set
 	name: Name
-	permissions: Permissions.Readable
+	permissions: Permissions<T>
 }
 
 export namespace Creatable {
-	export const type = isly.object<Creatable>({
-		email: Email.type,
-		password: Password.Set.type,
-		name: Name.type,
-		permissions: isly.fromIs("Permissions.Readable", Permissions.Readable.is),
-	})
+	function createType<T extends flagly.Flags>(type: isly.Type<T>): isly.Type<Creatable<T>> {
+		return isly.object<Creatable<T>>({
+			email: Email.type,
+			password: Password.Set.type,
+			name: Name.type,
+			permissions: Permissions.type.create(type),
+		})
+	}
+	export const type = Object.assign(createType(flagly.Flags.type), { create: createType })
 	export const is = type.is
 	export const flaw = type.flaw
 }
