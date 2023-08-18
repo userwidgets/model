@@ -25,6 +25,7 @@ type Base = {
 				// allow editing details of this org
 				// includes removing users. should removing user be another permission?
 				edit?: true
+				create?: flagly.Flags | true
 		  }
 		| true
 	app?: flagly.Flags | boolean
