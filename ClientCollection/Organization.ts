@@ -2,7 +2,8 @@ import { gracely } from "gracely"
 import { isoly } from "isoly"
 import { http } from "cloudly-http"
 import { rest } from "cloudly-rest"
-import { userwidgets } from "../index"
+import type { userwidgets } from "../index"
+import { Organization as userwidgetsOrganization } from "../Organization"
 import type { EntityTags } from "./index"
 
 export class Organization extends rest.Collection<gracely.Error> {
@@ -19,7 +20,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 			organization,
 			{ application }
 		)
-		if (userwidgets.Organization.is(result))
+		if (userwidgetsOrganization.is(result))
 			this.entityTags.organization[result.id] = isoly.DateTime.now()
 		return result
 	}
