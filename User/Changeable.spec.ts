@@ -4,7 +4,7 @@ import { userwidgets } from "../index"
 describe("Users.Changeable", () => {
 	const user: userwidgets.User.Changeable = {
 		name: { first: "my", last: "name" },
-		permissions: { "*": {}, "---o1---": {} },
+		permissions: "",
 		password: { new: "foobar", repeat: "foobar" },
 	}
 	it("is", () => {

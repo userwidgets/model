@@ -1,3 +1,4 @@
+import { flagly } from "flagly"
 import { isly } from "isly"
 import { userwidgets } from "../../index"
 
@@ -58,7 +59,15 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4", "user.admin", "org.edit")).toEqual(false)
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4")).toEqual(false)
 	})
+	it("get", () => {
+		const permissions = "*.user.view id.org.edit id.org.view"
+		expect(userwidgets.User.Permissions.get(permissions, "*")).toEqual("*.user.view")
+		expect(userwidgets.User.Permissions.get(permissions, "id")).toEqual("id.org.edit id.org.view")
+	})
 	it("remove", () => {
+		expect(userwidgets.User.Permissions.remove("acme.user.view +---o1---.user.view", "acme", false)).toEqual(
+			"+---o1---.user.view"
+		)
 		const permissions: userwidgets.User.Permissions = {
 			"*": { user: { view: true }, org: { view: true } },
 			a1b2c3d4: { user: { view: true, admin: true } },
@@ -87,7 +96,7 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.remove(partial, "a1b2c3d4", ["user.view", "user.admin"])).toEqual({})
 	})
 	it("set", () => {
-		const permissions: userwidgets.User.Permissions = {
+		const permissions: userwidgets.User.Permissions<flagly.Flags> = {
 			a1b2c3d4: { user: { view: true } },
 		}
 		expect(userwidgets.User.Permissions.set(permissions, "a1b2c3d4", true)).toEqual({
@@ -125,5 +134,16 @@ describe("User.Permissions", () => {
 			"*": { user: { view: true }, org: { view: true } },
 			a1b2c3d4: { user: { view: true, admin: true } },
 		})
+	})
+	it("filter", () => {
+		const permissions = "*.user.view id.org.edit id.org.view od.org.view od.user.view"
+		expect(userwidgets.User.Permissions.filter(permissions, ["id", "od", "*"])).toEqual(permissions)
+		expect(userwidgets.User.Permissions.filter(permissions, ["id"])).toEqual("id.org.edit id.org.view")
+		expect(userwidgets.User.Permissions.filter(permissions, ["od"])).toEqual("od.org.view od.user.view")
+		expect(userwidgets.User.Permissions.filter(permissions, ["*"])).toEqual("*.user.view")
+	})
+	it("organizations", () => {
+		const permissions = "id.user.view od.user.view od.user.edit"
+		expect(userwidgets.User.Permissions.organizations(permissions)).toEqual(["id", "od"])
 	})
 })

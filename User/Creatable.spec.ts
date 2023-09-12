@@ -5,10 +5,7 @@ describe("User.Creatable", () => {
 		email: "jane@example.com",
 		password: { new: "asd", repeat: "asd" },
 		name: { first: "jane", last: "doe" },
-		permissions: {
-			"*": { application: {}, organization: {} },
-			acme: { organization: {}, user: { view: true } },
-		},
+		permissions: "acme.user.view",
 	}
 	it("is", () => {
 		expect(userwidgets.User.Creatable.is(creatable)).toEqual(true)
@@ -17,7 +14,7 @@ describe("User.Creatable", () => {
 				email: "jane@example.com",
 				password: { new: "asd", repeat: "asd" },
 				name: { first: "jane", last: "doe" },
-				permissions: { acme: { organization: {}, user: {} } },
+				permissions: "",
 			})
 		)
 	})

@@ -10,12 +10,12 @@ export interface Changeable {
 export namespace Changeable {
 	export interface Invite {
 		user: Email
-		permissions?: string[]
+		permissions?: string
 	}
 	export namespace Invite {
 		export const type = isly.object<Invite>({
 			user: Email.type,
-			permissions: isly.array(isly.string()).optional(),
+			permissions: isly.string().optional(),
 		})
 		export const is = type.is
 		export const flaw = type.flaw

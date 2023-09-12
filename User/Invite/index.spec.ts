@@ -5,6 +5,8 @@ import { userwidgets } from "../../index"
 
 const now = new Date(Math.floor(new Date().getTime() / 1000) * 1000)
 authly.Issuer.defaultIssuedAt = now.getTime() / 1000
+const issued = isoly.DateTime.create(now.getTime() / 1000)
+const expires = isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 24 * 3)
 
 describe("User.Invite", () => {
 	const privateKey =
@@ -45,17 +47,7 @@ describe("User.Invite", () => {
 	const creatable: userwidgets.User.Invite.Creatable = {
 		email: "jane@example.com",
 		active: false,
-		permissions: {
-			"*": {
-				app: { view: true },
-				org: { view: true },
-				user: { view: true },
-			},
-			acme: {
-				organization: { view: true },
-				user: { view: true },
-			},
-		},
+		permissions: "*.app.view *.org.view *.user.view acme.organization.view acme.user.view",
 	}
 	it("is", () => {
 		const invite: userwidgets.User.Invite = {
@@ -63,12 +55,12 @@ describe("User.Invite", () => {
 			active: true,
 			permissions: {
 				"*": {
-					application: { view: true },
-					organization: { view: true },
+					app: { view: true },
+					org: { view: true },
 					user: { view: true },
 				},
 				"---o1---": {
-					organization: { view: true },
+					org: { view: true },
 					user: { view: true },
 					custom: { view: true },
 				},
@@ -121,43 +113,53 @@ describe("User.Invite", () => {
 		const token = await issuer.sign(creatable, Math.floor(now.getTime() / 1000))
 		const result = await verifier.verify(token)
 		expect(result).toEqual({
-			...creatable,
+			...(({ permissions, ...creatable }) => creatable)(creatable),
+			permissions: {
+				"*": {
+					app: { view: true },
+					org: { view: true },
+					user: { view: true },
+				},
+				acme: { organization: { view: true }, user: { view: true } },
+			},
 			issuer: "userwidgets",
-			issued: isoly.DateTime.create(now.getTime() / 1000),
-			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 24 * 3),
+			issued: issued,
+			expires: expires,
 			audience: "applicationId",
 			token: token,
 		})
 	})
 	it("signing and verifying custom invite", async () => {
 		type Permissions = { foo?: { view?: boolean } }
-		type Creatable = userwidgets.User.Invite.Creatable<Permissions>
-		type Invite = userwidgets.User.Invite<Permissions>
 		const permissions = isly.object<Permissions>({
 			foo: isly.object({ view: isly.boolean(true).optional() }).optional(),
 		})
 		const type = Object.assign(userwidgets.User.Invite.type.create(permissions), {
-			creatable: userwidgets.User.Invite.type.create(permissions),
+			creatable: userwidgets.User.Invite.Creatable.type,
 		})
-		const creatable: Creatable = {
+		const creatable: userwidgets.User.Invite.Creatable = {
 			email: "jessie@rocket.com",
-			permissions: { "o--o1--o": { user: { view: true }, foo: {} } },
+			permissions: "o--o1--o.user.view",
 			active: false,
 		}
-		const issuer = userwidgets.User.Invite.Issuer.create<Creatable>("issuer", "audience", publicKey, privateKey)
+		const issuer = userwidgets.User.Invite.Issuer.create("issuer", "audience", publicKey, privateKey)
 		const token = await issuer.sign(creatable)
 		if (token == undefined) {
 			expect(typeof token).toEqual("string")
 			return
 		}
-		const verifier = userwidgets.User.Invite.Verifier.create<Invite>(publicKey)
+		const verifier = userwidgets.User.Invite.Verifier.create<Permissions>(publicKey)
 		const invite = await verifier.verify(token)
 		expect(type.is(invite)).toEqual(true)
-		expect(type.get(invite)).not.toEqual(undefined)
-		expect(type.creatable.get(invite)).not.toEqual(creatable)
-		expect(type.creatable.get(invite)).not.toEqual({
-			...creatable,
+		expect(type.get(invite)).toEqual({
+			...(({ permissions, ...creatable }) => creatable)(creatable),
 			permissions: { "o--o1--o": { user: { view: true } } },
+			issuer: "issuer",
+			audience: "audience",
+			expires: expires,
+			issued: issued,
+			token: token,
 		})
+		expect(type.creatable.get(invite)).toEqual(undefined)
 	})
 })

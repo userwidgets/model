@@ -10,22 +10,7 @@ describe("User", () => {
 			first: "jane",
 			last: "doe",
 		},
-		permissions: {
-			"*": {
-				app: {},
-				org: {},
-				user: {},
-			},
-			"---o1---": {
-				org: {},
-			},
-			"---o2---": {
-				org: {},
-				user: {
-					view: true,
-				},
-			},
-		},
+		permissions: "+---o2---.user.view",
 		created: now,
 		modified: now,
 	}
@@ -34,9 +19,7 @@ describe("User", () => {
 		const u: userwidgets.User = {
 			email: "jessie@example.com",
 			name: { first: "jessie", last: "doe " },
-			permissions: {
-				"*": { user: { view: true } },
-			},
+			permissions: "*.user.view",
 			created: now,
 			modified: now,
 		}
