@@ -12,7 +12,7 @@ export const transformers: Transformer[] = [
 			backward: (value: number) => isoly.DateTime.create(value),
 		},
 		permissions: {
-			forward: (value: flagly.Flags) => flagly.Flags.stringify(value),
+			forward: (value: string) => value,
 			backward: (value: string) => flagly.parse(value),
 		},
 	}),

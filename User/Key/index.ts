@@ -2,6 +2,9 @@ import { flagly } from "flagly"
 import { isoly } from "isoly"
 import { authly } from "authly"
 import { isly } from "isly"
+import { Email } from "../../Email"
+import { Name } from "../Name"
+import { Permissions } from "../Permissions"
 import { Creatable as KeyCreatable } from "./Creatable"
 import { Transformer as KeyTransformer, transformers } from "./Transformers"
 
@@ -13,42 +16,41 @@ type BaseClaims = {
 	token: string
 }
 type Base<C extends Key.Creatable.Claims = Key.Creatable.Claims, P extends flagly.Flags = flagly.Flags> = BaseClaims &
-	KeyCreatable<C, P>
+	Omit<KeyCreatable<C>, "permissions"> & {
+		permissions: Permissions<P>
+	}
 export type Key<C extends Key.Creatable.Claims = Key.Creatable.Claims, P extends flagly.Flags = flagly.Flags> = Base<
-	C,
+	NonNullable<unknown>,
 	P
 > &
 	C
 export namespace Key {
 	export type Transformer = KeyTransformer
 	export const Transformer = KeyTransformer
-	export type Creatable<
-		C extends KeyCreatable.Claims = KeyCreatable.Claims,
-		P extends flagly.Flags = flagly.Flags
-	> = KeyCreatable<C, P>
+	export type Creatable<C extends KeyCreatable.Claims = KeyCreatable.Claims> = KeyCreatable<C>
 	export const Creatable = KeyCreatable
 	export namespace Creatable {
 		export type Claims = KeyCreatable.Claims
 	}
 	function createType<C extends Creatable.Claims, P extends flagly.Flags>({
-		claims: key = Creatable.Claims.type as isly.Type<C>,
+		claims: claims = Creatable.Claims.type as isly.Type<C>,
 		permissions = flagly.Flags.type as isly.Type<P>,
 	}: {
 		claims?: isly.Type<C>
 		permissions?: isly.Type<P>
 	} = {}): isly.Type<Key<C, P>> {
-		return isly.intersection<Key<C, P>, C, Base<C, P>>(
-			key,
-			isly.intersection<Base<C, P>, Key.Creatable<C, P>, BaseClaims>(
-				Key.Creatable.type.create({ claims: key, permissions }),
-				isly.object({
-					issuer: isly.string(),
-					audience: isly.string(),
-					issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-					expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-					token: isly.string(/^[^.]+\.[^.]+\.[^.]*/),
-				})
-			)
+		return isly.intersection<Key<C, P>, C, Base<NonNullable<unknown>, P>>(
+			claims,
+			isly.object<Base<NonNullable<unknown>, P>>({
+				name: Name.type,
+				email: Email.type,
+				permissions: Permissions.type.create(permissions),
+				issuer: isly.string(),
+				audience: isly.string(),
+				issued: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+				expires: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+				token: isly.string(/^[^.]+\.[^.]+\.[^.]*/),
+			})
 		)
 	}
 	export const type = Object.assign(createType(), { create: createType })

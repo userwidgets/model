@@ -45,13 +45,7 @@ describe("Key", () => {
 	const creatable: userwidgets.User.Key.Creatable = {
 		name: { first: "john", last: "doe" },
 		email: "john@example.com",
-		permissions: {
-			"*": {
-				app: { view: true },
-				org: { view: true },
-				user: { view: true },
-			},
-		},
+		permissions: "*.app.view *.org.view *.user.view",
 	}
 	it("is", async () => {
 		const key: userwidgets.User.Key = {
@@ -62,15 +56,7 @@ describe("Key", () => {
 			name: { first: "john", last: "doe" },
 			email: "john@example.com",
 			permissions: {
-				"*": {
-					application: {},
-					org: {},
-					user: {},
-				},
-				"---o1---": {
-					org: { view: true },
-					user: {},
-				},
+				"---o1---": { org: { view: true } },
 			},
 			token: "a.fake.token",
 		}
@@ -122,6 +108,7 @@ describe("Key", () => {
 		if (token) {
 			const expected = {
 				...creatable,
+				permissions: { "*": { app: { view: true }, org: { view: true }, user: { view: true } } },
 				issuer: "userwidgets",
 				issued: isoly.DateTime.create(now.getTime() / 1000),
 				expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 12),
@@ -144,20 +131,20 @@ describe("Key", () => {
 	it("signing and verifying custom key", async () => {
 		type Claims = { id: string }
 		type Permissions = { foo?: { view?: true } }
-		type Key = userwidgets.User.Key<Claims, Permissions>
-		type Creatable = userwidgets.User.Key.Creatable<Claims, Permissions>
+		type Key = userwidgets.User.Key<Claims>
+		type Creatable = userwidgets.User.Key.Creatable<Claims>
 		const claims = isly.object<Claims>({ id: isly.string() })
 		const permissions = isly.object<Permissions>({
-			foo: isly.object({ view: isly.boolean(true).optional() }).optional(),
+			foo: isly.union(isly.boolean(true), isly.object({ view: isly.boolean(true).optional() }).optional()),
 		})
 
 		const type = Object.assign(userwidgets.User.Key.type.create({ claims, permissions }), {
-			creatable: userwidgets.User.Key.Creatable.type.create({ claims, permissions }),
+			creatable: userwidgets.User.Key.Creatable.type.create({ claims }),
 		})
 		const creatable: Creatable = {
 			name: { first: "jessie", last: "doe" },
 			email: "jessie@rocket.com",
-			permissions: { "o--o1--o": { user: { view: true }, foo: { view: true } } },
+			permissions: "o--o1--o.user.view o--o1--o.foo",
 			id: "r0ck3t",
 		}
 
@@ -182,9 +169,19 @@ describe("Key", () => {
 		}
 
 		let key: unknown = await verifier.custom.verify(token)
+		const expected = {
+			...creatable,
+			id: "r0ck3t",
+			audience: "audience",
+			email: "jessie@rocket.com",
+			issued: now.toISOString(),
+			issuer: "issuer",
+			expires: new Date(now.getTime() + 12 * 60 * 60 * 1000).toISOString(),
+			permissions: { "o--o1--o": { user: { view: true }, foo: true } },
+		}
 		expect(type.is(key)).toEqual(true)
-		expect(type.get(key)).not.toEqual(undefined)
-		expect(type.creatable.get(key)).toEqual(creatable)
+		expect(type.get(key)).toEqual({ ...expected, token })
+		expect(type.creatable.get(key)).toEqual(undefined)
 
 		token = await issuer.default.sign(creatable)
 		if (token == undefined) {
@@ -193,7 +190,7 @@ describe("Key", () => {
 		}
 		key = await verifier.default.verify(token)
 		expect(type.is(key)).toEqual(true)
-		expect(type.get(key)).not.toEqual(undefined)
-		expect(type.creatable.get(key)).toEqual(creatable)
+		expect(type.get(key)).toEqual({ ...expected, token })
+		expect(type.creatable.get(key)).toEqual(undefined)
 	})
 })

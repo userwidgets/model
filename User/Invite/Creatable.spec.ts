@@ -5,17 +5,7 @@ describe("User.Invite.Creatable", () => {
 		const signature: userwidgets.User.Invite.Creatable = {
 			email: "jane@example.com",
 			active: true,
-			permissions: {
-				"*": {
-					application: {},
-					organization: {},
-					user: {},
-				},
-				acme: {
-					organization: {},
-					user: {},
-				},
-			},
+			permissions: "*.app.view",
 		}
 		expect(userwidgets.User.Invite.Creatable.is(signature)).toEqual(true)
 	})

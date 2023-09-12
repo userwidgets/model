@@ -3,36 +3,31 @@ import { isly } from "isly"
 import { Email } from "../../Email"
 import type { Organization } from "../../Organization"
 import { Name } from "../../User/Name"
+import { Permissions } from "..//Permissions"
 import type { User } from "../index"
-import { Permissions } from "../Permissions"
 import { Claims as KeyClaims } from "./Claims"
 import { Key } from "./index"
 
-type BaseClaims<T extends flagly.Flags> = {
+type BaseClaims = {
 	name: { first: string; last: string }
 	email: Email
-	permissions: Permissions<T>
+	permissions: string
 }
-export type Creatable<
-	C extends Creatable.Claims = Creatable.Claims,
-	P extends flagly.Flags = flagly.Flags
-> = BaseClaims<P> & C
+export type Creatable<C extends Creatable.Claims = Creatable.Claims> = BaseClaims & C
 export namespace Creatable {
 	export type Claims = KeyClaims
 	export const Claims = KeyClaims
-	function createType<C extends Claims, P extends flagly.Flags>({
+	function createType<C extends Claims>({
 		claims: claims = Claims.type as isly.Type<C>,
-		permissions = flagly.Flags.type as isly.Type<P>,
 	}: {
 		claims?: isly.Type<C>
-		permissions?: isly.Type<P>
-	} = {}): isly.Type<Creatable<C, P>> {
-		return isly.intersection<Creatable<C, P>, C, BaseClaims<P>>(
+	} = {}): isly.Type<Creatable<C>> {
+		return isly.intersection<Creatable<C>, C, BaseClaims>(
 			claims,
 			isly.object({
 				name: Name.type,
 				email: Email.type,
-				permissions: Permissions.type.create(permissions),
+				permissions: isly.string(),
 			})
 		)
 	}
@@ -43,13 +38,13 @@ export namespace Creatable {
 	export const flaw = type.flaw
 	export function from(key: Key, organizations?: Organization.Identifier[]): Creatable
 	export function from(user: User, organizations?: Organization.Identifier[]): Creatable
-	export function from(source: User | Key, organizations?: Organization.Identifier[]): Creatable {
+	export function from(key: Creatable, organization?: Organization.Identifier[]): Creatable
+	export function from(source: User | Key | Creatable, organizations?: Organization.Identifier[]): Creatable {
+		const permissions = !organizations ? source.permissions : Permissions.filter(source.permissions, organizations)
 		return {
 			email: source.email,
 			name: source.name,
-			permissions: !organizations
-				? source.permissions
-				: Object.fromEntries(Object.entries(source.permissions).filter(([id]) => organizations.includes(id))),
+			permissions: typeof permissions == "string" ? permissions : flagly.Flags.stringify(permissions),
 		}
 	}
 }

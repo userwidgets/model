@@ -9,43 +9,21 @@ describe("Creatable", () => {
 		const creatable: userwidgets.User.Key.Creatable = {
 			name: { first: "john", last: "doe" },
 			email: "john@example.com",
-			permissions: {
-				"*": {
-					app: { view: true },
-					org: { view: true },
-					user: { view: true },
-				},
-				"---o1---": {
-					organization: { view: true },
-					user: { view: true },
-				},
-			},
+			permissions: "*app.view *.org.view *.user.view +---o1---.organization.view +---o1---.user.view",
 		}
 		expect(userwidgets.User.Key.Creatable.is(creatable)).toBe(true)
 	})
 	it("custom", () => {
 		type Claims = { id: string }
 		const claims = isly.object<Claims>({ id: isly.string() })
-		type Permissions = { foo: boolean }
-		const permissions = isly.object<Permissions>({ foo: isly.boolean() })
-		type Creatable = userwidgets.User.Key.Creatable<Claims, Permissions>
-		const type = userwidgets.User.Key.Creatable.type.create({ claims, permissions })
+		type Creatable = userwidgets.User.Key.Creatable<Claims>
+		const type = userwidgets.User.Key.Creatable.type.create({ claims })
 		const creatable: Creatable = {
 			id: "r0ck3t",
 			name: { first: "jessie", last: "doe" },
 			email: "jessie@rocket.com",
-			permissions: { "o--o1--o": { user: { view: true }, foo: false } },
-		}
-		const dirty = {
-			id: "r0ck3t",
-			name: { first: "jessie", last: "doe" },
-			email: "jessie@rocket.com",
-			permissions: { "o--o1--o": { user: { view: true, garbage: true }, foo: false } },
+			permissions: "o--o1--o.user.view",
 		}
 		expect(type.is(creatable)).toEqual(true)
-		expect(type.is(dirty)).toEqual(true)
-		expect(type.get(dirty)).not.toEqual(undefined)
-		expect(type.get(dirty)).not.toEqual(dirty)
-		expect(type.is(type.get(dirty))).toEqual(true)
 	})
 })

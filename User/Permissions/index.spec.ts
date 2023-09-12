@@ -1,3 +1,4 @@
+import { flagly } from "flagly"
 import { isly } from "isly"
 import { userwidgets } from "../../index"
 
@@ -59,6 +60,9 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4")).toEqual(false)
 	})
 	it("remove", () => {
+		expect(userwidgets.User.Permissions.remove("acme.user.view +---o1---.user.view", "acme", false)).toEqual(
+			"+---o1---.user.view"
+		)
 		const permissions: userwidgets.User.Permissions = {
 			"*": { user: { view: true }, org: { view: true } },
 			a1b2c3d4: { user: { view: true, admin: true } },
@@ -87,7 +91,7 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.remove(partial, "a1b2c3d4", ["user.view", "user.admin"])).toEqual({})
 	})
 	it("set", () => {
-		const permissions: userwidgets.User.Permissions = {
+		const permissions: userwidgets.User.Permissions<flagly.Flags> = {
 			a1b2c3d4: { user: { view: true } },
 		}
 		expect(userwidgets.User.Permissions.set(permissions, "a1b2c3d4", true)).toEqual({
