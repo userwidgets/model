@@ -2,7 +2,7 @@ import { gracely } from "gracely"
 import { isoly } from "isoly"
 import { http } from "cloudly-http"
 import { rest } from "cloudly-rest"
-import type { userwidgets } from "../index"
+import { userwidgets } from "../index"
 import type { EntityTags } from "./index"
 
 export class Organization extends rest.Collection<gracely.Error> {
@@ -13,19 +13,14 @@ export class Organization extends rest.Collection<gracely.Error> {
 		organization: userwidgets.Organization.Creatable,
 		application: userwidgets.Application.Identifier,
 		url?: string
-	): Promise<
-		| gracely.Error
-		| { organization: gracely.Error }
-		| { organization: userwidgets.Organization; feedback: userwidgets.User.Feedback[] | gracely.Error }
-	> {
+	): Promise<userwidgets.Organization | gracely.Error> {
 		const result = await this.client.post<Awaited<ReturnType<Organization["create"]>>>(
 			`${this.configuration.pathPrefix}/organization${url ? "?url=" + url : ""}`,
 			organization,
 			{ application }
 		)
-		!gracely.Error.is(result) &&
-			!gracely.Error.is(result.organization) &&
-			(this.entityTags.organization[result.organization.id] = isoly.DateTime.now())
+		if (userwidgets.Organization.is(result))
+			this.entityTags.organization[result.id] = isoly.DateTime.now()
 		return result
 	}
 	async fetch(id: userwidgets.Organization.Identifier): Promise<userwidgets.Organization | gracely.Error> {
