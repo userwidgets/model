@@ -47,7 +47,7 @@ describe("User.Invite", () => {
 	const creatable: userwidgets.User.Invite.Creatable = {
 		email: "jane@example.com",
 		active: false,
-		permissions: "*.app.view *.org.view *.user.view acme.organization.view ",
+		permissions: "*.app.view *.org.view *.user.view acme.organization.view acme.user.view",
 	}
 	it("is", () => {
 		const invite: userwidgets.User.Invite = {
@@ -120,7 +120,7 @@ describe("User.Invite", () => {
 					org: { view: true },
 					user: { view: true },
 				},
-				acme: { organization: { view: true } },
+				acme: { organization: { view: true }, user: { view: true } },
 			},
 			issuer: "userwidgets",
 			issued: issued,
