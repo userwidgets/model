@@ -42,7 +42,8 @@ export class Organization extends rest.Collection<gracely.Error> {
 	}
 	async update(
 		id: userwidgets.Organization.Identifier,
-		organization: userwidgets.Organization.Changeable
+		organization: userwidgets.Organization.Changeable,
+		options?: { entityTag?: string }
 	): Promise<
 		| gracely.Error
 		| { organization: gracely.Error }
@@ -52,7 +53,7 @@ export class Organization extends rest.Collection<gracely.Error> {
 				removals: userwidgets.User.Feedback.Notification[]
 		  }
 	> {
-		const entityTag = this.entityTags.organization[id]
+		const entityTag = options?.entityTag ?? this.entityTags.organization[id]
 		const result = await this.client.patch<ReturnType<Organization["update"]>>(
 			`${this.configuration.pathPrefix}/organization/${id}`,
 			organization,
