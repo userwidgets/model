@@ -18,9 +18,10 @@ export class User extends rest.Collection<gracely.Error> {
 
 	async changePassword(
 		email: string,
-		passwords: userwidgets.User.Password.Change
+		passwords: userwidgets.User.Password.Change,
+		options?: { entityTag?: string }
 	): Promise<gracely.Result | gracely.Error> {
-		const entityTag = this.entityTags?.user?.[email]
+		const entityTag = options?.entityTag ?? this.entityTags?.user?.[email]
 		const response = await this.client.put<"">(
 			`${this.configuration.pathPrefix}/user/${email}/password`,
 			passwords,
@@ -29,8 +30,12 @@ export class User extends rest.Collection<gracely.Error> {
 		!gracely.Error.is(response) && (this.entityTags.user[email] = isoly.DateTime.now())
 		return response == "" ? gracely.success.noContent() : response
 	}
-	async changeName(email: string, name: userwidgets.User.Name): Promise<userwidgets.User | gracely.Error> {
-		const entityTag = this.entityTags.user[email]
+	async changeName(
+		email: string,
+		name: userwidgets.User.Name,
+		options?: { entityTag?: string }
+	): Promise<userwidgets.User | gracely.Error> {
+		const entityTag = options?.entityTag ?? this.entityTags.user[email]
 		const result = await this.client.put<userwidgets.User>(
 			`${this.configuration.pathPrefix}/user/${email}/name`,
 			name,
@@ -42,9 +47,10 @@ export class User extends rest.Collection<gracely.Error> {
 	async updatePermissions(
 		email: string,
 		organizationId: string,
-		permissions: userwidgets.User.Permissions
+		permissions: userwidgets.User.Permissions,
+		option?: { entityTags?: string }
 	): Promise<userwidgets.User | gracely.Error> {
-		const entityTag = this.entityTags.user[email]
+		const entityTag = option?.entityTags ?? this.entityTags.user[email]
 		const result = await this.client.patch<userwidgets.User>(
 			`${this.configuration.pathPrefix}/user/${email}/permission/${organizationId}`,
 			permissions,
