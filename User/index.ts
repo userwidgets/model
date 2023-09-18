@@ -38,7 +38,10 @@ export namespace User {
 	export const flaw = type.flaw
 
 	export const toKey = UserKey.Creatable.from
-	export type Key<C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims> = UserKey<C>
+	export type Key<
+		C extends UserKey.Creatable.Claims = UserKey.Creatable.Claims,
+		P extends flagly.Flags = flagly.Flags
+	> = UserKey<C, P>
 	export const Key = UserKey
 	export namespace Key {
 		export type Issuer<T extends Key.Creatable = Key.Creatable> = UserKey.Issuer<T>
