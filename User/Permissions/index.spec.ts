@@ -134,6 +134,9 @@ describe("User.Permissions", () => {
 			"*": { user: { view: true }, org: { view: true } },
 			a1b2c3d4: { user: { view: true, admin: true } },
 		})
+		expect(userwidgets.User.Permissions.merge({ "8UNxUAHs": { org: true } }, { "8UNxUAHs": true })).toEqual({
+			"8UNxUAHs": true,
+		})
 	})
 	it("filter", () => {
 		const permissions = "*.user.view id.org.edit id.org.view od.org.view od.user.view"
