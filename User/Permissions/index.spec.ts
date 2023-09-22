@@ -122,18 +122,15 @@ describe("User.Permissions", () => {
 		})
 	})
 	it("merge", () => {
-		const target: userwidgets.User.Permissions = {
-			"*": { user: { view: true } },
-			a1b2c3d4: { user: { view: true } },
-		}
-		const source: userwidgets.User.Permissions = {
-			"*": { org: { view: true } },
-			a1b2c3d4: { user: { admin: true } },
-		}
-		expect(userwidgets.User.Permissions.merge(target, source)).toEqual({
-			"*": { user: { view: true }, org: { view: true } },
-			a1b2c3d4: { user: { view: true, admin: true } },
-		})
+		expect(userwidgets.User.Permissions.merge("8UNxUAHs.user.view", "Aq3SUei-.user.view")).toEqual(
+			"8UNxUAHs.user.view Aq3SUei-.user.view"
+		)
+		expect(
+			userwidgets.User.Permissions.merge(
+				{ "*": { user: { view: true } }, a1b2c3d4: { user: { view: true } } },
+				{ "*": { org: { view: true } }, a1b2c3d4: { user: { admin: true } } }
+			)
+		).toEqual({ "*": { user: { view: true }, org: { view: true } }, a1b2c3d4: { user: { view: true, admin: true } } })
 		expect(userwidgets.User.Permissions.merge({ "8UNxUAHs": { org: true } }, { "8UNxUAHs": true })).toEqual({
 			"8UNxUAHs": true,
 		})
