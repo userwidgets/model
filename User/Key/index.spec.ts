@@ -79,6 +79,13 @@ describe("Key", () => {
 		const token = await issuer.sign(creatable, now.getTime() / 1000)
 		expect(token).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/)
 	})
+	it("verifying", async () => {
+		const verifier = userwidgets.User.Key.Verifier.create()
+		const token =
+			"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2Vyd2lkZ2V0cyIsImlhdCI6MTY5NTk3MzI1OCwiYXVkIjoibXlBdWRpZW5jZSIsImV4cCI6MTY5NjAxNjQ1OCwibmFtIjp7ImZpcnN0Ijoiam9obiIsImxhc3QiOiJkb2UifSwic3ViIjoiam9obkBleGFtcGxlLmNvbSIsInBlciI6IiJ9.Vn9kdejOyEElKd6dHsJk2Rnh8Nz3v_ROKfkJpob0-Dlx428WADWR7E51Xn5qYhGUx_3S5nsaKA0kTzU8dekSuQ"
+		const result = await verifier.verify(token)
+		expect(userwidgets.User.Key.is(result)).toEqual(true)
+	})
 	it("signing and verifying (authly)", async () => {
 		const issuer = authly.Issuer.create<userwidgets.User.Key.Creatable>(
 			"userwidgets",
@@ -104,29 +111,30 @@ describe("Key", () => {
 		const verifierNone = userwidgets.User.Key.Verifier.create()
 
 		const token = await issuer.sign(creatable)
-		expect(token).toBeTruthy()
-		if (token) {
-			const expected = {
-				...creatable,
-				permissions: { "*": { app: { view: true }, org: { view: true }, user: { view: true } } },
-				issuer: "userwidgets",
-				issued: isoly.DateTime.create(now.getTime() / 1000),
-				expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 12),
-				audience: "example",
-				token: token,
-			}
-			expect(await verifierPublicKey.verify(token)).toEqual(expected)
-			expect(await verifierNone.verify(token)).toEqual(expected)
-
-			const tokenParts = token.split(".")
-			expect(tokenParts.length).toEqual(3)
-			tokenParts[2] = tokenParts[2].split("").reverse().join("")
-			const corruptedToken = tokenParts.join(".")
-
-			expect(token).not.toEqual(corruptedToken)
-			expect(await verifierPublicKey.verify(corruptedToken)).toBeUndefined()
-			expect(await verifierNone.verify(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
+		if (!token) {
+			expect(token).toBeTruthy()
+			return
 		}
+		const expected = {
+			...creatable,
+			permissions: { "*": { app: { view: true }, org: { view: true }, user: { view: true } } },
+			issuer: "userwidgets",
+			issued: isoly.DateTime.create(now.getTime() / 1000),
+			expires: isoly.DateTime.create(now.getTime() / 1000 + 60 * 60 * 12),
+			audience: "example",
+			token: token,
+		}
+		expect(await verifierPublicKey.verify(token)).toEqual(expected)
+		expect(await verifierNone.verify(token)).toEqual(expected)
+
+		const tokenParts = token.split(".")
+		expect(tokenParts.length).toEqual(3)
+		tokenParts[2] = tokenParts[2].split("").reverse().join("")
+		const corruptedToken = tokenParts.join(".")
+
+		expect(token).not.toEqual(corruptedToken)
+		expect(await verifierPublicKey.verify(corruptedToken)).toBeUndefined()
+		expect(await verifierNone.verify(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
 	})
 	it("signing and verifying custom key", async () => {
 		type Claims = { id: string }
