@@ -79,10 +79,13 @@ describe("Key", () => {
 		const token = await issuer.sign(creatable, now.getTime() / 1000)
 		expect(token).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/)
 	})
-	it("verifying", async () => {
+	it("empty permissions is key", async () => {
+		const issuer = userwidgets.User.Key.Issuer.create("userwidgets", "myAudience", publicKey, privateKey)
 		const verifier = userwidgets.User.Key.Verifier.create()
-		const token =
-			"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2Vyd2lkZ2V0cyIsImlhdCI6MTY5NTk3MzI1OCwiYXVkIjoibXlBdWRpZW5jZSIsImV4cCI6MTY5NjAxNjQ1OCwibmFtIjp7ImZpcnN0Ijoiam9obiIsImxhc3QiOiJkb2UifSwic3ViIjoiam9obkBleGFtcGxlLmNvbSIsInBlciI6IiJ9.Vn9kdejOyEElKd6dHsJk2Rnh8Nz3v_ROKfkJpob0-Dlx428WADWR7E51Xn5qYhGUx_3S5nsaKA0kTzU8dekSuQ"
+		const token = await issuer.sign({ ...creatable, permissions: "" })
+		expect(token).toMatch(/^ey[^.]+\.[^.]+\.[^.]+$/)
+		if (!token)
+			return
 		const result = await verifier.verify(token)
 		expect(userwidgets.User.Key.is(result)).toEqual(true)
 	})
