@@ -42,12 +42,14 @@ export namespace Permissions {
 	): boolean {
 		let result: boolean
 		const parsed: flagly.Flags = typeof permissions == "object" ? permissions : flagly.parse(permissions)
-		if (flags.length == 0) {
+		if (flags.length == 0)
 			result = flagly.get.path(
 				parsed,
-				...(typeof organization == "object" ? flagly.Flags.stringify(organization) : organization).split(" ")
+				...(typeof organization == "object" ? flagly.Flags.stringify(organization) : organization)
+					.split(" ")
+					.filter(flag => flag)
 			)
-		} else if (typeof organization == "object")
+		else if (typeof organization == "object")
 			result = false
 		else {
 			const alternatives = flags.map(flag =>
