@@ -14,13 +14,16 @@ export class Me extends rest.Collection<gracely.Error> {
 	) {
 		super(client)
 	}
-	async login(credentials: User.Credentials): Promise<User.Key | gracely.Error> {
+	async login(credentials: User.Credentials | userwidgets.User.Key): Promise<User.Key | gracely.Error> {
 		let result: gracely.Error | User.Key
 		if (credentials.password == undefined)
 			result = gracely.client.malformedContent("password", "string", "Password is required for login.")
 		else {
 			const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
-				authorization: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
+				authorization:
+					"token" in credentials
+						? credentials.token
+						: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
 			})
 			result = gracely.Error.is(token)
 				? token
