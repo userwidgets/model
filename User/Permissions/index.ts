@@ -33,10 +33,21 @@ export namespace Permissions {
 		permissions: Permissions | string,
 		organization: Organization.Identifier | "*",
 		...flags: string[]
+	): boolean
+	export function check(permissions: Permissions | string, constraint: Permissions | string): boolean
+	export function check(
+		permissions: Permissions | string,
+		organization: Permissions | Organization.Identifier | "*",
+		...flags: string[]
 	): boolean {
 		let result: boolean
 		const parsed: flagly.Flags = typeof permissions == "object" ? permissions : flagly.parse(permissions)
-		if (flags.length == 0)
+		if (flags.length == 0) {
+			result = flagly.get.path(
+				parsed,
+				...(typeof organization == "object" ? flagly.Flags.stringify(organization) : organization).split(" ")
+			)
+		} else if (typeof organization == "object")
 			result = false
 		else {
 			const alternatives = flags.map(flag =>
