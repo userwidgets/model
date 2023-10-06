@@ -15,14 +15,13 @@ export class Me extends rest.Collection<gracely.Error> {
 		super(client)
 	}
 	async login(credentials: User.Credentials | userwidgets.User.Key): Promise<User.Key | gracely.Error> {
-		let result: gracely.Error | User.Key
 		const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
 			authorization:
 				"token" in credentials
 					? `Bearer ${credentials.token}`
 					: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
 		})
-		result = gracely.Error.is(token)
+		const result: gracely.Error | User.Key = gracely.Error.is(token)
 			? token
 			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
 			  gracely.client.unauthorized("Failed to verify token.")
