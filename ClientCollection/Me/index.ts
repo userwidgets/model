@@ -16,10 +16,9 @@ export class Me extends rest.Collection<gracely.Error> {
 	}
 	async login(credentials: User.Credentials | userwidgets.User.Key): Promise<User.Key | gracely.Error> {
 		const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
-			authorization:
-				"token" in credentials
-					? undefined
-					: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
+			...(!("token" in credentials) && {
+				authorization: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
+			}),
 		})
 		const result: gracely.Error | User.Key = gracely.Error.is(token)
 			? token
