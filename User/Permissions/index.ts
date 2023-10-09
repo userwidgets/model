@@ -145,7 +145,7 @@ export namespace Permissions {
 			target: typeof target == "object" ? target : flagly.parse(target),
 			source: typeof source == "object" ? source : flagly.parse(source),
 		}
-		const result = flagly.reduce(parsed.target, parsed.source)
+		const result = flagly.merge(parsed.target, parsed.source)
 		return typeof target == "object" ? (result as T) : flagly.Flags.stringify(result)
 	}
 	export function filter<T extends Permissions<flagly.Flags>>(
@@ -165,6 +165,12 @@ export namespace Permissions {
 		const result = Object.fromEntries(Object.entries(parsed).filter(([id]) => organizations.includes(id))) as T
 		return typeof permissions == "object" ? result : flagly.Flags.stringify(result)
 	}
+	export function simplify() {
+		return
+	}
+	export function complicate() {
+		return
+	}
 	export function organizations(
 		permissions: string | Permissions<flagly.Flags>,
 		options?: { star?: boolean }
@@ -173,3 +179,9 @@ export namespace Permissions {
 		return Object.keys(options?.star ? parsed : (({ "*": _, ...parsed }) => parsed)(parsed))
 	}
 }
+
+/*
+start = "a1b2c3d4.user"
+end = "a1b2c3d4.user.view a1b2c3d4.user.admin a1b2c3d4.user.invite"
+lookup = ["user.view", "user.admin", "user.invite", "org.view"]
+*/
