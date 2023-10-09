@@ -138,6 +138,12 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.merge({ "8UNxUAHs": { org: true } }, { "8UNxUAHs": true })).toEqual({
 			"8UNxUAHs": true,
 		})
+		expect(userwidgets.User.Permissions.merge("3Ry4ldKN.user.view 3Ry4ldKN.user.invite", "3Ry4ldKN")).toEqual(
+			"3Ry4ldKN"
+		)
+		expect(userwidgets.User.Permissions.merge("3Ry4ldKN", "3Ry4ldKN.user.view 3Ry4ldKN.user.invite")).toEqual(
+			"3Ry4ldKN"
+		)
 	})
 	it("filter", () => {
 		const permissions = "*.user.view id.org.edit id.org.view od.org.view od.user.view"

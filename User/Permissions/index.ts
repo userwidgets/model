@@ -145,7 +145,7 @@ export namespace Permissions {
 			target: typeof target == "object" ? target : flagly.parse(target),
 			source: typeof source == "object" ? source : flagly.parse(source),
 		}
-		const result = flagly.reduce(parsed.target, parsed.source)
+		const result = flagly.merge(parsed.target, parsed.source)
 		return typeof target == "object" ? (result as T) : flagly.Flags.stringify(result)
 	}
 	export function filter<T extends Permissions<flagly.Flags>>(
