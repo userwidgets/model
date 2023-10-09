@@ -165,12 +165,6 @@ export namespace Permissions {
 		const result = Object.fromEntries(Object.entries(parsed).filter(([id]) => organizations.includes(id))) as T
 		return typeof permissions == "object" ? result : flagly.Flags.stringify(result)
 	}
-	export function simplify() {
-		return
-	}
-	export function complicate() {
-		return
-	}
 	export function organizations(
 		permissions: string | Permissions<flagly.Flags>,
 		options?: { star?: boolean }
