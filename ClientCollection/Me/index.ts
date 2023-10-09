@@ -14,21 +14,18 @@ export class Me extends rest.Collection<gracely.Error> {
 	) {
 		super(client)
 	}
-	async login(credentials: User.Credentials): Promise<User.Key | gracely.Error> {
-		let result: gracely.Error | User.Key
-		if (credentials.password == undefined)
-			result = gracely.client.malformedContent("password", "string", "Password is required for login.")
-		else {
-			const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
+	async login(credentials: User.Credentials | userwidgets.User.Key): Promise<User.Key | gracely.Error> {
+		const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
+			...(!("token" in credentials) && {
 				authorization: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
-			})
-			result = gracely.Error.is(token)
-				? token
-				: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
-				  gracely.client.unauthorized("Failed to verify token.")
-			if (!gracely.Error.is(result))
-				this.keySetter(result.token)
-		}
+			}),
+		})
+		const result: gracely.Error | User.Key = gracely.Error.is(token)
+			? token
+			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
+			  gracely.client.unauthorized("Failed to verify token.")
+		if (!gracely.Error.is(result))
+			this.keySetter(result.token)
 		return result
 	}
 	async register(invite: User.Invite, credentials: User.Credentials.Register): Promise<User.Key | gracely.Error> {
