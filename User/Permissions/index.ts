@@ -179,9 +179,3 @@ export namespace Permissions {
 		return Object.keys(options?.star ? parsed : (({ "*": _, ...parsed }) => parsed)(parsed))
 	}
 }
-
-/*
-start = "a1b2c3d4.user"
-end = "a1b2c3d4.user.view a1b2c3d4.user.admin a1b2c3d4.user.invite"
-lookup = ["user.view", "user.admin", "user.invite", "org.view"]
-*/
