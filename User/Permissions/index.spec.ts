@@ -32,6 +32,7 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.is(permissions)).toEqual(true)
 	})
 	it("check", () => {
+		expect(userwidgets.User.Permissions.check("a1b2c3d4", "a1b2c3d4.user.view")).toEqual(true)
 		expect(userwidgets.User.Permissions.check("a1b2c3d4", {})).toEqual(true)
 		expect(userwidgets.User.Permissions.check("a1b2c3d4", "")).toEqual(true)
 		expect(
