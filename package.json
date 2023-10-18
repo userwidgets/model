@@ -76,7 +76,7 @@
 		"flagly": "^0.2.1",
 		"gracely": "^2.0.4",
 		"isly": "^0.1.10",
-		"isoly": "^2.0.21"
+		"isoly": "2.0.31"
 	},
 	"overrides": {
 		"semver": "^7.5.4",
