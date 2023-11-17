@@ -5,11 +5,11 @@ describe("Application", () => {
 	const now = isoly.DateTime.now()
 	it("is", () => {
 		const application: userwidgets.Application = {
-			id: "---a1---",
+			id: "---i-can-be-very-long",
 			name: "example",
 			organizations: {
-				"---o1---": {
-					id: "---o1---",
+				"--i-am-arbitrarily-long": {
+					id: "--i-am-arbitrarily-long",
 					name: "Example AB",
 					users: ["johnny@app.com", "john@app.com", "richard@app.com"],
 					created: now,
