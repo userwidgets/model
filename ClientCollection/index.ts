@@ -32,10 +32,7 @@ export class ClientCollection {
 		...moreClients: http.Client[]
 	) {
 		configuration.application &&
-			(client.appendHeader = request => ({
-				...(client.appendHeader?.(request) ?? {}),
-				application: configuration.application,
-			}))
+			(client.appendHeader = request => ({ ...request.header, application: configuration.application }))
 		this.configuration = Configuration.addDefault(configuration)
 		this.user = new ClientCollection.User(this.client, this.entityTags, this.configuration)
 		this.me = new ClientCollection.Me(this.client, key => (this.key = key), this.configuration)
