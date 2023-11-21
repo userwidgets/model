@@ -9,6 +9,7 @@ export interface Configuration {
 	 * E.g `${pathPrefix}/me`
 	 * Default:
 	 */
+	application?: string
 	pathPrefix: "" | `/${string}`
 	inviteParameterName: string
 }
