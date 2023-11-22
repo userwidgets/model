@@ -138,6 +138,9 @@ export namespace Permissions {
 			result = flags.reduce((result, flag) => flagly.remove(result, organization, ...flag.split(".")), parsed)
 		return typeof permissions == "object" ? (result as T) : flagly.Flags.stringify(result)
 	}
+	export function stringify<T extends Permissions<flagly.Flags>>(source: T): string {
+		return flagly.Flags.stringify(source)
+	}
 	export function merge<T extends Permissions<flagly.Flags>>(target: T, source: T | string): T
 	export function merge<T extends Permissions<flagly.Flags>>(target: string, source: T | string): string
 	export function merge<T extends Permissions<flagly.Flags>>(target: T | string, source: T): T | string {
