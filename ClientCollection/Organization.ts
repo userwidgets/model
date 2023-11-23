@@ -55,9 +55,9 @@ export class Organization extends rest.Collection<gracely.Error> {
 		  }
 	> {
 		const entityTag = options?.entityTag ?? this.entityTags.organization[id]
-		const query = url ? "?url=" + url : ""
+		const search = url ? new URLSearchParams([["url", url]]).toString() : undefined
 		const result = await this.client.patch<ReturnType<Organization["update"]>>(
-			`${this.configuration.pathPrefix}/organization/${id}` + query,
+			`${this.configuration.pathPrefix}/organization/${id}` + (search ? `?${search}` : ""),
 			organization,
 			{
 				...(entityTag && { ifMatch: [entityTag] }),
