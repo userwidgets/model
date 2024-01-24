@@ -7,7 +7,7 @@ export interface Changeable {
 	name?: User["name"]
 	password?: User.Password.Change | User.Password.Set
 	permissions?: User["permissions"]
-	twoFactor?: User["twoFactor"]
+	twoFactor?: string
 }
 export namespace Changeable {
 	export const type = isly.object<Changeable>({

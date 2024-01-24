@@ -8,7 +8,6 @@ export interface Creatable {
 	password: Password.Set
 	name: Name
 	permissions: string
-	twoFactor?: string
 }
 
 export namespace Creatable {
@@ -17,7 +16,6 @@ export namespace Creatable {
 		password: Password.Set.type,
 		name: Name.type,
 		permissions: isly.string(),
-		twoFactor: isly.string().optional(),
 	})
 	export const is = type.is
 	export const flaw = type.flaw
