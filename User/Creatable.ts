@@ -8,7 +8,7 @@ export interface Creatable {
 	password: Password.Set
 	name: Name
 	permissions: string
-	twoFactor?: "enabled" | string
+	twoFactor?: string
 }
 
 export namespace Creatable {
