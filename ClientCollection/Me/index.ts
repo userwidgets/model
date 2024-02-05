@@ -14,10 +14,14 @@ export class Me extends rest.Collection<gracely.Error> {
 	) {
 		super(client)
 	}
-	async login(credentials: User.Credentials | userwidgets.User.Key): Promise<User.Key | gracely.Error> {
+	async login(
+		credentials: User.Credentials | userwidgets.User.Key,
+		twoFactor?: string
+	): Promise<User.Key | gracely.Error> {
 		const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
 			...(!("token" in credentials) && {
 				authorization: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
+				"authorization-2fa": twoFactor,
 			}),
 		})
 		const result: gracely.Error | User.Key = gracely.Error.is(token)
