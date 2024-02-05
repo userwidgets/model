@@ -21,8 +21,8 @@ export class Me extends rest.Collection<gracely.Error> {
 		const token = await this.client.get<string>(`${this.configuration.pathPrefix}/me`, {
 			...(!("token" in credentials) && {
 				authorization: User.Credentials.toBasic({ user: credentials.user, password: credentials.password }),
-				"authorization-2fa": twoFactor,
 			}),
+			...(twoFactor && { "authorization-2fa": twoFactor }),
 		})
 		const result: gracely.Error | User.Key = gracely.Error.is(token)
 			? token
