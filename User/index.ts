@@ -11,7 +11,6 @@ import { Key as UserKey } from "./Key"
 import { Name as UserName } from "./Name"
 import { Password as UserPassword } from "./Password"
 import { Permissions as UserPermissions } from "./Permissions"
-import { Unauthenticated as UserUnauthenticated } from "./Unauthenticated"
 
 export interface User extends Omit<User.Creatable, "password"> {
 	created: isoly.DateTime
@@ -83,8 +82,6 @@ export namespace User {
 			export type Interface = UserFeedback.Notification.Interface
 		}
 	}
-	export type Unauthenticated = UserUnauthenticated
-	export const Unauthenticated = UserUnauthenticated
 	export type Creatable = UserCreatable
 	export const Creatable = UserCreatable
 	export type Changeable = UserChangeable
