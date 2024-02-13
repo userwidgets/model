@@ -72,14 +72,10 @@
 		"authly": "^3.0.7",
 		"cloudly-http": "^0.1.6",
 		"cloudly-rest": "^0.1.3",
-		"cryptly": "^3.0.4",
+		"cryptly": "^4.0.3",
 		"flagly": "^0.2.1",
 		"gracely": "^2.0.4",
 		"isly": "^0.1.10",
 		"isoly": "2.0.31"
-	},
-	"overrides": {
-		"semver": "^7.5.4",
-		"optionator": "^0.9.3"
 	}
 }
