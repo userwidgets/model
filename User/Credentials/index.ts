@@ -20,7 +20,8 @@ export namespace Credentials {
 		let result: Credentials | undefined
 		if (login && login.substring(0, 6).toLowerCase() == "basic ") {
 			const data = new authly.TextDecoder().decode(authly.Base64.decode(login.substring(6), "standard")).split(":")
-			result = data.length == 2 ? { user: data[0], password: data[1] } : undefined
+			const user = data.shift()
+			result = user ? { user, password: data.join(":") } : undefined
 		}
 		return result
 	}
