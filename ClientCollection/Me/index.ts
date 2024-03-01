@@ -1,14 +1,17 @@
 import { gracely } from "gracely"
+import { isoly } from "isoly"
 import { http } from "cloudly-http"
 import { rest } from "cloudly-rest"
 import { userwidgets } from "../../index"
 import { User } from "../../User"
+import type { EntityTags } from "../index"
 import { Invite } from "./Invite"
 
 export class Me extends rest.Collection<gracely.Error> {
 	readonly invite = new Invite(this.client, this.configuration)
 	constructor(
 		client: http.Client,
+		readonly entityTags: EntityTags,
 		private keySetter: (key: string | undefined) => void,
 		readonly configuration: userwidgets.Configuration
 	) {
@@ -28,8 +31,10 @@ export class Me extends rest.Collection<gracely.Error> {
 			? token
 			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
 			  gracely.client.unauthorized("Failed to verify token.")
-		if (!gracely.Error.is(result))
+		if (!gracely.Error.is(result)) {
 			this.keySetter(result.token)
+			this.entityTags.user[result.email] = isoly.DateTime.now()
+		}
 		return result
 	}
 	async register(invite: User.Invite, credentials: User.Credentials.Register): Promise<User.Key | gracely.Error> {

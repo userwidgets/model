@@ -35,7 +35,7 @@ export class ClientCollection {
 			(client.appendHeader = request => ({ ...request.header, application: configuration.application }))
 		this.configuration = Configuration.addDefault(configuration)
 		this.user = new ClientCollection.User(this.client, this.entityTags, this.configuration)
-		this.me = new ClientCollection.Me(this.client, key => (this.key = key), this.configuration)
+		this.me = new ClientCollection.Me(this.client, this.entityTags, key => (this.key = key), this.configuration)
 		this.organization = new ClientCollection.Organization(this.client, this.entityTags, this.configuration)
 		this.application = new ClientCollection.Application(this.client, this.entityTags, this.configuration)
 		;[client, ...moreClients].forEach(client => this.addClient(client))
