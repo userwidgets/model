@@ -15,10 +15,9 @@ import { Unauthenticated as UserUnauthenticated } from "./Unauthenticated"
 
 export interface User extends Omit<User.Creatable, "password"> {
 	created: isoly.DateTime
-	modified: isoly.DateTime
+	modified: isoly.DateTime | { other: isoly.DateTime; password: isoly.DateTime }
 	twoFactor?: boolean
 }
-
 export namespace User {
 	export type Permissions<T extends flagly.Flags = flagly.Flags> = UserPermissions<T>
 	export const Permissions = UserPermissions
@@ -35,6 +34,7 @@ export namespace User {
 		permissions: isly.string(),
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		passwordChanged: isly.fromIs("isoly.DateTime", isoly.DateTime.is).optional(),
 		twoFactor: isly.boolean().optional(),
 	})
 	export const is = type.is
