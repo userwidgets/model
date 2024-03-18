@@ -33,8 +33,13 @@ export namespace User {
 		name: Name.type,
 		permissions: isly.string(),
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-		passwordChanged: isly.fromIs("isoly.DateTime", isoly.DateTime.is).optional(),
+		modified: isly.union(
+			isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			isly.object({
+				other: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+				password: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			})
+		),
 		twoFactor: isly.boolean().optional(),
 	})
 	export const is = type.is
