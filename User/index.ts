@@ -1,7 +1,6 @@
 import { flagly } from "flagly"
 import { isoly } from "isoly"
 import { isly } from "isly"
-import { Email } from "../Email"
 import { Changeable as UserChangeable } from "./Changeable"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
@@ -28,10 +27,7 @@ export namespace User {
 	}
 	export type Name = UserName
 	export const Name = UserName
-	export const type = isly.object<User>({
-		email: Email.type,
-		name: Name.type,
-		permissions: isly.string(),
+	export const type = User.Creatable.type.omit(["password"]).extend<User>({
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.union(
 			isly.fromIs("isoly.DateTime", isoly.DateTime.is),
