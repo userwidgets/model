@@ -27,7 +27,7 @@ export namespace User {
 	}
 	export type Name = UserName
 	export const Name = UserName
-	export const type = User.Creatable.type.omit(["password"]).extend<User>({
+	export const type = UserCreatable.type.omit(["password"]).extend<User>({
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.union(
 			isly.fromIs("isoly.DateTime", isoly.DateTime.is),
