@@ -1,7 +1,6 @@
 import { flagly } from "flagly"
 import { isoly } from "isoly"
 import { isly } from "isly"
-import { Email } from "../Email"
 import { Changeable as UserChangeable } from "./Changeable"
 import { Creatable as UserCreatable } from "./Creatable"
 import { Credentials as UserCredentials } from "./Credentials"
@@ -15,10 +14,9 @@ import { Unauthenticated as UserUnauthenticated } from "./Unauthenticated"
 
 export interface User extends Omit<User.Creatable, "password"> {
 	created: isoly.DateTime
-	modified: isoly.DateTime
+	modified: isoly.DateTime | { other: isoly.DateTime; password: isoly.DateTime }
 	twoFactor?: boolean
 }
-
 export namespace User {
 	export type Permissions<T extends flagly.Flags = flagly.Flags> = UserPermissions<T>
 	export const Permissions = UserPermissions
@@ -29,12 +27,15 @@ export namespace User {
 	}
 	export type Name = UserName
 	export const Name = UserName
-	export const type = isly.object<User>({
-		email: Email.type,
-		name: Name.type,
-		permissions: isly.string(),
+	export const type = UserCreatable.type.omit(["password"]).extend<User>({
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
-		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+		modified: isly.union(
+			isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			isly.object({
+				other: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+				password: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
+			})
+		),
 		twoFactor: isly.boolean().optional(),
 	})
 	export const is = type.is
