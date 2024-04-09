@@ -24,10 +24,24 @@ export class Me extends rest.Collection<gracely.Error> {
 			}),
 			...(twoFactor && { "authorization-2fa": twoFactor }),
 		})
-		const result: gracely.Error | User.Key = gracely.Error.is(token)
-			? token
-			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
-			  gracely.client.unauthorized("Failed to verify token.")
+		let result: gracely.Error | User.Key
+		if (gracely.Error.is(token))
+			result = token
+		else {
+			result =
+				(await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
+				gracely.client.unauthorized("Failed to verify token.")
+			if (gracely.Error.is(result)) {
+				// TODO: remove console logs and revert code after login problem is solved
+				console.log("this.configuration.publicKey", this.configuration.publicKey)
+				console.log("typeof this.configuration.publicKey", typeof this.configuration.publicKey)
+				console.log("token:", token)
+				console.log(
+					"(await User.Key.Verifier.create(undefined).verify(token)):",
+					await User.Key.Verifier.create(undefined).verify(token)
+				)
+			}
+		}
 		if (!gracely.Error.is(result))
 			this.keySetter(result.token)
 		return result
