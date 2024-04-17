@@ -30,4 +30,9 @@ export class User extends rest.Collection<gracely.Error> {
 		)
 		return result
 	}
+	async remove2fa(email: userwidgets.Email): Promise<userwidgets.User | gracely.Error> {
+		return await this.client.delete<userwidgets.User | gracely.Error>(
+			`${this.configuration.pathPrefix}/user/${email}/2fa`
+		)
+	}
 }
