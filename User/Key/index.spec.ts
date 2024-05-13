@@ -81,7 +81,7 @@ describe("Key", () => {
 	})
 	it("empty permissions is key", async () => {
 		const issuer = userwidgets.User.Key.Issuer.create("userwidgets", "myAudience", publicKey, privateKey)
-		const verifier = userwidgets.User.Key.Verifier.create()
+		const verifier = userwidgets.User.Key.Verifier.create(publicKey)
 		const token = await issuer.sign({ ...creatable, permissions: "" })
 		expect(token).toMatch(/^ey[^.]+\.[^.]+\.[^.]+$/)
 		if (!token)
@@ -128,7 +128,7 @@ describe("Key", () => {
 			token: token,
 		}
 		expect(await verifierPublicKey.verify(token)).toEqual(expected)
-		expect(await verifierNone.verify(token)).toEqual(expected)
+		expect(await verifierNone.verify(token)).toBeUndefined()
 
 		const tokenParts = token.split(".")
 		expect(tokenParts.length).toEqual(3)
@@ -137,7 +137,9 @@ describe("Key", () => {
 
 		expect(token).not.toEqual(corruptedToken)
 		expect(await verifierPublicKey.verify(corruptedToken)).toBeUndefined()
-		expect(await verifierNone.verify(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
+		expect(await verifierPublicKey.unpack(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
+		expect(await verifierNone.verify(corruptedToken)).toBeUndefined()
+		expect(await verifierNone.unpack(corruptedToken)).toEqual({ ...expected, token: corruptedToken })
 	})
 	it("signing and verifying custom key", async () => {
 		type Claims = { id: string }
