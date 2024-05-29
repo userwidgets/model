@@ -63,6 +63,8 @@ describe("User.Permissions", () => {
 		expect(userwidgets.User.Permissions.check(permissions, "a1b2c3d4")).toEqual(false)
 		expect(userwidgets.User.Permissions.check("a1b2c3d4", "a1b2c3d4")).toEqual(true)
 		expect(userwidgets.User.Permissions.check("a1b2c3d4.user.view", "a1b2c3d4")).toEqual(false)
+		expect(userwidgets.User.Permissions.check("asd.user.admin", "user.admin")).toEqual(false)
+		expect(userwidgets.User.Permissions.check("*", "*.user.admin")).toEqual(true)
 	})
 	it("get", () => {
 		const permissions = "*.user.view id.org.edit id.org.view"

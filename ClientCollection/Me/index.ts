@@ -39,9 +39,10 @@ export class Me extends rest.Collection<gracely.Error> {
 	}
 	async register(invite: User.Invite, credentials: User.Credentials.Register): Promise<User.Key | gracely.Error> {
 		const token = await this.client.post<string>(`${this.configuration.pathPrefix}/me/${invite.token}`, credentials)
+		const verifier = User.Key.Verifier.create(this.configuration.publicKey)
 		const result = gracely.Error.is(token)
 			? token
-			: (await User.Key.Verifier.create(this.configuration.publicKey).verify(token)) ??
+			: (await (this.configuration.publicKey ? verifier.verify(token) : verifier.unpack(token))) ??
 			  gracely.client.unauthorized("Failed to verify token.")
 		if (!gracely.Error.is(result))
 			this.keySetter(result.token)
