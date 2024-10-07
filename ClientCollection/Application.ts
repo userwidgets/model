@@ -14,12 +14,14 @@ export class Application extends rest.Collection<gracely.Error> {
 			`${this.configuration.pathPrefix}/application`,
 			application
 		)
-		!gracely.Error.is(result) && (this.entityTags.application[result.id] = isoly.DateTime.now())
+		if (!gracely.Error.is(result))
+			this.entityTags.application[result.id] = isoly.DateTime.now()
 		return result
 	}
 	async fetch(): Promise<userwidgets.Application | gracely.Error> {
 		const result = await this.client.get<userwidgets.Application>(`${this.configuration.pathPrefix}/application`)
-		!gracely.Error.is(result) && (this.entityTags.application[result.id] = isoly.DateTime.now())
+		if (!gracely.Error.is(result))
+			this.entityTags.application[result.id] = isoly.DateTime.now()
 		return result
 	}
 }

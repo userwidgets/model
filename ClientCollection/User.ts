@@ -11,7 +11,7 @@ export class User extends rest.Collection<gracely.Error> {
 	}
 	async list(): Promise<userwidgets.User[] | gracely.Error> {
 		const result = await this.client.get<userwidgets.User[]>(`${this.configuration.pathPrefix}/user`)
-		!gracely.Error.is(result) &&
+		if (!gracely.Error.is(result))
 			result.forEach(user => ((this.entityTags.user[user.email] = isoly.DateTime.now()), this.entityTags))
 		return result
 	}
