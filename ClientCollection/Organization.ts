@@ -28,12 +28,13 @@ export class Organization extends rest.Collection<gracely.Error> {
 		const result = await this.client.get<userwidgets.Organization>(
 			`${this.configuration.pathPrefix}/organization/${id}`
 		)
-		!gracely.Error.is(result) && (this.entityTags.organization[result.id] = isoly.DateTime.now())
+		if (!gracely.Error.is(result))
+			this.entityTags.organization[result.id] = isoly.DateTime.now()
 		return result
 	}
 	async list(): Promise<userwidgets.Organization[] | gracely.Error> {
 		const result = await this.client.get<userwidgets.Organization[]>(`${this.configuration.pathPrefix}/organization`)
-		!gracely.Error.is(result) &&
+		if (!gracely.Error.is(result))
 			result.reduce(
 				(entityTags, organization) => ((entityTags.organization[organization.id] = isoly.DateTime.now()), entityTags),
 				this.entityTags
@@ -63,7 +64,8 @@ export class Organization extends rest.Collection<gracely.Error> {
 				...(entityTag && { ifMatch: [entityTag] }),
 			}
 		)
-		!gracely.Error.is(result) && (this.entityTags.organization[id] = isoly.DateTime.now())
+		if (!gracely.Error.is(result))
+			this.entityTags.organization[id] = isoly.DateTime.now()
 		return result
 	}
 }
