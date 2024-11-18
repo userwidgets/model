@@ -1,4 +1,4 @@
-import * as authly from "authly"
+import { authly } from "authly"
 import { isly } from "isly"
 import { userwidgets } from "../../index"
 
