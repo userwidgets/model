@@ -23,14 +23,16 @@ export namespace Organization {
 	export namespace Changeable {
 		export type Invite = OrganizationChangeable.Invite
 	}
-	export const type = isly.object<Organization>({
+	export const type = Creatable.type.omit(["permissions", "user"]).extend<Organization>({
 		id: Identifier.type,
 		name: isly.string(/.+/),
 		permissions: isly.array(isly.string(/.+/)),
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		users: isly.array(Email.type),
+		// user:
 	})
+	// export const type = isly.object<Organization>({})
 	export const is = type.is
 	export const flaw = type.flaw
 }

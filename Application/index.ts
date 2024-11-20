@@ -19,11 +19,11 @@ export namespace Application {
 	export const Creatable = ApplicationCreatable
 	export const Changeable = ApplicationChangeable
 	export type Changeable = ApplicationChangeable
-	export const type = isly.object<Application>({
+	export const type = Creatable.type.omit(["permissions", "selfSignOn"]).extend<Application>({
 		id: Identifier.type,
-		name: isly.string(),
-		organizations: isly.record(Organization.Identifier.type, Organization.type),
 		permissions: isly.array(isly.string()),
+		organizations: isly.record(Organization.Identifier.type, Organization.type),
+		selfSignOn: isly.boolean(),
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 	})
