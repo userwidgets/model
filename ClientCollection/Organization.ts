@@ -22,7 +22,11 @@ export class Organization extends rest.Collection<gracely.Error> {
 		)
 		if (userwidgetsOrganization.is(result))
 			this.entityTags.organization[result.id] = isoly.DateTime.now()
-		return result
+		return userwidgetsOrganization.is(result) ||
+			!("organization" in result) ||
+			!userwidgetsOrganization.is(result.organization)
+			? result
+			: result.organization
 	}
 	async fetch(id: userwidgets.Organization.Identifier): Promise<userwidgets.Organization | gracely.Error> {
 		const result = await this.client.get<userwidgets.Organization>(
