@@ -7,7 +7,7 @@ export interface Creatable {
 export namespace Creatable {
 	export const type = isly.object<Creatable>({
 		name: isly.string(/.+/),
-		selfSignOn: isly.boolean(),
+		selfSignOn: isly.boolean().optional(),
 		permissions: isly.array(isly.string(/.+/)).optional(),
 	})
 	export const is = type.is
