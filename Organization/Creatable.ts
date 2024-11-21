@@ -13,7 +13,7 @@ export namespace Creatable {
 		id: Identifier.type.optional(),
 		name: isly.string(/.+/),
 		permissions: isly.array(isly.string(/.+/)).optional(),
-		user: Email.type,
+		user: Email.type.optional(),
 	})
 	export const is = type.is
 	export const flaw = type.flaw
