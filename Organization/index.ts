@@ -14,15 +14,9 @@ export interface Organization extends Omit<Organization.Creatable, "permissions"
 }
 
 export namespace Organization {
-	export type Identifier = OrganizationIdentifier
-	export const Identifier = OrganizationIdentifier
-	export type Creatable = OrganizationCreatable
-	export const Creatable = OrganizationCreatable
-	export type Changeable = OrganizationChangeable
-	export const Changeable = OrganizationChangeable
-	export namespace Changeable {
-		export type Invite = OrganizationChangeable.Invite
-	}
+	export import Identifier = OrganizationIdentifier
+	export import Creatable = OrganizationCreatable
+	export import Changeable = OrganizationChangeable
 	export const type = Creatable.type.omit(["permissions", "id", "user"]).extend<Organization>({
 		id: Identifier.type,
 		users: isly.array(Email.type),
