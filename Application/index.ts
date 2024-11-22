@@ -13,17 +13,13 @@ export interface Application extends Omit<Application.Creatable, "permissions"> 
 }
 
 export namespace Application {
-	export type Identifier = ApplicationIdentifier
-	export const Identifier = ApplicationIdentifier
-	export type Creatable = ApplicationCreatable
-	export const Creatable = ApplicationCreatable
-	export const Changeable = ApplicationChangeable
-	export type Changeable = ApplicationChangeable
-	export const type = isly.object<Application>({
+	export import Identifier = ApplicationIdentifier
+	export import Creatable = ApplicationCreatable
+	export import Changeable = ApplicationChangeable
+	export const type = Creatable.type.omit(["permissions"]).extend<Application>({
 		id: Identifier.type,
-		name: isly.string(),
-		organizations: isly.record(Organization.Identifier.type, Organization.type),
 		permissions: isly.array(isly.string()),
+		organizations: isly.record(Organization.Identifier.type, Organization.type),
 		created: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 		modified: isly.fromIs("isoly.DateTime", isoly.DateTime.is),
 	})
